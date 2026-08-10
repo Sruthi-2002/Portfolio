@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SruthiOS — Sruthi Raghavan | ML/AI Engineer</title>
+<meta name="description" content="Sruthi Raghavan — M.S. Computer Engineering @ NYU Tandon. ML/AI engineer working on vision-language models, LLM fine-tuning, and computer vision.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='5' width='26' height='22' rx='3' fill='%232176c7'/%3E%3Crect x='3' y='5' width='26' height='6' rx='3' fill='%230f5bb5'/%3E%3Ccircle cx='7' cy='8' r='1.3' fill='%23ffffff'/%3E%3Ccircle cx='11' cy='8' r='1.3' fill='%23ffffff'/%3E%3Crect x='6' y='14' width='20' height='9' rx='1.5' fill='%234a9eed'/%3E%3C/svg%3E">
+<meta property="og:title" content="SruthiOS — Sruthi Raghavan">
+<meta property="og:description" content="ML/AI engineer. M.S. Computer Engineering @ NYU Tandon.">
+<meta property="og:type" content="website">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;width:100vw;height:100vh;background:#000;}
+
+/* ══ BOOT ══ */
+#boot{position:fixed;inset:0;background:#000;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity 1.2s ease;}
+#boot.out{opacity:0;pointer-events:none;}
+.boot-logo h1{color:#fff;font-size:32px;font-weight:300;letter-spacing:8px;margin-bottom:6px;text-align:center;}
+.boot-logo p{color:#666;font-size:11px;letter-spacing:4px;text-align:center;}
+.boot-bar{width:220px;height:5px;background:#1a1a1a;border-radius:3px;overflow:hidden;}
+.boot-fill{height:100%;width:0;background:linear-gradient(90deg,#1e5fb3,#4a9eed);border-radius:3px;animation:bf 2.6s ease forwards;}
+@keyframes bf{0%{width:0}50%{width:60%}75%{width:82%}100%{width:100%}}
+.boot-copy{position:absolute;bottom:24px;color:#333;font-size:10px;letter-spacing:2px;}
+
+/* ══ DESKTOP ══ */
+#desktop{position:fixed;inset:0;overflow:hidden;display:none;}
+#wallpaper{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+#wpfb{position:absolute;inset:0;z-index:0;display:none;}
+
+/* ══ ICONS ══ */
+.icon-grid{position:absolute;top:14px;left:14px;display:flex;flex-direction:column;gap:6px;z-index:10;}
+.icon{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 5px;border-radius:2px;cursor:pointer;width:78px;}
+.icon:hover{background:rgba(49,106,197,.4);}
+.icon.sel{background:rgba(49,106,197,.55);outline:1px dotted rgba(255,255,255,.7);}
+.ii{width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.icon span{font-size:11px;color:#fff;text-shadow:1px 1px 3px #000,0 0 8px rgba(0,0,0,.9);text-align:center;line-height:1.3;}
+.ico-mon{width:36px;height:24px;background:linear-gradient(to bottom,#d4d0c8,#b4b0a8);border:2px solid #888;border-radius:2px;position:relative;}
+.ico-mon-s{position:absolute;top:2px;left:2px;right:2px;bottom:4px;background:linear-gradient(135deg,#4a9eed,#2176c7);}
+.ico-stand{width:10px;height:5px;background:#999;margin:0 auto;}
+.ico-f{width:38px;height:32px;position:relative;}
+.ico-f .ft{width:16px;height:7px;border-radius:3px 3px 0 0;position:absolute;top:0;left:0;background:#f5c842;}
+.ico-f .fb{width:38px;height:26px;border-radius:1px 3px 3px 3px;position:absolute;top:6px;left:0;}
+.ico-f .fbd{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:13px;}
+.ico-pdf{width:30px;height:36px;background:#fff;border:1px solid #ccc;position:relative;}
+.ico-pdf::after{content:'';position:absolute;top:0;right:0;border-left:8px solid #ddd;border-top:8px solid transparent;}
+.ico-pdf-b{position:absolute;bottom:4px;left:0;right:0;height:10px;background:#c00;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;font-weight:700;}
+.ico-t{width:36px;height:28px;background:#1a1a1a;border:1px solid #555;border-radius:2px;padding:3px;}
+.ico-t-x{font-size:7px;color:#0f0;font-family:monospace;line-height:1.4;}
+.ico-m{width:34px;height:26px;background:#fff;border:2px solid #4a9eed;position:relative;overflow:hidden;}
+.ico-m::before{content:'';position:absolute;top:0;left:0;right:0;height:13px;background:linear-gradient(135deg,#4a9eed 50%,transparent 50%);}
+.ico-m::after{content:'';position:absolute;top:0;right:0;height:13px;width:50%;background:linear-gradient(225deg,#4a9eed 50%,transparent 50%);}
+.ico-ai{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 10px rgba(124,58,237,.6);}
+.ico-h{width:34px;height:34px;border-radius:6px;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 10px rgba(34,197,94,.5);}
+.ico-tr{width:34px;height:34px;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 10px rgba(245,158,11,.5);}
+
+/* ══ WINDOWS ══ */
+.win{position:absolute;border:1px solid #555;box-shadow:3px 3px 14px rgba(0,0,0,.6);display:none;flex-direction:column;z-index:20;animation:wo .15s ease;max-height:calc(100vh - 50px);}
+.win.open{display:flex;}
+@keyframes wo{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.win-tb{background:linear-gradient(to right,#0f5bb5,#3a8ad4);padding:4px 7px;display:flex;align-items:center;justify-content:space-between;cursor:move;flex-shrink:0;user-select:none;}
+.win-title{font-size:12px;color:#fff;font-weight:600;display:flex;align-items:center;gap:6px;}
+.win-btns{display:flex;gap:2px;}
+.wb{width:22px;height:18px;background:linear-gradient(to bottom,#d4d0c8,#b4b0a8);border:1px solid #888;font-size:12px;color:#222;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.wb.x{background:linear-gradient(to bottom,#e87461,#c25040);color:#fff;}
+.wb.x:hover{background:#f00;}
+.win-menu{background:#ece9d8;padding:2px 8px;display:flex;gap:12px;border-bottom:1px solid #aaa;font-size:11px;color:#333;flex-shrink:0;}
+.win-menu span{cursor:pointer;padding:1px 3px;}
+.win-menu span:hover{background:#316ac5;color:#fff;}
+.win-addr{background:#ece9d8;padding:3px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #aaa;font-size:11px;flex-shrink:0;}
+.addr-f{flex:1;background:#fff;border:1px solid #7f9db9;padding:1px 6px;font-size:11px;color:#333;}
+.win-body{background:#fff;display:flex;overflow:hidden;}
+.win-side{width:134px;background:linear-gradient(to bottom,#6b9cd5,#3d6faf);padding:10px;border-right:1px solid #9ab;flex-shrink:0;overflow-y:auto;}
+.side-p{background:rgba(255,255,255,.15);border-radius:4px;padding:8px;margin-bottom:10px;text-align:center;}
+.side-photo{width:54px;height:54px;border-radius:50%;border:2px solid rgba(255,255,255,.6);margin:0 auto 5px;object-fit:cover;display:block;}
+.side-init{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);margin:0 auto 5px;display:none;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;}
+.side-n{font-size:11px;color:#fff;font-weight:600;}
+.side-s{font-size:9px;color:rgba(255,255,255,.75);margin-top:1px;}
+.side-l{font-size:10px;}
+.side-l p{font-weight:600;text-decoration:underline;color:#fff;margin-bottom:5px;}
+.side-l a{display:block;margin:3px 0;color:rgba(255,255,255,.88);cursor:pointer;text-decoration:none;}
+.side-l a:hover{color:#fff;text-decoration:underline;}
+.win-content{flex:1;padding:12px;overflow-y:auto;font-size:11px;}
+.win-content::-webkit-scrollbar,.win-side::-webkit-scrollbar{width:8px;}
+.win-content::-webkit-scrollbar-track{background:#f0f0f0;}
+.win-content::-webkit-scrollbar-thumb{background:#bbb;}
+.sec{font-size:11px;color:#555;margin:0 0 8px;padding-bottom:3px;border-bottom:1px solid #ddd;font-weight:600;}
+.sec.mt{margin-top:12px;}
+.itab{display:grid;grid-template-columns:82px 1fr;gap:3px 8px;margin-bottom:10px;}
+.itab .k{color:#666;}
+.itab .v{color:#222;font-weight:500;}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.prog{display:flex;align-items:center;gap:5px;padding:3px;border-radius:1px;}
+.prog:hover{background:#316ac5;}
+.prog:hover .pn{color:#fff;}
+.pb{width:18px;height:18px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;flex-shrink:0;}
+.pn{font-size:11px;color:#333;}
+.pcard{border:1px solid #ddd;padding:9px;margin-bottom:8px;}
+.pcard:hover{background:#f8f8ff;border-color:#aac;}
+.pname{font-size:12px;font-weight:600;color:#0000cc;margin-bottom:3px;}
+.pdesc{font-size:11px;color:#444;margin-bottom:5px;line-height:1.55;}
+.pdesc ul{margin:4px 0 0 14px;}
+.pdesc li{margin-bottom:3px;}
+.ptags{display:flex;gap:4px;flex-wrap:wrap;}
+.ptag{font-size:10px;background:#e8f0fe;color:#1a73e8;padding:2px 7px;border-radius:10px;}
+.ecard{border:1px solid #ddd;padding:9px;margin-bottom:8px;}
+.ecard:hover{background:#f8fff8;border-color:#aac;}
+.eco{font-size:12px;font-weight:600;color:#333;}
+.erol{font-size:11px;color:#0000cc;}
+.edate{font-size:10px;color:#888;margin:2px 0 4px;}
+.ebul{font-size:11px;color:#444;line-height:1.55;margin-left:14px;}
+.ebul li{margin-bottom:3px;}
+.term-body{background:#0c0c0c;padding:14px;font-family:'Courier New',monospace;font-size:11px;color:#0f0;line-height:1.7;overflow-y:auto;}
+.mail-body{padding:14px;display:flex;flex-direction:column;gap:8px;}
+.mrow{display:flex;align-items:center;gap:10px;font-size:12px;}
+.mrow .mk{color:#666;width:76px;flex-shrink:0;}
+.mrow a{color:#0000cc;text-decoration:none;}
+.mrow a:hover{text-decoration:underline;}
+.mbtns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.mbtn{padding:5px 13px;font-size:11px;cursor:pointer;border:1px solid #888;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);font-family:'Segoe UI',Tahoma,sans-serif;color:#333;text-decoration:none;}
+.mbtn:hover{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
+.mbtn.pri{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
+.res-body{align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:32px;}
+
+/* ══ SRUTHIGPT ══ */
+.sg-st{background:#ece9d8;padding:3px 10px;font-size:10px;color:#555;border-bottom:1px solid #aaa;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sdot{width:7px;height:7px;border-radius:50%;background:#4caf50;animation:pd 2s infinite;}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.5}}
+.sg-chat{overflow-y:auto;padding:10px;background:#fff;display:flex;flex-direction:column;gap:8px;height:210px;}
+.sg-chat::-webkit-scrollbar{width:5px;}
+.sg-chat::-webkit-scrollbar-thumb{background:#ccc;}
+.smsg{display:flex;gap:7px;align-items:flex-start;max-width:93%;}
+.smsg.u{align-self:flex-end;flex-direction:row-reverse;}
+.sav{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+.sav.ai{background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff;}
+.sav.u{background:linear-gradient(135deg,#4a9eed,#2176c7);color:#fff;}
+.sbub{padding:7px 10px;font-size:11px;line-height:1.55;color:#222;}
+.sbub.ai{background:#f3f0ff;border:1px solid #ddd6fe;border-radius:0 7px 7px 7px;}
+.sbub.u{background:#e8f0fe;border:1px solid #c2d3f8;border-radius:7px 0 7px 7px;}
+.typing{display:flex;align-items:center;gap:4px;padding:8px 10px;background:#f3f0ff;border:1px solid #ddd6fe;border-radius:0 7px 7px 7px;}
+.td{width:5px;height:5px;border-radius:50%;background:#7c3aed;animation:tb 1.2s infinite;}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes tb{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.sg-chips{padding:6px 8px;background:#f7f7f7;border-top:1px solid #ddd;display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
+.chip{font-size:10px;padding:3px 8px;background:#fff;border:1px solid #b0b8d0;border-radius:10px;cursor:pointer;color:#333;}
+.chip:hover{background:#e8f0fe;border-color:#4a9eed;color:#1a4ab5;}
+.sg-inp{display:flex;border-top:1px solid #aaa;background:#ece9d8;padding:5px 6px;gap:4px;align-items:flex-end;flex-shrink:0;}
+.sinput{flex:1;border:1px solid #7f9db9;background:#fff;padding:5px 7px;font-size:11px;font-family:'Segoe UI',Tahoma,sans-serif;resize:none;outline:none;max-height:60px;}
+.s-send{background:linear-gradient(to bottom,#4a9eed,#2176c7);border:1px solid #1a5fa0;color:#fff;font-size:11px;padding:5px 9px;cursor:pointer;height:28px;font-family:inherit;}
+.s-send:disabled{opacity:.5;cursor:not-allowed;}
+.s-mic{background:linear-gradient(to bottom,#22c55e,#16a34a);border:1px solid #15803d;color:#fff;font-size:13px;padding:0 7px;cursor:pointer;height:28px;}
+.s-mic.rec{background:linear-gradient(to bottom,#ef4444,#dc2626);animation:rp 1s infinite;}
+@keyframes rp{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ══ SNAKE ══ */
+.sn-wrap{background:#111;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px;}
+.sn-hud{font-size:11px;color:#0f0;font-family:monospace;display:flex;gap:18px;}
+#snc{border:2px solid #333;background:#111;}
+.sn-dpad{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.drow{display:flex;gap:2px;}
+.dkey{width:28px;height:24px;background:linear-gradient(to bottom,#d4d0c8,#b4b0a8);border:1px solid #888;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;color:#333;}
+.dkey:hover{background:#316ac5;color:#fff;}
+.sn-btns{display:flex;gap:6px;}
+
+/* ══ START MENU ══ */
+#smenu{position:absolute;bottom:36px;left:0;width:238px;background:#fff;border:1px solid #555;box-shadow:3px -3px 12px rgba(0,0,0,.5);z-index:500;display:none;flex-direction:column;}
+.sm-h{background:linear-gradient(to right,#245edb,#3a8ad4);padding:10px 12px;display:flex;align-items:center;gap:10px;}
+.sm-av{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.5);object-fit:cover;}
+.sm-av-i{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);display:none;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700;}
+.sm-n{font-size:13px;color:#fff;font-weight:600;}
+.sm-s{font-size:10px;color:rgba(255,255,255,.75);}
+.smi{display:flex;align-items:center;gap:10px;padding:7px 12px;font-size:12px;color:#222;cursor:pointer;}
+.smi:hover{background:#316ac5;color:#fff;}
+.sm-d{height:1px;background:#ddd;margin:3px 0;}
+.sm-f{background:#ece9d8;padding:6px 10px;display:flex;gap:6px;border-top:1px solid #ccc;flex-wrap:wrap;}
+.sm-fb{font-size:11px;color:#333;cursor:pointer;padding:2px 8px;border:1px solid #aaa;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);}
+.sm-fb:hover{background:#316ac5;color:#fff;border-color:#316ac5;}
+
+/* ══ CONTEXT MENU ══ */
+#ctx{position:absolute;background:#fff;border:1px solid #999;box-shadow:2px 2px 8px rgba(0,0,0,.35);z-index:600;display:none;min-width:172px;}
+.ci{padding:5px 16px;font-size:12px;color:#222;cursor:pointer;}
+.ci:hover{background:#316ac5;color:#fff;}
+.cs{height:1px;background:#ddd;margin:3px 0;}
+
+/* ══ WALLPAPER PICKER ══ */
+#wpp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#ece9d8;border:1px solid #555;box-shadow:4px 4px 14px rgba(0,0,0,.5);z-index:700;display:none;width:340px;flex-direction:column;}
+.wpp-tb{background:linear-gradient(to right,#0f5bb5,#3a8ad4);padding:4px 8px;display:flex;align-items:center;justify-content:space-between;}
+.wpp-tb span{font-size:12px;color:#fff;font-weight:600;}
+.wpp-b{padding:16px;display:flex;flex-direction:column;gap:12px;}
+.wpo-row{display:flex;gap:8px;}
+.wpo{flex:1;cursor:pointer;border:2px solid #aaa;border-radius:2px;overflow:hidden;text-align:center;}
+.wpo.sel{border-color:#0078d7;}
+.wpo .pv{height:52px;background-size:cover;background-position:center;}
+.wpo .lb{font-size:10px;padding:3px;background:#f0f0f0;color:#333;}
+.wpp-btns{display:flex;gap:8px;justify-content:flex-end;}
+.wpb{padding:4px 16px;font-size:11px;cursor:pointer;border:1px solid #888;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);font-family:inherit;}
+.wpb.ok{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
+
+/* ══ DIALOG ══ */
+#dlg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#ece9d8;border:1px solid #888;box-shadow:4px 4px 12px rgba(0,0,0,.45);z-index:800;display:none;width:320px;flex-direction:column;}
+.dlg-tb{background:linear-gradient(to right,#0f5bb5,#3a8ad4);padding:4px 8px;display:flex;align-items:center;justify-content:space-between;}
+.dlg-tb span{font-size:12px;color:#fff;font-weight:600;}
+.dlg-b{padding:16px;display:flex;gap:12px;align-items:flex-start;}
+.dlg-i{font-size:30px;flex-shrink:0;}
+.dlg-t{font-size:12px;color:#222;line-height:1.7;}
+.dlg-btns{display:flex;gap:8px;justify-content:center;padding:0 16px 14px;}
+.dlg-btn{padding:5px 20px;font-size:12px;cursor:pointer;border:1px solid #888;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);min-width:80px;font-family:inherit;}
+.dlg-btn:hover{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
+
+/* ══ BALLOON ══ */
+#bal{position:absolute;bottom:46px;right:12px;background:#ffffc0;border:1px solid #cca;padding:8px 24px 8px 10px;font-size:11px;color:#333;max-width:215px;box-shadow:2px 2px 6px rgba(0,0,0,.2);z-index:400;display:none;border-radius:4px 4px 0 4px;line-height:1.5;}
+#bal::after{content:'';position:absolute;bottom:-8px;right:10px;border-left:8px solid transparent;border-top:8px solid #ffffc0;}
+.bal-x{position:absolute;top:3px;right:5px;font-size:11px;cursor:pointer;color:#666;font-weight:600;}
+
+/* ══ SCREENSAVER ══ */
+#ss{position:fixed;inset:0;background:#000;z-index:9000;display:none;overflow:hidden;cursor:none;}
+#ss-t{position:absolute;font-size:20px;font-weight:700;color:#4a9eed;white-space:nowrap;text-shadow:0 0 12px currentColor;}
+
+/* ══ TASKBAR ══ */
+#tb{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(to bottom,#245edb,#1a4ab5);display:flex;align-items:center;justify-content:space-between;padding:0 4px;border-top:1px solid #4a7fd4;z-index:300;}
+#sb{background:linear-gradient(to bottom,#5bb84a,#3a9a28);border:1px solid #2a7a1a;border-radius:0 10px 10px 0;padding:3px 14px 3px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;height:30px;box-shadow:1px 1px 3px rgba(0,0,0,.4);flex-shrink:0;}
+#sb:hover{background:linear-gradient(to bottom,#6cca5a,#4aac38);}
+.slogo{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1px;width:16px;height:14px;}
+.slogo div{border-radius:1px;}
+.slbl{font-size:13px;font-weight:700;color:#fff;font-style:italic;}
+.tb-apps{display:flex;gap:2px;margin-left:6px;overflow:hidden;flex:1;}
+.tba{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:2px;padding:2px 8px;font-size:10px;color:#fff;display:none;align-items:center;gap:4px;cursor:pointer;height:26px;white-space:nowrap;max-width:112px;overflow:hidden;}
+.tba.on{display:flex;}
+.tba.act{background:rgba(0,0,0,.25);}
+.tb-tray{display:flex;align-items:center;gap:9px;background:linear-gradient(to bottom,#1b5ec4,#1040a0);padding:3px 10px;height:30px;border-left:1px solid rgba(255,255,255,.15);flex-shrink:0;}
+.tb-tray a{color:rgba(255,255,255,.75);font-size:12px;text-decoration:none;}
+.tb-tray a:hover{color:#fff;}
+.ct{font-size:12px;color:#fff;font-weight:600;line-height:1.2;text-align:right;}
+.cd{font-size:9px;color:rgba(255,255,255,.8);line-height:1.2;text-align:right;}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-logo"><h1>SruthiOS</h1><p>Personal Portfolio System</p></div>
+  <div class="boot-bar"><div class="boot-fill"></div></div>
+  <div class="boot-copy">© 2026 Sruthi Raghavan · NYU Tandon</div>
+</div>
+
+<!-- DESKTOP -->
+<div id="desktop">
+  <img id="wallpaper" src="./download.webp" alt="" onerror="this.style.display='none';document.getElementById('wpfb').style.display='block'">
+  <div id="wpfb" style="background:linear-gradient(180deg,#3a9bd5 0%,#87ceeb 55%,#6abf3a 100%)"></div>
+
+  <div class="icon-grid">
+    <div class="icon" id="ic-pc" ondblclick="openW('pc')" onclick="selIco('pc')">
+      <div class="ii"><div class="ico-mon"><div class="ico-mon-s"></div></div><div class="ico-stand"></div></div><span>This PC</span>
+    </div>
+    <div class="icon" id="ic-proj" ondblclick="openW('proj')" onclick="selIco('proj')">
+      <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb" style="background:linear-gradient(to bottom,#fde76e,#e8b830)"></div><div class="fbd">🧠</div></div></div><span>My Projects</span>
+    </div>
+    <div class="icon" id="ic-exp" ondblclick="openW('exp')" onclick="selIco('exp')">
+      <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb" style="background:linear-gradient(to bottom,#fdd87a,#e0a020)"></div><div class="fbd">💼</div></div></div><span>Experience</span>
+    </div>
+    <div class="icon" id="ic-res" ondblclick="openW('res')" onclick="selIco('res')">
+      <div class="ii"><div class="ico-pdf"><div class="ico-pdf-b">PDF</div></div></div><span>Resume.pdf</span>
+    </div>
+    <div class="icon" id="ic-sk" ondblclick="openW('sk')" onclick="selIco('sk')">
+      <div class="ii"><div class="ico-t"><div class="ico-t-x">C:\>_<br>skills</div></div></div><span>Skills.exe</span>
+    </div>
+    <div class="icon" id="ic-tr" ondblclick="openW('tr')" onclick="selIco('tr')">
+      <div class="ii"><div class="ico-tr">🏆</div></div><span>Awards</span>
+    </div>
+    <div class="icon" id="ic-mail" ondblclick="openW('mail')" onclick="selIco('mail')">
+      <div class="ii"><div class="ico-m"></div></div><span>Mail</span>
+    </div>
+    <div class="icon" id="ic-sgpt" ondblclick="openW('sgpt')" onclick="selIco('sgpt')">
+      <div class="ii"><div class="ico-ai">✦</div></div><span>SruthiGPT</span>
+    </div>
+    <div class="icon" id="ic-hire" ondblclick="showHire()" onclick="selIco('hire')">
+      <div class="ii"><div class="ico-h">🤝</div></div><span>Hire Me.exe</span>
+    </div>
+  </div>
+
+  <!-- THIS PC -->
+  <div class="win" id="win-pc" style="top:26px;left:120px;width:470px;">
+    <div class="win-tb" onmousedown="dragS(event,'pc')">
+      <div class="win-title"><div style="width:14px;height:12px;background:linear-gradient(135deg,#4a9eed,#2176c7)"></div>This PC</div>
+      <div class="win-btns"><div class="wb" onclick="minW('pc')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('pc')">✕</div></div>
+    </div>
+    <div class="win-menu"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
+    <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\This PC</div></div>
+    <div class="win-body" style="height:300px;">
+      <div class="win-side">
+        <div class="side-p">
+          <img src="./photo.jpeg" alt="Sruthi Raghavan" class="side-photo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="side-init">SR</div>
+          <div class="side-n">Sruthi Raghavan</div>
+          <div class="side-s">NYU Tandon · ML/AI</div>
+        </div>
+        <div class="side-l">
+          <p>System tasks</p>
+          <a href="https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing" target="_blank" rel="noopener">→ View Resume</a>
+          <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener">→ GitHub</a>
+          <a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener">→ LinkedIn</a>
+          <a href="mailto:sruthiraghavan2002@gmail.com">→ Send Email</a>
+        </div>
+      </div>
+      <div class="win-content">
+        <p class="sec">System Information</p>
+        <div class="itab">
+          <span class="k">Name:</span><span class="v">Sruthi Raghavan</span>
+          <span class="k">Focus:</span><span class="v">ML / AI Engineering</span>
+          <span class="k">M.S.:</span><span class="v">Computer Engineering, NYU Tandon</span>
+          <span class="k">GPA:</span><span class="v">3.5 / 4.0 · Jan 2025 – Dec 2026</span>
+          <span class="k">B.Tech:</span><span class="v">CSE (AI &amp; Robotics), VIT Chennai</span>
+          <span class="k">GPA:</span><span class="v">8.5 / 10 · 2020 – 2024</span>
+          <span class="k">Location:</span><span class="v">Jersey City, NJ</span>
+          <span class="k">Status:</span><span class="v" style="color:#16a34a;font-weight:700">Open to opportunities ✓</span>
+        </div>
+        <p class="sec">About</p>
+        <p style="line-height:1.65;color:#333;margin-bottom:10px;">ML/AI engineer working at the intersection of vision-language models, LLM fine-tuning, and computer vision. Currently a Graduate Research Assistant at NYU's Faber Lab building OCR pipelines over 73,000+ historical mortgage records, and a Data Program Intern at The GovLab shipping tools adopted by UNESCO.</p>
+        <p class="sec">Campus Activities</p>
+        <p style="line-height:1.65;color:#444;">Exam Proctor (Courant) · HackNYU Volunteer · NYU Hyperloop (Electrical &amp; CAD Team) · Delish VITCC (Content Lead) · Capsule VITCC (Content Writer)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="win" id="win-proj" style="top:34px;left:132px;width:450px;">
+    <div class="win-tb" onmousedown="dragS(event,'proj')">
+      <div class="win-title">🧠 My Projects</div>
+      <div class="win-btns"><div class="wb" onclick="minW('proj')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('proj')">✕</div></div>
+    </div>
+    <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
+    <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\My Projects</div></div>
+    <div class="win-body" style="flex-direction:column;padding:12px;height:300px;overflow-y:auto;">
+      <div class="pcard">
+        <div class="pname">⚙ Training Efficiency Benchmarking for LLM Fine-Tuning <span style="color:#888;font-weight:400;font-size:10px;">· 2025</span></div>
+        <div class="pdesc">
+          A config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct / GSM8K, with versioned outputs and structured logging for reproducibility.
+          <ul>
+            <li>GoRA delivered ~15% higher throughput at comparable accuracy (10,965 → 12,698 tok/s)</li>
+            <li>QLoRA cut peak GPU memory by 7.3%; gradient checkpointing cut it ~57%</li>
+            <li>Nsight Compute kernel profiling traced GoRA's gain to compute utilization rising from 4.2% → 70.3%</li>
+          </ul>
+        </div>
+        <div class="ptags"><span class="ptag">PyTorch</span><span class="ptag">Hugging Face PEFT</span><span class="ptag">Nsight Systems</span><span class="ptag">SLURM</span></div>
+      </div>
+      <div class="pcard">
+        <div class="pname">🏙 SiteIQ — Real-Estate Intelligence Agent <span style="color:#888;font-weight:400;font-size:10px;">· 3rd Place, Anti-Slopathon</span></div>
+        <div class="pdesc">An agent that produces structured investment verdicts from map-based property search. Placed 3rd out of 50+ teams.</div>
+        <div class="ptags"><span class="ptag">LLM Agents</span><span class="ptag">Python</span><span class="ptag">REST APIs</span></div>
+      </div>
+      <div class="pcard">
+        <div class="pname">📊 UNESCO Data Governance Self-Assessment Tool</div>
+        <div class="pdesc">An interactive assessment tool spanning 56 questions across 4 dimensions — deployed live under The GovLab, adopted for course use, and praised directly by UNESCO. Built as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard.</div>
+        <div class="ptags"><span class="ptag">JavaScript</span><span class="ptag">PWA</span><span class="ptag">Frontend</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="win" id="win-exp" style="top:34px;left:132px;width:460px;">
+    <div class="win-tb" onmousedown="dragS(event,'exp')">
+      <div class="win-title">💼 Experience</div>
+      <div class="win-btns"><div class="wb" onclick="minW('exp')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('exp')">✕</div></div>
+    </div>
+    <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
+    <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\Experience</div></div>
+    <div class="win-body" style="flex-direction:column;padding:12px;height:310px;overflow-y:auto;">
+      <div class="ecard">
+        <div class="eco">New York University — Faber Lab</div>
+        <div class="erol">Graduate Research Assistant (Redlining Research)</div>
+        <div class="edate">Jun 2026 – Present · Remote</div>
+        <ul class="ebul">
+          <li>Built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records (~150,000 page images) spanning 1935–1975</li>
+          <li>Parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster (SLURM), completing all 30 batches in ~2 weeks — work that would take years manually</li>
+        </ul>
+      </div>
+      <div class="ecard">
+        <div class="eco">The GovLab</div>
+        <div class="erol">Data Program Intern</div>
+        <div class="edate">Jun 2026 – Present · Remote</div>
+        <ul class="ebul">
+          <li>Designed and built an interactive UNESCO Data Governance self-assessment tool (56 questions, 4 dimensions), deployed live and adopted for course use</li>
+          <li>Developed a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard</li>
+        </ul>
+      </div>
+      <div class="ecard">
+        <div class="eco">NYU — CV Starr Center for Applied Economics</div>
+        <div class="erol">Graduate Administrative Assistant</div>
+        <div class="edate">Jan 2026 – Present · New York, NY</div>
+        <ul class="ebul">
+          <li>Administer Microsoft servers and maintain the department website (WordPress/CMS) alongside event and IT logistics</li>
+        </ul>
+      </div>
+      <div class="ecard">
+        <div class="eco">HCL Technologies</div>
+        <div class="erol">AI Intern</div>
+        <div class="edate">Oct 2024 – Dec 2024 · Chennai, India</div>
+        <ul class="ebul">
+          <li>Built a handwriting-recognition and QR-code detection system using OCR and Tesseract on real-time webcam input</li>
+          <li>Developed a car-defect detection system benchmarking YOLO against Faster R-CNN, selecting YOLO for faster inference at comparable accuracy</li>
+        </ul>
+      </div>
+      <div class="ecard">
+        <div class="eco">MultiD — Multi Dimensional Technologies</div>
+        <div class="erol">Project Intern — Drone-Assisted Crack Detection</div>
+        <div class="edate">Jul 2023 – Nov 2023 · Hybrid</div>
+        <ul class="ebul">
+          <li>Designed a drone-assisted infrastructure crack detection system using YOLOv8 to automate manual visual inspection</li>
+          <li>Curated and annotated a 150-image crack dataset and tuned YOLOv8 hyperparameters, improving accuracy over baseline</li>
+        </ul>
+      </div>
+      <div class="ecard">
+        <div class="eco">National University of Singapore &amp; Hewlett-Packard Enterprise</div>
+        <div class="erol">Data Science Intern — Stock Market Prediction</div>
+        <div class="edate">Jun 2022 – Jul 2022 · Singapore</div>
+        <ul class="ebul">
+          <li>Built a Flask web app predicting next-day stock movements by combining historical price data and financial news via LSTM and sentiment analysis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- AWARDS -->
+  <div class="win" id="win-tr" style="top:60px;left:160px;width:360px;">
+    <div class="win-tb" onmousedown="dragS(event,'tr')">
+      <div class="win-title">🏆 Achievements</div>
+      <div class="win-btns"><div class="wb" onclick="minW('tr')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('tr')">✕</div></div>
+    </div>
+    <div class="win-body" style="flex-direction:column;padding:14px;">
+      <div class="pcard" style="margin-bottom:0;">
+        <div class="pname">🥉 3rd Place — Anti-Slopathon</div>
+        <div class="pdesc">Out of 50+ teams, for <strong>SiteIQ</strong> — a real-estate intelligence agent producing structured investment verdicts from map-based property search.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUME -->
+  <div class="win" id="win-res" style="top:50px;left:150px;width:320px;">
+    <div class="win-tb" onmousedown="dragS(event,'res')">
+      <div class="win-title">📄 Resume.pdf</div>
+      <div class="win-btns"><div class="wb" onclick="minW('res')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('res')">✕</div></div>
+    </div>
+    <div class="win-body res-body">
+      <div style="font-size:48px">📄</div>
+      <div style="font-size:13px;color:#333;font-weight:600">Sruthi_Raghavan_Resume.pdf</div>
+      <div style="font-size:11px;color:#888;text-align:center">Opens in Google Drive</div>
+      <a href="https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing" target="_blank" rel="noopener" style="background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;padding:7px 20px;font-size:12px;border:1px solid #1a5fa0;text-decoration:none;">Open Resume ↗</a>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="win" id="win-sk" style="top:40px;left:140px;width:420px;">
+    <div class="win-tb" onmousedown="dragS(event,'sk')" style="background:linear-gradient(to right,#1a1a1a,#2a2a2a)">
+      <div class="win-title" style="font-family:monospace">⚡ C:\&gt; Skills.exe</div>
+      <div class="win-btns"><div class="wb" onclick="minW('sk')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('sk')">✕</div></div>
+    </div>
+    <div class="win-body term-body" style="flex-direction:column;height:290px;">
+      <div style="color:#aaa">Microsoft Windows XP [Version 5.1.2600]</div>
+      <div style="color:#aaa;margin-bottom:10px">(C) Copyright 2026 Sruthi Corp. All rights reserved.</div>
+      <div>C:\&gt; skills.exe --list</div><br>
+      <div style="color:#ff0">[ Languages ]</div>
+      <div>&nbsp;&nbsp;Python · C++ · SQL · JavaScript · HTML/CSS</div>
+      <div style="color:#ff0;margin-top:8px">[ ML &amp; AI ]</div>
+      <div>&nbsp;&nbsp;PyTorch · TensorFlow · Hugging Face PEFT</div>
+      <div>&nbsp;&nbsp;LoRA / QLoRA · Distributed Training (DDP/FSDP)</div>
+      <div>&nbsp;&nbsp;Vision-Language Models · Scikit-learn · NLP</div>
+      <div style="color:#ff0;margin-top:8px">[ Computer Vision ]</div>
+      <div>&nbsp;&nbsp;YOLO / YOLOv8 · Faster R-CNN · OpenCV</div>
+      <div>&nbsp;&nbsp;Tesseract OCR</div>
+      <div style="color:#ff0;margin-top:8px">[ Tools &amp; Infra ]</div>
+      <div>&nbsp;&nbsp;Pandas · NumPy · Git · Docker · Flask</div>
+      <div>&nbsp;&nbsp;REST APIs · PostgreSQL · Linux · Bash</div>
+      <div>&nbsp;&nbsp;HPC / SLURM · Nsight Systems</div>
+      <br>
+      <div style="color:#0f0">All systems operational. <span style="color:#fff">NYU Tandon · M.S. Computer Engineering</span></div>
+      <div style="margin-top:8px">C:\&gt; <span id="cur">█</span></div>
+    </div>
+  </div>
+
+  <!-- MAIL -->
+  <div class="win" id="win-mail" style="top:45px;left:145px;width:370px;">
+    <div class="win-tb" onmousedown="dragS(event,'mail')">
+      <div class="win-title">✉ Mail — Sruthi Raghavan</div>
+      <div class="win-btns"><div class="wb" onclick="minW('mail')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('mail')">✕</div></div>
+    </div>
+    <div class="win-body" style="flex-direction:column;">
+      <div class="mail-body">
+        <div style="font-size:13px;font-weight:600;color:#333;margin-bottom:4px">Get in touch 👋</div>
+        <div class="mrow"><span class="mk">📧 Email:</span><a href="mailto:sruthiraghavan2002@gmail.com">sruthiraghavan2002@gmail.com</a></div>
+        <div class="mrow"><span class="mk">💻 GitHub:</span><a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener">github.com/Sruthi-2002</a></div>
+        <div class="mrow"><span class="mk">🔗 LinkedIn:</span><a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener">linkedin.com/in/sruthi-raghavan</a></div>
+        <div class="mrow"><span class="mk">📄 Resume:</span><a href="https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing" target="_blank" rel="noopener">View on Google Drive</a></div>
+        <div class="mrow"><span class="mk">📍 Based in:</span><span style="color:#333">Jersey City, NJ</span></div>
+        <div class="mbtns">
+          <a href="mailto:sruthiraghavan2002@gmail.com" class="mbtn pri">📧 Send Email</a>
+          <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" class="mbtn">GitHub ↗</a>
+          <a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener" class="mbtn">LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SRUTHIGPT -->
+  <div class="win" id="win-sgpt" style="top:22px;left:125px;width:375px;">
+    <div class="win-tb" onmousedown="dragS(event,'sgpt')" style="background:linear-gradient(to right,#4c1d95,#7c3aed)">
+      <div class="win-title"><span style="font-size:14px">✦</span> SruthiGPT — Ask me anything!</div>
+      <div class="win-btns"><div class="wb" onclick="minW('sgpt')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('sgpt')">✕</div></div>
+    </div>
+    <div class="sg-st"><div class="sdot"></div>SruthiGPT is online and ready</div>
+    <div class="sg-chat" id="sg-chat">
+      <div class="smsg"><div class="sav ai">S</div><div class="sbub ai">Hey! 👋 I'm <strong>SruthiGPT</strong> — I know everything about Sruthi. Ask me about her research, projects, ML work, or whether she's open to opportunities!</div></div>
+    </div>
+    <div class="sg-chips" id="sg-chips">
+      <div class="chip" onclick="useChip(this)">What research is she doing?</div>
+      <div class="chip" onclick="useChip(this)">What's her ML experience?</div>
+      <div class="chip" onclick="useChip(this)">Tell me about her projects</div>
+      <div class="chip" onclick="useChip(this)">Is she open to work?</div>
+    </div>
+    <div class="sg-inp">
+      <textarea class="sinput" id="sg-in" placeholder="Ask about Sruthi..." rows="1" onkeydown="gptKey(event)"></textarea>
+      <button class="s-mic" id="mic" onclick="toggleMic()" title="Voice input">🎤</button>
+      <button class="s-send" id="gs" onclick="gptSend()">Send →</button>
+    </div>
+  </div>
+
+  <!-- SNAKE -->
+  <div class="win" id="win-snake" style="top:28px;left:120px;width:300px;">
+    <div class="win-tb" onmousedown="dragS(event,'snake')" style="background:linear-gradient(to right,#111,#2a2a2a)">
+      <div class="win-title" style="font-family:monospace">🐍 Snake</div>
+      <div class="win-btns"><div class="wb" onclick="minW('snake')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('snake');stopSnake()">✕</div></div>
+    </div>
+    <div class="sn-wrap">
+      <div class="sn-hud"><span>Score: <span id="sn-sc">0</span></span><span>Best: <span id="sn-hi">0</span></span></div>
+      <canvas id="snc" width="240" height="240"></canvas>
+      <div class="sn-btns">
+        <div class="dkey" onclick="startSnake()" style="width:70px;background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0">▶ Start</div>
+        <div class="dkey" onclick="stopSnake()" style="width:70px">↺ Reset</div>
+      </div>
+      <div class="sn-dpad">
+        <div class="drow"><div class="dkey" onclick="sDir(0,-1)">▲</div></div>
+        <div class="drow"><div class="dkey" onclick="sDir(-1,0)">◄</div><div class="dkey" onclick="sDir(0,1)">▼</div><div class="dkey" onclick="sDir(1,0)">►</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- START MENU -->
+  <div id="smenu">
+    <div class="sm-h">
+      <img src="./photo.jpeg" alt="" class="sm-av" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="sm-av-i">SR</div>
+      <div><div class="sm-n">Sruthi Raghavan</div><div class="sm-s">NYU Tandon · ML/AI Engineer</div></div>
+    </div>
+    <div>
+      <div class="smi" onclick="openFM('pc')">💻 This PC</div>
+      <div class="smi" onclick="openFM('proj')">🧠 My Projects</div>
+      <div class="smi" onclick="openFM('exp')">💼 Experience</div>
+      <div class="smi" onclick="openFM('tr')">🏆 Achievements</div>
+      <div class="smi" onclick="openFM('res')">📄 Resume.pdf</div>
+      <div class="smi" onclick="openFM('sk')">⚡ Skills.exe</div>
+      <div class="smi" onclick="openFM('sgpt')">✦ SruthiGPT</div>
+      <div class="sm-d"></div>
+      <div class="smi" onclick="openFM('snake')">🐍 Games › Snake</div>
+      <div class="smi" onclick="showHire()">🤝 Hire Me.exe</div>
+      <div class="sm-d"></div>
+      <div class="smi" onclick="showWP()">🎨 Change Wallpaper</div>
+    </div>
+    <div class="sm-f">
+      <div class="sm-fb" onclick="openFM('mail')">✉ Contact</div>
+      <div class="sm-fb" onclick="trigSS()">🔒 Screensaver</div>
+    </div>
+  </div>
+
+  <!-- CONTEXT MENU -->
+  <div id="ctx">
+    <div class="ci" onclick="showWP();closeCtx()">🎨 Change Wallpaper</div>
+    <div class="ci" onclick="openFM('pc');closeCtx()">💻 View Info</div>
+    <div class="cs"></div>
+    <div class="ci" onclick="openFM('mail');closeCtx()">✉ Contact Sruthi</div>
+    <div class="ci" onclick="window.open('https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing','_blank');closeCtx()">📄 Download Resume</div>
+  </div>
+
+  <!-- WALLPAPER PICKER -->
+  <div id="wpp">
+    <div class="wpp-tb"><span>🎨 Display Properties — Wallpaper</span><div class="wb x" onclick="closeWP()">✕</div></div>
+    <div class="wpp-b">
+      <div class="wpo-row">
+        <div class="wpo sel" id="wpo-bliss" onclick="selWP('bliss')"><div class="pv" style="background:linear-gradient(180deg,#87ceeb 40%,#6abf3a 100%)"></div><div class="lb">Bliss</div></div>
+        <div class="wpo" id="wpo-nyc" onclick="selWP('nyc')"><div class="pv" style="background:linear-gradient(180deg,#0a0a1a,#2d1b4e)"></div><div class="lb">NYC Night</div></div>
+        <div class="wpo" id="wpo-dark" onclick="selWP('dark')"><div class="pv" style="background:#111"></div><div class="lb">Dark</div></div>
+      </div>
+      <div class="wpp-btns"><div class="wpb" onclick="closeWP()">Cancel</div><div class="wpb ok" onclick="applyWP()">Apply</div></div>
+    </div>
+  </div>
+
+  <!-- HIRE DIALOG -->
+  <div id="dlg">
+    <div class="dlg-tb"><span>🤝 Hire Me.exe</span><div class="wb x" onclick="closeDlg()">✕</div></div>
+    <div class="dlg-b">
+      <div class="dlg-i">🚀</div>
+      <div class="dlg-t">Would you like to hire <strong>Sruthi Raghavan</strong> for an ML/AI or software engineering role?<br><br>She brings PyTorch, vision-language models, LLM fine-tuning, distributed training, and HPC experience to the table.<br><br><em>M.S. Computer Engineering · NYU Tandon</em></div>
+    </div>
+    <div class="dlg-btns">
+      <div class="dlg-btn" onclick="closeDlg();window.location.href='mailto:sruthiraghavan2002@gmail.com'">Yes, let's talk! 🎉</div>
+      <div class="dlg-btn" onclick="closeDlg();window.location.href='mailto:sruthiraghavan2002@gmail.com'">Absolutely Yes! 🔥</div>
+    </div>
+  </div>
+
+  <!-- BALLOON -->
+  <div id="bal">
+    <span class="bal-x" onclick="document.getElementById('bal').style.display='none'">✕</span>
+    💼 <strong>Sruthi is actively looking for SDE/AI roles!</strong><br>
+    <span style="font-size:10px;color:#888">Double-click icons to explore her portfolio</span>
+  </div>
+
+  <!-- SCREENSAVER -->
+  <div id="ss"><div id="ss-t">Sruthi.exe</div></div>
+
+  <!-- TASKBAR -->
+  <div id="tb">
+    <div style="display:flex;align-items:center;gap:3px;flex:1;overflow:hidden;">
+      <div id="sb" onclick="toggleSM()">
+        <div class="slogo"><div style="background:#ff5722"></div><div style="background:#4caf50"></div><div style="background:#2196f3"></div><div style="background:#ffc107"></div></div>
+        <span class="slbl">start</span>
+      </div>
+      <div class="tb-apps">
+        <div class="tba" id="tb-pc" onclick="togW('pc')">💻 This PC</div>
+        <div class="tba" id="tb-proj" onclick="togW('proj')">🧠 Projects</div>
+        <div class="tba" id="tb-exp" onclick="togW('exp')">💼 Experience</div>
+        <div class="tba" id="tb-tr" onclick="togW('tr')">🏆 Awards</div>
+        <div class="tba" id="tb-res" onclick="togW('res')">📄 Resume</div>
+        <div class="tba" id="tb-sk" onclick="togW('sk')">⚡ Skills</div>
+        <div class="tba" id="tb-mail" onclick="togW('mail')">✉ Mail</div>
+        <div class="tba" id="tb-sgpt" onclick="togW('sgpt')">✦ SruthiGPT</div>
+        <div class="tba" id="tb-snake" onclick="togW('snake')">🐍 Snake</div>
+      </div>
+    </div>
+    <div class="tb-tray">
+      <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" title="GitHub">⌨</a>
+      <a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener" title="LinkedIn">🔗</a>
+      <div><div class="ct" id="ct">--:--</div><div class="cd" id="cd">---</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ BOOT ══
+setTimeout(()=>{
+  const b=document.getElementById('boot');b.classList.add('out');
+  setTimeout(()=>{
+    b.style.display='none';
+    document.getElementById('desktop').style.display='block';
+    tick();setInterval(tick,60000);
+    setTimeout(showBal,4000);
+    resetSS();
+  },1200);
+},3200);
+
+// ══ CLOCK ══
+function tick(){
+  const n=new Date(),h=n.getHours(),m=n.getMinutes();
+  document.getElementById('ct').textContent=`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+  const D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('cd').textContent=`${D[n.getDay()]} ${M[n.getMonth()]} ${n.getDate()}`;
+}
+
+// ══ WINDOWS ══
+const WS=['pc','proj','exp','tr','res','sk','mail','sgpt','snake'];
+const mini={};let zz=20;
+function selIco(id){document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel'));document.getElementById('ic-'+id)?.classList.add('sel');}
+function openW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(!w)return;w.classList.add('open');w.style.display='flex';mini[id]=false;t&&t.classList.add('on');front(id);if(id==='snake')initSnake();}
+function closeW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.classList.remove('open');w.style.display='none';}if(t)t.classList.remove('on','act');mini[id]=false;}
+function minW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w)w.style.display='none';if(t)t.classList.remove('act');mini[id]=true;}
+function togW(id){const w=document.getElementById('win-'+id);if(!w)return;if(mini[id]||w.style.display==='none'){w.style.display='flex';mini[id]=false;front(id);}else minW(id);}
+function front(id){const w=document.getElementById('win-'+id);if(w)w.style.zIndex=++zz;WS.forEach(x=>document.getElementById('tb-'+x)?.classList.remove('act'));document.getElementById('tb-'+id)?.classList.add('act');}
+WS.forEach(id=>{const w=document.getElementById('win-'+id);if(w)w.addEventListener('mousedown',()=>front(id));});
+function openFM(id){openW(id);closeSM();}
+
+// ══ DRAG ══
+let drag=null,ox=0,oy=0;
+function dragS(e,id){const w=document.getElementById('win-'+id);front(id);const r=w.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;drag=w;e.preventDefault();}
+document.addEventListener('mousemove',e=>{
+  if(!drag)return;
+  let nx=e.clientX-ox,ny=e.clientY-oy;
+  nx=Math.max(0,Math.min(nx,window.innerWidth-drag.offsetWidth));
+  ny=Math.max(0,Math.min(ny,window.innerHeight-36-drag.offsetHeight));
+  drag.style.left=nx+'px';drag.style.top=ny+'px';
+});
+document.addEventListener('mouseup',()=>drag=null);
+
+// ══ START MENU ══
+function toggleSM(){const m=document.getElementById('smenu');m.style.display=m.style.display==='flex'?'none':'flex';}
+function closeSM(){document.getElementById('smenu').style.display='none';}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#smenu')&&!e.target.closest('#sb'))closeSM();
+  if(!e.target.closest('#ctx'))closeCtx();
+});
+
+// ══ RIGHT CLICK ══
+document.getElementById('desktop').addEventListener('contextmenu',e=>{
+  if(e.target.closest('.win')||e.target.closest('#tb')||e.target.closest('.icon'))return;
+  e.preventDefault();
+  const m=document.getElementById('ctx');
+  m.style.left=Math.min(e.clientX,window.innerWidth-180)+'px';
+  m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px';
+  m.style.display='block';
+});
+function closeCtx(){document.getElementById('ctx').style.display='none';}
+
+// ══ WALLPAPER ══
+let pend='bliss';
+const WP={bliss:{img:'./download.webp'},nyc:{fb:'linear-gradient(180deg,#0a0a1a 0%,#16213e 40%,#2d1b4e 100%)'},dark:{fb:'#111'}};
+function showWP(){const p=document.getElementById('wpp');p.style.display='flex';p.style.zIndex=++zz;closeSM();}
+function closeWP(){document.getElementById('wpp').style.display='none';}
+function selWP(w){pend=w;['bliss','nyc','dark'].forEach(x=>document.getElementById('wpo-'+x).classList.toggle('sel',x===w));}
+function applyWP(){
+  const s=WP[pend],img=document.getElementById('wallpaper'),fb=document.getElementById('wpfb');
+  if(s.img){img.src=s.img;img.style.display='block';fb.style.display='none';}
+  else{img.style.display='none';fb.style.display='block';fb.style.background=s.fb;}
+  closeWP();
+}
+
+// ══ HIRE / BALLOON ══
+function showHire(){const d=document.getElementById('dlg');d.style.display='flex';d.style.zIndex=++zz;closeSM();}
+function closeDlg(){document.getElementById('dlg').style.display='none';}
+function showBal(){const b=document.getElementById('bal');b.style.display='block';setTimeout(()=>b.style.display='none',7000);}
+
+// ══ SCREENSAVER ══
+let ssT=null,ssOn=false,sx=60,sy=60,dx=1.8,dy=1.3;
+function resetSS(){clearTimeout(ssT);if(!ssOn)ssT=setTimeout(trigSS,30000);}
+function trigSS(){ssOn=true;document.getElementById('ss').style.display='block';animSS();closeSM();}
+function dismissSS(){ssOn=false;document.getElementById('ss').style.display='none';resetSS();}
+function animSS(){
+  if(!ssOn)return;
+  const ss=document.getElementById('ss'),t=document.getElementById('ss-t');
+  const mw=ss.offsetWidth-t.offsetWidth-10,mh=ss.offsetHeight-t.offsetHeight-10;
+  sx+=dx;sy+=dy;
+  if(sx<=0||sx>=mw){dx*=-1;t.style.color=rnd();}
+  if(sy<=0||sy>=mh){dy*=-1;t.style.color=rnd();}
+  t.style.left=Math.max(0,sx)+'px';t.style.top=Math.max(0,sy)+'px';
+  requestAnimationFrame(animSS);
+}
+function rnd(){return['#4a9eed','#a78bfa','#22c55e','#f59e0b','#ef4444','#ec4899','#0f0'][Math.floor(Math.random()*7)];}
+document.addEventListener('mousemove',()=>{ssOn?dismissSS():resetSS();});
+document.addEventListener('keydown',()=>{ssOn?dismissSS():resetSS();});
+
+// ══ CURSOR ══
+let bo=true;setInterval(()=>{const c=document.getElementById('cur');if(c){c.style.opacity=bo?'1':'0';bo=!bo;}},500);
+
+// ══ SNAKE ══
+const CELL=12,COLS=20,ROWS=20;
+let sg=null,si=null,shi=0;
+function initSnake(){const c=document.getElementById('snc'),x=c.getContext('2d');x.fillStyle='#111';x.fillRect(0,0,240,240);x.fillStyle='#0f0';x.font='12px monospace';x.textAlign='center';x.fillText('Press ▶ Start',120,120);}
+function startSnake(){
+  if(si)clearInterval(si);
+  const st=[{x:10,y:10}];
+  sg={sn:st,dir:{x:1,y:0},food:rf(st),sc:0};
+  document.getElementById('sn-sc').textContent=0;
+  const ctx=document.getElementById('snc').getContext('2d');
+  si=setInterval(()=>{
+    const{sn,dir,food}=sg;
+    const hd={x:sn[0].x+dir.x,y:sn[0].y+dir.y};
+    if(hd.x<0||hd.x>=COLS||hd.y<0||hd.y>=ROWS||sn.some(s=>s.x===hd.x&&s.y===hd.y)){
+      clearInterval(si);si=null;
+      ctx.fillStyle='rgba(0,0,0,.75)';ctx.fillRect(0,85,240,70);
+      ctx.fillStyle='#f00';ctx.font='bold 14px monospace';ctx.textAlign='center';ctx.fillText('Game Over!',120,115);
+      ctx.fillStyle='#0f0';ctx.font='11px monospace';ctx.fillText('Score: '+sg.sc,120,135);return;
+    }
+    sn.unshift(hd);
+    if(hd.x===food.x&&hd.y===food.y){sg.sc++;document.getElementById('sn-sc').textContent=sg.sc;if(sg.sc>shi){shi=sg.sc;document.getElementById('sn-hi').textContent=shi;}sg.food=rf(sn);}
+    else sn.pop();
+    ctx.fillStyle='#111';ctx.fillRect(0,0,240,240);
+    ctx.fillStyle='#f00';ctx.fillRect(sg.food.x*CELL,sg.food.y*CELL,CELL-1,CELL-1);
+    sn.forEach((s,i)=>{ctx.fillStyle=i===0?'#0f0':'#1a7a1a';ctx.fillRect(s.x*CELL,s.y*CELL,CELL-1,CELL-1);});
+  },110);
+}
+document.addEventListener('keydown',e=>{
+  if(!sg||!si)return;const d=sg.dir;
+  if(e.key==='ArrowUp'&&d.y!==1){sg.dir={x:0,y:-1};e.preventDefault();}
+  if(e.key==='ArrowDown'&&d.y!==-1){sg.dir={x:0,y:1};e.preventDefault();}
+  if(e.key==='ArrowLeft'&&d.x!==1){sg.dir={x:-1,y:0};e.preventDefault();}
+  if(e.key==='ArrowRight'&&d.x!==-1){sg.dir={x:1,y:0};e.preventDefault();}
+});
+function sDir(x,y){if(!sg)return;const d=sg.dir;if(x!==0&&d.x===0)sg.dir={x:x,y:0};if(y!==0&&d.y===0)sg.dir={x:0,y:y};}
+function stopSnake(){if(si){clearInterval(si);si=null;}sg=null;initSnake();document.getElementById('sn-sc').textContent=0;}
+function rf(sn){let f;do{f={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};}while(sn.some(s=>s.x===f.x&&s.y===f.y));return f;}
+
+// ══ SRUTHIGPT ══
+// Local scripted responder — no backend, no key, no network calls.
+// Ordered: the most specific topics are checked first, general ones last.
+const KB=[
+  {keywords:['research','faber','ocr','redlining','qwen'],
+   answer:"I'm a Graduate Research Assistant at NYU's Faber Lab working on redlining research. I built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records — about 150,000 page images spanning 1935 to 1975 — into analysis-ready data for housing-discrimination research. I parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster with SLURM and finished all 30 batches in roughly two weeks."},
+  {keywords:['govlab','unesco','pwa'],
+   answer:"At The GovLab I designed and built an interactive UNESCO Data Governance self-assessment tool — 56 questions across 4 dimensions. It's deployed live under The GovLab, has been adopted for course use, and got direct positive feedback from UNESCO. I built it as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard."},
+  {keywords:['llm','fine-tuning','lora','qlora','gora','benchmark','pytorch'],
+   answer:"I built a config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct with GSM8K. GoRA gave about 15% higher throughput at comparable accuracy — 10,965 to 12,698 tokens per second. QLoRA cut peak GPU memory by 7.3% and gradient checkpointing cut it by about 57%. Nsight Compute profiling traced GoRA's gain to compute utilization rising from 4.2% to 70.3%."},
+  {keywords:['siteiq','hackathon','award','achievement','prize','won'],
+   answer:"I won 3rd place at Anti-Slopathon out of 50+ teams with SiteIQ — a real-estate intelligence agent that produces structured investment verdicts from map-based property search."},
+  {keywords:['computer vision','yolo','drone','crack','multid'],
+   answer:"At MultiD I designed a drone-assisted infrastructure crack detection system using YOLOv8 to automate manual visual inspection. I curated and annotated a 150-image crack dataset and tuned the hyperparameters to improve detection accuracy over the baseline configuration."},
+  {keywords:['hcl','tesseract','handwriting','qr','defect'],
+   answer:"At HCL Technologies I was an AI Intern. I built a handwriting-recognition and QR-code detection system using OCR and Tesseract on real-time webcam input, and developed a car-defect detection system benchmarking YOLO against Faster R-CNN — we went with YOLO for faster inference at comparable accuracy."},
+  {keywords:['nus','singapore','hpe','stock','lstm'],
+   answer:"At NUS and Hewlett-Packard Enterprise in Singapore I built a Flask web app that predicts next-day stock movements by combining historical price data with financial news, using LSTM and sentiment analysis."},
+  {keywords:['project','projects','built','portfolio'],
+   answer:"My main projects are the LLM fine-tuning efficiency benchmarking framework, SiteIQ (3rd place at Anti-Slopathon), and the UNESCO Data Governance self-assessment tool I built at The GovLab. Ask me about any of them!"},
+  {keywords:['skill','stack','tech','language','tool','know'],
+   answer:"Languages: Python, C++, SQL, JavaScript, HTML/CSS. On the ML side: PyTorch, Hugging Face PEFT, LoRA/QLoRA, distributed training with DDP/FSDP, vision-language models, TensorFlow, YOLO/YOLOv8, Faster R-CNN, OpenCV, Tesseract OCR, scikit-learn, and NLP. Tooling: Pandas, NumPy, Git, Docker, Flask, REST APIs, PostgreSQL, Linux, HPC/SLURM, Nsight Systems, and Bash."},
+  {keywords:['education','study','school','university','nyu','vit','degree','gpa'],
+   answer:"I'm doing my M.S. in Computer Engineering at NYU Tandon, graduating December 2026, with a 3.5 GPA. Before that I did my B.Tech in Computer Science & Engineering with a specialization in AI and Robotics at VIT Chennai, where I had an 8.5/10."},
+  {keywords:['hire','hiring','available','open to work','looking','opportunit','recruit'],
+   answer:"Yes! I'm open to ML/AI and software engineering opportunities. The fastest way to reach me is sruthiraghavan2002@gmail.com."},
+  {keywords:['contact','email','reach','github','linkedin','resume'],
+   answer:"You can reach me at sruthiraghavan2002@gmail.com, or find me on GitHub at github.com/Sruthi-2002 and LinkedIn at linkedin.com/in/sruthi-raghavan. My resume is on the desktop as Resume.pdf."},
+  {keywords:['intern','internship','experience','worked','job','career'],
+   answer:"I've worked at NYU's Faber Lab (Graduate Research Assistant), The GovLab (Data Program Intern), NYU's CV Starr Center (Graduate Administrative Assistant), HCL Technologies (AI Intern), MultiD (Project Intern on drone-assisted crack detection), and NUS with Hewlett-Packard Enterprise (Data Science Intern). Ask about any of them for details."},
+  {keywords:['location','where','based','live','city'],
+   answer:"I'm based in Jersey City, NJ, right across from Manhattan — and I study at NYU Tandon in Brooklyn."},
+  {keywords:['who','about','yourself','tell me about','intro','hello','hi','hey'],
+   answer:"I'm Sruthi Raghavan — an ML/AI engineer finishing my M.S. in Computer Engineering at NYU Tandon. I work on vision-language models, LLM fine-tuning, and computer vision. Right now I'm a Graduate Research Assistant at NYU's Faber Lab and a Data Program Intern at The GovLab. Ask me about my research, projects, or experience!"}
+];
+const FALLBACK="I don't have anything on that. For anything I haven't covered, email Sruthi directly at sruthiraghavan2002@gmail.com!";
+// Keywords match at a word start, so short ones like "hi" don't fire inside "this".
+function hasKw(msg,kw){return new RegExp('\\b'+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(msg);}
+function findAnswer(txt){
+  const m=txt.toLowerCase();
+  for(const e of KB){if(e.keywords.some(k=>hasKw(m,k)))return e.answer;}
+  return FALLBACK;
+}
+
+const hist=[];let busy=false;
+function gptKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();gptSend();}}
+function useChip(el){document.getElementById('sg-in').value=el.textContent;document.getElementById('sg-chips').style.display='none';gptSend();}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function addBub(role,txt){
+  const u=role==='user',ch=document.getElementById('sg-chat');
+  const d=document.createElement('div');d.className='smsg'+(u?' u':'');
+  d.innerHTML='<div class="sav '+(u?'u':'ai')+'">'+(u?'You':'S')+'</div><div class="sbub '+(u?'u':'ai')+'">'+esc(txt).replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')+'</div>';
+  ch.appendChild(d);ch.scrollTop=ch.scrollHeight;
+}
+function showTyping(){
+  const ch=document.getElementById('sg-chat');
+  const d=document.createElement('div');d.className='smsg';d.id='tind';
+  d.innerHTML='<div class="sav ai">S</div><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div>';
+  ch.appendChild(d);ch.scrollTop=ch.scrollHeight;
+}
+function hideTyping(){const t=document.getElementById('tind');if(t)t.remove();}
+
+function gptSend(){
+  const inp=document.getElementById('sg-in'),txt=inp.value.trim();
+  if(!txt||busy)return;
+  busy=true;document.getElementById('gs').disabled=true;inp.value='';
+  addBub('user',txt);hist.push({role:'user',content:txt});showTyping();
+  const reply=findAnswer(txt);
+  // Simulate thinking: 600–900ms before the reply appears.
+  setTimeout(()=>{
+    hideTyping();
+    hist.push({role:'assistant',content:reply});addBub('ai',reply);
+    busy=false;document.getElementById('gs').disabled=false;
+  },600+Math.floor(Math.random()*301));
+}
+
+// ══ VOICE ══
+let recog=null,isRec=false;
+function toggleMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice input works best in Chrome or Edge.');return;}
+  if(isRec){recog&&recog.stop();return;}
+  recog=new SR();recog.continuous=false;recog.interimResults=false;recog.lang='en-US';
+  recog.onstart=()=>{isRec=true;document.getElementById('mic').classList.add('rec');};
+  recog.onresult=e=>{document.getElementById('sg-in').value=e.results[0][0].transcript;};
+  recog.onerror=()=>{isRec=false;document.getElementById('mic').classList.remove('rec');};
+  recog.onend=()=>{isRec=false;document.getElementById('mic').classList.remove('rec');};
+  recog.start();
+}
+</script>
+</body>
+</html>
