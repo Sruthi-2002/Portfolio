@@ -13,15 +13,32 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;width:100vw;height:100vh;background:#000;}
 
-/* ══ BOOT ══ */
-#boot{position:fixed;inset:0;background:#000;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity 1.2s ease;}
-#boot.out{opacity:0;pointer-events:none;}
-.boot-logo h1{color:#fff;font-size:32px;font-weight:300;letter-spacing:8px;margin-bottom:6px;text-align:center;}
-.boot-logo p{color:#666;font-size:11px;letter-spacing:4px;text-align:center;}
-.boot-bar{width:220px;height:5px;background:#1a1a1a;border-radius:3px;overflow:hidden;}
-.boot-fill{height:100%;width:0;background:linear-gradient(90deg,#1e5fb3,#4a9eed);border-radius:3px;animation:bf 2.6s ease forwards;}
-@keyframes bf{0%{width:0}50%{width:60%}75%{width:82%}100%{width:100%}}
-.boot-copy{position:absolute;bottom:24px;color:#333;font-size:10px;letter-spacing:2px;}
+/* ══ LOCK SCREEN -> SIGN-IN -> DESKTOP (replaces the boot screen) ══ */
+#lock,#signin{position:fixed;inset:0;background:#0b1a33 url(./download.webp) center/cover no-repeat;color:#fff;user-select:none;overflow:hidden;}
+#lock{z-index:99999;touch-action:none;will-change:transform;transition:transform .4s cubic-bezier(.4,0,.2,1);}
+#lock::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.25);}
+#lock.up{transform:translateY(-100%);}
+.lk-clock{position:absolute;left:48px;bottom:56px;text-shadow:0 1px 8px rgba(0,0,0,.3);}
+.lk-time{font-size:80px;font-weight:300;line-height:1;}
+.lk-date{font-size:24px;font-weight:300;margin-top:10px;}
+#signin{z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .4s ease;}
+#signin::before{content:'';position:absolute;inset:-48px;background:inherit;filter:blur(24px);}
+#signin::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.4);}
+#signin>*{position:relative;z-index:1;}
+.si-photo,.si-init{width:180px;height:180px;border-radius:50%;object-fit:cover;}
+.si-init{display:none;align-items:center;justify-content:center;background:#0078d7;font-size:56px;font-weight:300;}
+.si-name{font-size:28px;font-weight:400;}
+.si-wel{display:none;align-items:center;gap:14px;margin-top:22px;font-size:15px;}
+#signin.go .si-wel{display:flex;}
+.si-wel .boot-ring{width:26px;height:26px;}
+.si-wel .boot-ring i::after{width:3px;height:3px;margin-left:-1.5px;}
+#signin.out{opacity:0;pointer-events:none;}
+/* Windows 10 boot spinner: five dots chasing round a ring */
+.boot-ring{position:relative;width:44px;height:44px;}
+.boot-ring i{position:absolute;inset:0;opacity:0;animation:w10spin 5.5s infinite;}
+.boot-ring i::after{content:'';position:absolute;top:0;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#fff;}
+.boot-ring i:nth-child(2){animation-delay:.24s}.boot-ring i:nth-child(3){animation-delay:.48s}.boot-ring i:nth-child(4){animation-delay:.72s}.boot-ring i:nth-child(5){animation-delay:.96s}
+@keyframes w10spin{0%{transform:rotate(225deg);opacity:1;animation-timing-function:ease-out}7%{transform:rotate(345deg);animation-timing-function:linear}30%{transform:rotate(455deg);animation-timing-function:ease-in-out}39%{transform:rotate(690deg);animation-timing-function:linear}70%{transform:rotate(815deg);opacity:1;animation-timing-function:ease-out}75%{transform:rotate(945deg);animation-timing-function:ease-out}76%{transform:rotate(945deg);opacity:0}100%{transform:rotate(945deg);opacity:0}}
 
 /* ══ DESKTOP ══ */
 #desktop{position:fixed;inset:0;overflow:hidden;display:none;}
@@ -29,19 +46,18 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 #wpfb{position:absolute;inset:0;z-index:0;display:none;}
 
 /* ══ ICONS ══ */
-.icon-grid{position:absolute;top:14px;left:14px;display:flex;flex-direction:column;gap:6px;z-index:10;}
-.icon{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 5px;border-radius:2px;cursor:pointer;width:78px;}
-.icon:hover{background:rgba(49,106,197,.4);}
-.icon.sel{background:rgba(49,106,197,.55);outline:1px dotted rgba(255,255,255,.7);}
-.ii{width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.icon-grid{position:absolute;top:14px;left:14px;display:grid;grid-template-columns:repeat(2,80px);grid-template-rows:repeat(5,88px);grid-auto-flow:column;gap:6px;z-index:10;}
+.icon{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:4px 2px 0;border-radius:0;cursor:pointer;width:80px;height:88px;}
+.icon:hover{background:rgba(0,120,215,.15);outline:1px solid rgba(0,120,215,.5);outline-offset:-1px;}
+.icon.sel{background:rgba(0,120,215,.3);outline:1px solid #0078d7;outline-offset:-1px;}
+.ii{width:40px;height:40px;margin:4px;transform:scale(1.2);display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;}
 .icon span{font-size:11px;color:#fff;text-shadow:1px 1px 3px #000,0 0 8px rgba(0,0,0,.9);text-align:center;line-height:1.3;}
 .ico-mon{width:36px;height:24px;background:linear-gradient(to bottom,#d4d0c8,#b4b0a8);border:2px solid #888;border-radius:2px;position:relative;}
 .ico-mon-s{position:absolute;top:2px;left:2px;right:2px;bottom:4px;background:linear-gradient(135deg,#4a9eed,#2176c7);}
 .ico-stand{width:10px;height:5px;background:#999;margin:0 auto;}
 .ico-f{width:38px;height:32px;position:relative;}
 .ico-f .ft{width:16px;height:7px;border-radius:3px 3px 0 0;position:absolute;top:0;left:0;background:#f5c842;}
-.ico-f .fb{width:38px;height:26px;border-radius:1px 3px 3px 3px;position:absolute;top:6px;left:0;}
-.ico-f .fbd{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:13px;}
+.ico-f .fb{width:38px;height:26px;border-radius:1px 3px 3px 3px;position:absolute;top:6px;left:0;background:linear-gradient(to bottom,#fde76e,#e8b830);}
 .ico-pdf{width:30px;height:36px;background:#fff;border:1px solid #ccc;position:relative;}
 .ico-pdf::after{content:'';position:absolute;top:0;right:0;border-left:8px solid #ddd;border-top:8px solid transparent;}
 .ico-pdf-b{position:absolute;bottom:4px;left:0;right:0;height:10px;background:#c00;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;font-weight:700;}
@@ -50,45 +66,80 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .ico-m{width:34px;height:26px;background:#fff;border:2px solid #4a9eed;position:relative;overflow:hidden;}
 .ico-m::before{content:'';position:absolute;top:0;left:0;right:0;height:13px;background:linear-gradient(135deg,#4a9eed 50%,transparent 50%);}
 .ico-m::after{content:'';position:absolute;top:0;right:0;height:13px;width:50%;background:linear-gradient(225deg,#4a9eed 50%,transparent 50%);}
-.ico-ai{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 10px rgba(124,58,237,.6);}
-.ico-h{width:34px;height:34px;border-radius:6px;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 10px rgba(34,197,94,.5);}
-.ico-tr{width:34px;height:34px;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 10px rgba(245,158,11,.5);}
+.ic{width:16px;height:16px;flex-shrink:0;display:inline-block;vertical-align:-3px;}
+.ic-d{width:40px;height:40px;display:block;}
+.ic-l{width:48px;height:48px;display:block;}
 
 /* ══ WINDOWS ══ */
-.win{position:absolute;border:1px solid #555;box-shadow:3px 3px 14px rgba(0,0,0,.6);display:none;flex-direction:column;z-index:20;animation:wo .15s ease;max-height:calc(100vh - 50px);}
+.win{position:absolute;background:#fff;border:1px solid #d0d0d0;box-shadow:0 8px 24px rgba(0,0,0,.22);display:none;flex-direction:column;z-index:20;animation:wo .15s ease;max-height:calc(100vh - 50px);}
 .win.open{display:flex;}
 @keyframes wo{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
-.win-tb{background:linear-gradient(to right,#0f5bb5,#3a8ad4);padding:4px 7px;display:flex;align-items:center;justify-content:space-between;cursor:move;flex-shrink:0;user-select:none;}
-.win-title{font-size:12px;color:#fff;font-weight:600;display:flex;align-items:center;gap:6px;}
-.win-btns{display:flex;gap:2px;}
-.wb{width:22px;height:18px;background:linear-gradient(to bottom,#d4d0c8,#b4b0a8);border:1px solid #888;font-size:12px;color:#222;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
-.wb.x{background:linear-gradient(to bottom,#e87461,#c25040);color:#fff;}
-.wb.x:hover{background:#f00;}
-.win-menu{background:#ece9d8;padding:2px 8px;display:flex;gap:12px;border-bottom:1px solid #aaa;font-size:11px;color:#333;flex-shrink:0;}
-.win-menu span{cursor:pointer;padding:1px 3px;}
-.win-menu span:hover{background:#316ac5;color:#fff;}
-.win-addr{background:#ece9d8;padding:3px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #aaa;font-size:11px;flex-shrink:0;}
-.addr-f{flex:1;background:#fff;border:1px solid #7f9db9;padding:1px 6px;font-size:11px;color:#333;}
+/* !important: Skills, Assistant and Snake carry inline titlebar gradients */
+.win-tb{background:#fff!important;border-bottom:1px solid #e5e5e5;height:33px;padding:0 0 0 10px;display:flex;align-items:center;justify-content:space-between;cursor:move;flex-shrink:0;user-select:none;}
+.win-title{font-size:12px;color:#000;font-weight:400;display:flex;align-items:center;gap:8px;line-height:16px;}
+.win-btns{display:flex;gap:0;}
+/* Caption buttons: the text glyphs stay in the DOM, drawn instead as 1px lines */
+.wb{position:relative;width:46px;height:32px;background:transparent;border:0;font-size:0;color:#000;cursor:pointer;flex-shrink:0;}
+.wb::before,.wb::after{content:'';position:absolute;left:50%;top:50%;}
+.win-btns .wb:nth-child(1)::before{width:10px;height:1px;background:currentColor;transform:translate(-50%,-50%);}
+.win-btns .wb:nth-child(2)::before{width:10px;height:10px;border:1px solid currentColor;transform:translate(-50%,-50%);}
+.win.max .win-btns .wb:nth-child(2)::before{width:8px;height:8px;transform:translate(calc(-50% - 1px),calc(-50% + 1px));}
+.win.max .win-btns .wb:nth-child(2)::after{width:8px;height:8px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:translate(calc(-50% + 1px),calc(-50% - 1px));}
+.wb.x::before,.wb.x::after{width:14px;height:1px;background:currentColor;}
+.wb.x::before{transform:translate(-50%,-50%) rotate(45deg);}
+.wb.x::after{transform:translate(-50%,-50%) rotate(-45deg);}
+.wb:hover{background:#e5e5e5;}
+.wb.x:hover,.win.blur .wb.x:hover{background:#e81123;color:#fff;}
+.win-menu{background:#fff;padding:0 4px;display:flex;gap:0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#000;flex-shrink:0;}
+.win-menu span{cursor:pointer;padding:4px 8px;}
+.win-menu span:hover{background:#e5e5e5;color:#000;}
+.win-addr{background:#fff;padding:4px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #e5e5e5;font-size:12px;flex-shrink:0;}
+.addr-f{flex:1;background:#fff;border:1px solid #ccc;border-radius:0;padding:2px 8px;font-size:12px;color:#000;}
 .win-body{background:#fff;display:flex;overflow:hidden;}
-.win-side{width:134px;background:linear-gradient(to bottom,#6b9cd5,#3d6faf);padding:10px;border-right:1px solid #9ab;flex-shrink:0;overflow-y:auto;}
-.side-p{background:rgba(255,255,255,.15);border-radius:4px;padding:8px;margin-bottom:10px;text-align:center;}
-.side-photo{width:54px;height:54px;border-radius:50%;border:2px solid rgba(255,255,255,.6);margin:0 auto 5px;object-fit:cover;display:block;}
-.side-init{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);margin:0 auto 5px;display:none;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;}
-.side-n{font-size:11px;color:#fff;font-weight:600;}
-.side-s{font-size:9px;color:rgba(255,255,255,.75);margin-top:1px;}
-.side-l{font-size:10px;}
-.side-l p{font-weight:600;text-decoration:underline;color:#fff;margin-bottom:5px;}
-.side-l a{display:block;margin:3px 0;color:rgba(255,255,255,.88);cursor:pointer;text-decoration:none;}
-.side-l a:hover{color:#fff;text-decoration:underline;}
+/* This PC as Windows 10 File Explorer: ribbon tabs, nav arrows + breadcrumb, navigation pane, status bar */
+.x-rib{display:flex;height:24px;background:#fff;border-bottom:1px solid #e5e5e5;font-size:12px;flex-shrink:0;}
+.x-tab{display:flex;align-items:center;padding:0 12px;color:#000;cursor:default;border:1px solid transparent;border-bottom:0;}
+.x-tab:hover{background:#e5f3ff;border-color:#cce8ff;}
+.x-tab.x-file{background:#1979ca;color:#fff;border-color:#1979ca;}
+.x-tab.x-file:hover{background:#2b88d8;border-color:#2b88d8;}
+.x-bar{display:flex;align-items:center;gap:2px;padding:4px 8px;background:#fff;border-bottom:1px solid #e5e5e5;flex-shrink:0;}
+.x-nb{display:flex;align-items:center;justify-content:center;width:22px;height:22px;color:#444;}
+.x-nb svg{width:14px;height:14px;}
+.x-nb:not(.x-up){color:#bfbfbf;}   /* nothing to go back or forward to */
+.x-fwd svg{transform:scaleX(-1);}
+.x-up svg{transform:rotate(90deg);}
+.x-crumb{flex:1;display:flex;align-items:center;gap:6px;height:24px;margin-left:6px;padding:0 6px;border:1px solid #d9d9d9;font-size:12px;color:#000;min-width:0;}
+.x-sep{color:#666;}
+.x-nav{width:150px;flex-shrink:0;padding:6px 0;border-right:1px solid #e5e5e5;overflow-y:auto;background:#fff;}
+.x-qa,.x-ni{display:flex;align-items:center;gap:6px;width:100%;height:24px;padding:0 10px;font:inherit;font-size:12px;color:#000;text-align:left;}
+.x-qa{cursor:default;}
+.x-ni{padding-left:26px;border:1px solid transparent;background:none;cursor:pointer;}
+.x-ni:hover{background:#e5f3ff;}
+.x-ni:active{background:#cce8ff;border-color:#99d1ff;}
+.x-prof{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.side-photo{width:54px;height:54px;border-radius:50%;border:1px solid #d0d0d0;object-fit:cover;display:block;flex-shrink:0;}
+.side-init{width:54px;height:54px;border-radius:50%;background:#0078d7;border:0;display:none;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;}
+.side-n{font-size:12px;color:#000;font-weight:600;}
+.side-s{font-size:10px;color:#555;margin-top:1px;}
+.x-links{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:4px;font-size:11px;}
+.x-links a{color:#0066cc;text-decoration:none;}
+.x-links a:hover{text-decoration:underline;}
 .win-content{flex:1;padding:12px;overflow-y:auto;font-size:11px;}
-.win-content::-webkit-scrollbar,.win-side::-webkit-scrollbar{width:8px;}
-.win-content::-webkit-scrollbar-track{background:#f0f0f0;}
-.win-content::-webkit-scrollbar-thumb{background:#bbb;}
+.win ::-webkit-scrollbar{width:12px;height:12px;}
+.win ::-webkit-scrollbar-track,.win ::-webkit-scrollbar-corner{background:#f0f0f0;}
+.win ::-webkit-scrollbar-thumb{background:#cdcdcd;border-radius:0;}
+.win ::-webkit-scrollbar-thumb:hover{background:#a6a6a6;}
+/* Firefox only: in Chrome, setting scrollbar-color would disable the rules above */
+@supports not selector(::-webkit-scrollbar){.win *{scrollbar-color:#cdcdcd #f0f0f0;}}
 .sec{font-size:11px;color:#555;margin:0 0 8px;padding-bottom:3px;border-bottom:1px solid #ddd;font-weight:600;}
+.sec.psec{margin-top:8px;}
 .sec.mt{margin-top:12px;}
 .itab{display:grid;grid-template-columns:82px 1fr;gap:3px 8px;margin-bottom:10px;}
 .itab .k{color:#666;}
 .itab .v{color:#222;font-weight:500;}
+.sres{margin-bottom:10px;}
+.sr{font-size:11px;color:#666;line-height:1.55;margin-bottom:3px;}
+.sr-n{font-family:Consolas,'Courier New',monospace;color:#222;}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
 .prog{display:flex;align-items:center;gap:5px;padding:3px;border-radius:1px;}
 .prog:hover{background:#316ac5;}
@@ -100,6 +151,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .pname{font-size:12px;font-weight:600;color:#0000cc;margin-bottom:3px;}
 .pdesc{font-size:11px;color:#444;margin-bottom:5px;line-height:1.55;}
 .pdesc ul{margin:4px 0 0 14px;}
+.pdesc ul.lead{margin:2px 0 6px 14px;}
 .pdesc li{margin-bottom:3px;}
 .ptags{display:flex;gap:4px;flex-wrap:wrap;}
 .ptag{font-size:10px;background:#e8f0fe;color:#1a73e8;padding:2px 7px;border-radius:10px;}
@@ -111,24 +163,46 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .ebul{font-size:11px;color:#444;line-height:1.55;margin-left:14px;}
 .ebul li{margin-bottom:3px;}
 .term-body{background:#0c0c0c;padding:14px;font-family:'Courier New',monospace;font-size:11px;color:#0f0;line-height:1.7;overflow-y:auto;}
-.mail-body{padding:14px;display:flex;flex-direction:column;gap:8px;}
-.mrow{display:flex;align-items:center;gap:10px;font-size:12px;}
-.mrow .mk{color:#666;width:76px;flex-shrink:0;}
-.mrow a{color:#0000cc;text-decoration:none;}
-.mrow a:hover{text-decoration:underline;}
-.mbtns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.mbtn{padding:5px 13px;font-size:11px;cursor:pointer;border:1px solid #888;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);font-family:'Segoe UI',Tahoma,sans-serif;color:#333;text-decoration:none;}
-.mbtn:hover{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
-.mbtn.pri{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
-.res-body{align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:32px;}
+/* Mail: Windows 10 Mail composing a new message */
+.mc-body{height:300px;}
+.mc-side{width:160px;flex-shrink:0;background:#f0f0f0;border-right:1px solid #e5e5e5;padding:12px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.mc-name{font-size:13px;font-weight:600;color:#000;margin:0 0 8px 6px;}
+.mc-link{display:flex;align-items:center;gap:8px;padding:5px 6px;font-size:12px;color:#0066cc;text-decoration:none;}
+.mc-link:hover{background:#e5e5e5;text-decoration:underline;}
+.mc-link .gh{color:#24292f;}
+.mc-link .li{color:#0a66c2;}
+.mc-note{font-size:11px;color:#555;margin:0 0 2px 6px;}
+.mc-link+.mc-note{margin-top:12px;}
+.mc-main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.mc-bar{display:flex;justify-content:flex-end;padding:8px 10px;border-bottom:1px solid #e5e5e5;}
+.mc-send{padding:5px 18px;font:inherit;font-size:12px;color:#fff;background:#0078d7;border:1px solid #0078d7;cursor:pointer;}
+.mc-send:hover{background:#006cc1;border-color:#006cc1;}
+.mc-send:focus-visible{outline:2px solid #000;outline-offset:1px;}
+.mc-row{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #e5e5e5;font-size:12px;color:#555;}
+.mc-row input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:12px;color:#000;outline:none;}
+.mc-subj{border:0;border-bottom:1px solid #e5e5e5;padding:8px 12px;font:inherit;font-size:14px;color:#000;outline:none;}
+.mc-subj:focus{border-bottom-color:#0078d7;}
+.mc-msg{flex:1;min-height:0;border:0;padding:10px 12px;font:inherit;font-size:12px;line-height:1.5;color:#000;resize:none;outline:none;}
+.mc-msg:focus{box-shadow:inset 2px 0 0 #0078d7;}
+.mc-subj::placeholder,.mc-msg::placeholder{color:#888;}
+
+/* ══ FOCUS / RESIZE / MAXIMIZE ══ */
+.win.foc{box-shadow:0 8px 24px rgba(0,0,0,.22);}
+.win.blur{box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.win.blur .win-title,.win.blur .wb{color:#888;}
+.win.sized{max-height:none;}
+.win.sized>.win-body,.win.sized>.sn-wrap,.win.sized>.sg-chat{flex:1 1 auto;height:auto!important;min-height:0;}
+.win-rz{position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;z-index:6;background:repeating-linear-gradient(135deg,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.28) 2px 3px,rgba(255,255,255,.5) 3px 4px);}
+.win.max .win-rz{display:none;}
+
+/* ══ DESKTOP SELECTION ══ */
+#selr{position:absolute;display:none;z-index:15;border:1px solid #0078d7;background:rgba(0,120,215,.3);pointer-events:none;}
 
 /* ══ SRUTHIGPT ══ */
-.sg-st{background:#ece9d8;padding:3px 10px;font-size:10px;color:#555;border-bottom:1px solid #aaa;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sg-st{background:#f0f0f0;padding:3px 10px;font-size:10px;color:#555;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .sdot{width:7px;height:7px;border-radius:50%;background:#4caf50;animation:pd 2s infinite;}
 @keyframes pd{0%,100%{opacity:1}50%{opacity:.5}}
 .sg-chat{overflow-y:auto;padding:10px;background:#fff;display:flex;flex-direction:column;gap:8px;height:210px;}
-.sg-chat::-webkit-scrollbar{width:5px;}
-.sg-chat::-webkit-scrollbar-thumb{background:#ccc;}
 .smsg{display:flex;gap:7px;align-items:flex-start;max-width:93%;}
 .smsg.u{align-self:flex-end;flex-direction:row-reverse;}
 .sav{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
@@ -144,13 +218,59 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .sg-chips{padding:6px 8px;background:#f7f7f7;border-top:1px solid #ddd;display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;}
 .chip{font-size:10px;padding:3px 8px;background:#fff;border:1px solid #b0b8d0;border-radius:10px;cursor:pointer;color:#333;}
 .chip:hover{background:#e8f0fe;border-color:#4a9eed;color:#1a4ab5;}
-.sg-inp{display:flex;border-top:1px solid #aaa;background:#ece9d8;padding:5px 6px;gap:4px;align-items:flex-end;flex-shrink:0;}
-.sinput{flex:1;border:1px solid #7f9db9;background:#fff;padding:5px 7px;font-size:11px;font-family:'Segoe UI',Tahoma,sans-serif;resize:none;outline:none;max-height:60px;}
-.s-send{background:linear-gradient(to bottom,#4a9eed,#2176c7);border:1px solid #1a5fa0;color:#fff;font-size:11px;padding:5px 9px;cursor:pointer;height:28px;font-family:inherit;}
+.sg-inp{display:flex;border-top:1px solid #e5e5e5;background:#f0f0f0;padding:5px 6px;gap:4px;align-items:flex-end;flex-shrink:0;}
+.sinput{flex:1;border:1px solid #ccc;border-radius:0;background:#fff;padding:5px 7px;font-size:11px;font-family:'Segoe UI',Tahoma,sans-serif;resize:none;outline:none;max-height:60px;}
+.sinput:focus{border-color:#0078d7;}
+.s-send{background:#0078d7;border:1px solid #0078d7;color:#fff;font-size:11px;padding:5px 9px;cursor:pointer;height:28px;font-family:inherit;}
+.s-send:hover:not(:disabled){background:#006cc1;border-color:#006cc1;}
 .s-send:disabled{opacity:.5;cursor:not-allowed;}
-.s-mic{background:linear-gradient(to bottom,#22c55e,#16a34a);border:1px solid #15803d;color:#fff;font-size:13px;padding:0 7px;cursor:pointer;height:28px;}
-.s-mic.rec{background:linear-gradient(to bottom,#ef4444,#dc2626);animation:rp 1s infinite;}
+.s-mic{background:#e1e1e1;border:1px solid #adadad;color:#000;font-size:13px;padding:0 7px;cursor:pointer;height:28px;}
+.s-mic:hover{border-color:#0078d7;}
+.s-mic .ic{display:block;width:14px;height:14px;}
+.s-mic.rec{background:#e81123;border-color:#e81123;color:#fff;animation:rp 1s infinite;}
 @keyframes rp{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ══ MEDIA PLAYER ══ */
+.mp-body{flex-direction:column;gap:8px;padding:8px;background:linear-gradient(to bottom,#3b434d,#242a31);color:#d3dbe4;}
+.mp-lcd{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;padding:6px 8px;background:#0d1511;border:1px solid #0a0d10;box-shadow:inset 0 1px 3px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.08);font-family:Consolas,'Courier New',monospace;font-size:11px;color:#8fd49b;}
+.mp-title{overflow:hidden;white-space:nowrap;}
+.mp-marq{display:inline-block;padding-left:100%;animation:mpq 20s linear infinite;}
+@keyframes mpq{to{transform:translateX(-100%);}}
+.mp-vizw{position:relative;flex:1;min-height:64px;}
+.mp-viz{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.mp-info{display:flex;justify-content:space-between;gap:8px;color:#6fae7b;}
+#mp-mute{visibility:hidden;color:#d9a45a;}
+.mp-lcd.muted #mp-mute{visibility:visible;}
+.mp-ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-right:10px;}
+.mp-btns{display:flex;gap:4px;}
+.mp-b{position:relative;width:30px;height:22px;padding:0;border:1px solid #15191e;border-radius:3px;background:linear-gradient(to bottom,#646e7a,#3a424b);box-shadow:inset 0 1px 0 rgba(255,255,255,.18);color:#dfe6ee;cursor:pointer;}
+.mp-b:hover{background:linear-gradient(to bottom,#727d8a,#444d57);}
+.mp-b:active{background:linear-gradient(to bottom,#353c44,#4a535d);box-shadow:inset 0 1px 2px rgba(0,0,0,.5);}
+.mp-b.on{color:#8fd49b;}
+.mp-b:focus-visible{outline:1px solid #8fd49b;outline-offset:1px;}
+.mp-b::before,.mp-b::after{content:'';position:absolute;top:50%;left:50%;}
+.mp-b.play::before{border-left:9px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent;transform:translate(-35%,-50%);}
+.mp-b.pause::before,.mp-b.pause::after{width:3px;height:10px;background:currentColor;transform:translate(-50%,-50%);}
+.mp-b.pause::before{margin-left:-3px;}
+.mp-b.pause::after{margin-left:3px;}
+.mp-b.stop::before{width:9px;height:9px;background:currentColor;transform:translate(-50%,-50%);}
+.mp-b.prev::before,.mp-b.next::before{width:2px;height:10px;background:currentColor;transform:translate(-50%,-50%);}
+.mp-b.prev::before{margin-left:-5px;}
+.mp-b.next::before{margin-left:5px;}
+.mp-b.prev::after{border-right:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent;transform:translate(-50%,-50%);margin-left:1px;}
+.mp-b.next::after{border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent;transform:translate(-50%,-50%);margin-left:-1px;}
+.mp-vol{display:flex;align-items:center;gap:6px;font-size:10px;color:#a9b4bf;}
+.mp-seek,.mp-vol input{-webkit-appearance:none;appearance:none;height:14px;margin:0;background:transparent;cursor:pointer;}
+.mp-seek{width:100%;}
+.mp-vol input{width:80px;}
+.mp-seek::-webkit-slider-runnable-track,.mp-vol input::-webkit-slider-runnable-track{height:4px;background:#15191e;border:1px solid #0c0f12;border-radius:2px;}
+.mp-seek::-webkit-slider-thumb,.mp-vol input::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:14px;margin-top:-6px;border:1px solid #15191e;border-radius:2px;background:linear-gradient(to bottom,#cfd6de,#8d97a3);}
+.mp-seek::-moz-range-track,.mp-vol input::-moz-range-track{height:4px;background:#15191e;border:1px solid #0c0f12;border-radius:2px;}
+.mp-seek::-moz-range-thumb,.mp-vol input::-moz-range-thumb{width:10px;height:14px;border:1px solid #15191e;border-radius:2px;background:linear-gradient(to bottom,#cfd6de,#8d97a3);}
+.mp-seek:focus-visible,.mp-vol input:focus-visible{outline:1px solid #8fd49b;outline-offset:2px;}
+.tb-vol{display:flex;width:16px;height:16px;padding:0;border:0;background:none;color:rgba(255,255,255,.85);cursor:pointer;}
+.tb-vol:hover{color:#fff;}
+.tb-vol svg{width:16px;height:16px;}
 
 /* ══ SNAKE ══ */
 .sn-wrap{background:#111;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px;}
@@ -158,151 +278,312 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 #snc{border:2px solid #333;background:#111;}
 .sn-dpad{display:flex;flex-direction:column;align-items:center;gap:2px;}
 .drow{display:flex;gap:2px;}
-.dkey{width:28px;height:24px;background:linear-gradient(to bottom,#d4d0c8,#b4b0a8);border:1px solid #888;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;color:#333;}
-.dkey:hover{background:#316ac5;color:#fff;}
+.dkey{width:28px;height:24px;background:#e1e1e1;border:1px solid #adadad;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:0;color:#000;}
+.dkey:hover{border-color:#0078d7;}
+/* !important: the Snake Start button carries an inline gradient */
+.sn-btns .dkey:first-child{background:#0078d7!important;border-color:#0078d7!important;color:#fff!important;}
 .sn-btns{display:flex;gap:6px;}
 
 /* ══ START MENU ══ */
-#smenu{position:absolute;bottom:36px;left:0;width:238px;background:#fff;border:1px solid #555;box-shadow:3px -3px 12px rgba(0,0,0,.5);z-index:500;display:none;flex-direction:column;}
-.sm-h{background:linear-gradient(to right,#245edb,#3a8ad4);padding:10px 12px;display:flex;align-items:center;gap:10px;}
-.sm-av{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.5);object-fit:cover;}
-.sm-av-i{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.5);display:none;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700;}
-.sm-n{font-size:13px;color:#fff;font-weight:600;}
-.sm-s{font-size:10px;color:rgba(255,255,255,.75);}
-.smi{display:flex;align-items:center;gap:10px;padding:7px 12px;font-size:12px;color:#222;cursor:pointer;}
-.smi:hover{background:#316ac5;color:#fff;}
-.sm-d{height:1px;background:#ddd;margin:3px 0;}
-.sm-f{background:#ece9d8;padding:6px 10px;display:flex;gap:6px;border-top:1px solid #ccc;flex-wrap:wrap;}
-.sm-fb{font-size:11px;color:#333;cursor:pointer;padding:2px 8px;border:1px solid #aaa;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);}
-.sm-fb:hover{background:#316ac5;color:#fff;border-color:#316ac5;}
+#smenu{position:absolute;bottom:48px;left:0;width:640px;height:min(520px,calc(100vh - 48px));padding-left:48px;background:rgba(32,36,42,.97);border:0;border-radius:0;box-shadow:0 0 18px rgba(0,0,0,.45);z-index:500;display:none;}
+/* rail: 48px, expands over the list on hover (as in Windows 10) to show labels */
+.sm-rail{position:absolute;left:0;top:0;bottom:0;width:48px;display:flex;flex-direction:column;overflow:hidden;background:rgb(32,36,42);z-index:2;transition:width .15s ease 0s,box-shadow .15s;}
+.sm-rail:hover{width:256px;box-shadow:4px 0 16px rgba(0,0,0,.5);transition:width .15s ease .4s,box-shadow .15s .4s;}
+.sm-ri{display:flex;align-items:center;gap:16px;height:48px;padding:0 16px;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.sm-ri:hover{background:rgba(255,255,255,.1);}
+.sm-ri.sm-bottom{margin-top:auto;}
+.sm-ric{width:16px;height:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sm-ric svg{width:16px;height:16px;}
+.sm-user .sm-ric{width:16px;}
+.sm-av,.sm-av-i{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.sm-av-i{display:none;align-items:center;justify-content:center;background:#0078d7;font-size:11px;font-weight:600;color:#fff;}
+.sm-rl{font-size:13px;}
+.sm-user .sm-rl{display:flex;flex-direction:column;margin-left:6px;}
+.sm-n{font-size:13px;color:#fff;font-weight:400;}
+.sm-s{font-size:11px;color:#aaa;}
+.sm-apps{flex:0 0 252px;overflow-y:auto;padding:6px 0 12px;}
+.sm-apps::-webkit-scrollbar{width:6px;}
+.sm-apps::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);}
+.sm-hd{padding:10px 16px 4px;font-size:12px;color:#fff;}
+.smi{display:flex;align-items:center;gap:12px;padding:8px 16px;font-size:12px;color:#fff;cursor:pointer;}
+.smi-i{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;}
+.smi:hover{background:rgba(255,255,255,.1);color:#fff;}
+.smi.sm-sub{padding-left:44px;}
+.smi[hidden]{display:none;}
+.sm-chev{margin-left:auto;width:6px;height:6px;border-right:1px solid #ccc;border-bottom:1px solid #ccc;transform:rotate(45deg);margin-top:-3px;}
+.sm-folder[aria-expanded="true"] .sm-chev{transform:rotate(-135deg);margin-top:3px;}
+.sm-tiles{flex:1;padding:12px 16px 16px;overflow-y:auto;}
+.sm-tt{font-size:12px;color:#fff;margin:4px 0 10px;}
+.sm-grid{display:grid;grid-template-columns:repeat(3,100px);grid-auto-rows:100px;gap:4px;}
+.tile{display:flex;flex-direction:column;justify-content:flex-end;padding:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;outline:2px solid transparent;outline-offset:-2px;overflow:hidden;}
+.tile:hover{outline-color:rgba(255,255,255,.45);}
+.tile.num{background:#0078d7;justify-content:space-between;}
+.tile.num.d1{background:#005a9e;}
+.tile.num.d2{background:#004578;}
+.tn{font-size:26px;font-weight:300;line-height:1.1;}
+.tc{font-size:11px;line-height:1.3;}
+.tile .tic{width:32px;height:32px;margin:auto;}
+.tl{font-size:11px;}
+/* Aero Snap preview */
+#snapprev{position:absolute;display:none;pointer-events:none;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(0,0,0,.15),0 8px 24px rgba(0,0,0,.25);}
+/* Recycle Bin: File Explorer body with a status bar */
+.bin-body{height:240px;align-items:center;justify-content:center;}
+.bin-empty{font-size:12px;color:#666;}
+.win-status{flex-shrink:0;padding:4px 10px;font-size:11px;color:#555;background:#fff;border-top:1px solid #e5e5e5;}
 
 /* ══ CONTEXT MENU ══ */
-#ctx{position:absolute;background:#fff;border:1px solid #999;box-shadow:2px 2px 8px rgba(0,0,0,.35);z-index:600;display:none;min-width:172px;}
-.ci{padding:5px 16px;font-size:12px;color:#222;cursor:pointer;}
-.ci:hover{background:#316ac5;color:#fff;}
-.cs{height:1px;background:#ddd;margin:3px 0;}
+#ctx{position:absolute;background:#fff;border:1px solid #ccc;border-radius:0;box-shadow:2px 2px 4px rgba(0,0,0,.2);z-index:600;display:none;min-width:220px;padding:2px 0;}
+.ci{position:relative;display:flex;align-items:center;padding:5px 32px 5px 38px;font-size:12px;color:#000;cursor:pointer;white-space:nowrap;}
+.ci .ic{position:absolute;left:12px;top:50%;margin-top:-8px;}
+.ci.sub{cursor:default;}
+.ci.sub::after{content:'';position:absolute;right:14px;top:50%;width:5px;height:5px;border-top:1px solid #000;border-right:1px solid #000;transform:translateY(-50%) rotate(45deg);}
+.ci:hover{background:#e5e5e5;color:#000;}
+.cs{height:1px;background:#d7d7d7;margin:3px 0;}
 
 /* ══ WALLPAPER PICKER ══ */
-#wpp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#ece9d8;border:1px solid #555;box-shadow:4px 4px 14px rgba(0,0,0,.5);z-index:700;display:none;width:340px;flex-direction:column;}
-.wpp-tb{background:linear-gradient(to right,#0f5bb5,#3a8ad4);padding:4px 8px;display:flex;align-items:center;justify-content:space-between;}
-.wpp-tb span{font-size:12px;color:#fff;font-weight:600;}
+#wpp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1px solid #d0d0d0;box-shadow:0 8px 24px rgba(0,0,0,.22);z-index:700;display:none;width:340px;flex-direction:column;}
+.wpp-tb{background:#fff;border-bottom:1px solid #e5e5e5;height:33px;padding:0 0 0 10px;display:flex;align-items:center;justify-content:space-between;}
+.wpp-tb span{display:flex;align-items:center;gap:8px;font-size:12px;color:#000;font-weight:400;}
 .wpp-b{padding:16px;display:flex;flex-direction:column;gap:12px;}
 .wpo-row{display:flex;gap:8px;}
-.wpo{flex:1;cursor:pointer;border:2px solid #aaa;border-radius:2px;overflow:hidden;text-align:center;}
+.wpo{flex:1;cursor:pointer;border:2px solid #ccc;border-radius:0;overflow:hidden;text-align:center;}
 .wpo.sel{border-color:#0078d7;}
 .wpo .pv{height:52px;background-size:cover;background-position:center;}
 .wpo .lb{font-size:10px;padding:3px;background:#f0f0f0;color:#333;}
 .wpp-btns{display:flex;gap:8px;justify-content:flex-end;}
-.wpb{padding:4px 16px;font-size:11px;cursor:pointer;border:1px solid #888;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);font-family:inherit;}
-.wpb.ok{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
-
-/* ══ DIALOG ══ */
-#dlg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#ece9d8;border:1px solid #888;box-shadow:4px 4px 12px rgba(0,0,0,.45);z-index:800;display:none;width:320px;flex-direction:column;}
-.dlg-tb{background:linear-gradient(to right,#0f5bb5,#3a8ad4);padding:4px 8px;display:flex;align-items:center;justify-content:space-between;}
-.dlg-tb span{font-size:12px;color:#fff;font-weight:600;}
-.dlg-b{padding:16px;display:flex;gap:12px;align-items:flex-start;}
-.dlg-i{font-size:30px;flex-shrink:0;}
-.dlg-t{font-size:12px;color:#222;line-height:1.7;}
-.dlg-btns{display:flex;gap:8px;justify-content:center;padding:0 16px 14px;}
-.dlg-btn{padding:5px 20px;font-size:12px;cursor:pointer;border:1px solid #888;background:linear-gradient(to bottom,#f0ede8,#d8d5ce);min-width:80px;font-family:inherit;}
-.dlg-btn:hover{background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0;}
+.wpb{padding:4px 16px;font-size:11px;cursor:pointer;border:1px solid #adadad;background:#e1e1e1;color:#000;font-family:inherit;}
+.wpb:hover{border-color:#0078d7;}
+.wpb.ok{background:#0078d7;color:#fff;border-color:#0078d7;}
+.wpb.ok:hover{background:#006cc1;border-color:#006cc1;}
 
 /* ══ BALLOON ══ */
-#bal{position:absolute;bottom:46px;right:12px;background:#ffffc0;border:1px solid #cca;padding:8px 24px 8px 10px;font-size:11px;color:#333;max-width:215px;box-shadow:2px 2px 6px rgba(0,0,0,.2);z-index:400;display:none;border-radius:4px 4px 0 4px;line-height:1.5;}
-#bal::after{content:'';position:absolute;bottom:-8px;right:10px;border-left:8px solid transparent;border-top:8px solid #ffffc0;}
-.bal-x{position:absolute;top:3px;right:5px;font-size:11px;cursor:pointer;color:#666;font-weight:600;}
+#bal{position:absolute;bottom:60px;right:12px;background:#2b2b2b;border:1px solid #444;padding:14px 36px 14px 14px;font-size:12px;color:#fff;width:300px;max-width:calc(100vw - 24px);box-shadow:0 4px 16px rgba(0,0,0,.45);z-index:400;display:none;border-radius:0;line-height:1.5;}
+/* inline #888 on the toast subtitle is too faint against #2b2b2b */
+#bal span[style]{color:#bbb!important;}
+.bal-x{position:absolute;top:6px;right:8px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:#ccc;font-weight:400;}
+.bal-x:hover{background:rgba(255,255,255,.1);color:#fff;}
+.bal-row{display:flex;gap:10px;align-items:flex-start;}
+.bal-row .ic{margin-top:2px;}
 
 /* ══ SCREENSAVER ══ */
 #ss{position:fixed;inset:0;background:#000;z-index:9000;display:none;overflow:hidden;cursor:none;}
-#ss-t{position:absolute;font-size:20px;font-weight:700;color:#4a9eed;white-space:nowrap;text-shadow:0 0 12px currentColor;}
+#ss-t{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:700;color:#4a9eed;white-space:nowrap;text-shadow:0 0 12px currentColor;}
+#ss.gl #ss-t{display:none;}
+.ss-gl{position:absolute;left:0;top:0;display:block;}
 
 /* ══ TASKBAR ══ */
-#tb{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(to bottom,#245edb,#1a4ab5);display:flex;align-items:center;justify-content:space-between;padding:0 4px;border-top:1px solid #4a7fd4;z-index:300;}
-#sb{background:linear-gradient(to bottom,#5bb84a,#3a9a28);border:1px solid #2a7a1a;border-radius:0 10px 10px 0;padding:3px 14px 3px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;height:30px;box-shadow:1px 1px 3px rgba(0,0,0,.4);flex-shrink:0;}
-#sb:hover{background:linear-gradient(to bottom,#6cca5a,#4aac38);}
-.slogo{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1px;width:16px;height:14px;}
-.slogo div{border-radius:1px;}
-.slbl{font-size:13px;font-weight:700;color:#fff;font-style:italic;}
-.tb-apps{display:flex;gap:2px;margin-left:6px;overflow:hidden;flex:1;}
-.tba{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:2px;padding:2px 8px;font-size:10px;color:#fff;display:none;align-items:center;gap:4px;cursor:pointer;height:26px;white-space:nowrap;max-width:112px;overflow:hidden;}
-.tba.on{display:flex;}
-.tba.act{background:rgba(0,0,0,.25);}
-.tb-tray{display:flex;align-items:center;gap:9px;background:linear-gradient(to bottom,#1b5ec4,#1040a0);padding:3px 10px;height:30px;border-left:1px solid rgba(255,255,255,.15);flex-shrink:0;}
-.tb-tray a{color:rgba(255,255,255,.75);font-size:12px;text-decoration:none;}
+#tb{position:absolute;bottom:0;left:0;right:0;height:48px;background:rgba(28,32,38,.95);display:flex;align-items:center;justify-content:space-between;padding:0;border-top:0;z-index:300;}
+#sb{background:transparent;border:0;border-radius:0;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;width:48px;height:48px;box-shadow:none;flex-shrink:0;}
+#sb:hover{background:rgba(255,255,255,.1);}
+.slogo{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;width:16px;height:16px;}
+/* !important: the four logo panes carry inline XP colours */
+.slogo div{background:#fff!important;border-radius:0;}
+/* visually hidden, still announced by screen readers */
+.slbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.tb-search{display:flex;align-items:center;gap:8px;width:200px;height:34px;padding:0 10px;margin-left:4px;background:rgba(255,255,255,.08);color:#bbb;font-size:11px;flex-shrink:0;cursor:default;user-select:none;}
+.tb-search-ico{position:relative;width:12px;height:12px;flex-shrink:0;}
+.tb-search-ico::before{content:'';position:absolute;top:0;right:0;width:8px;height:8px;border:1px solid currentColor;border-radius:50%;}
+.tb-search-ico::after{content:'';position:absolute;bottom:0;left:0;width:7px;height:1px;background:currentColor;transform:rotate(-45deg);transform-origin:left center;}
+.tb-apps{display:flex;gap:0;overflow:hidden;flex:1;height:48px;}
+/* icon-only buttons, 48px wide; pinned ones always shown, the rest only while their window is open */
+.tb-tv,.tba{position:relative;width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:0;background:transparent;color:#fff;cursor:pointer;}
+.tb-apps{margin-left:1px;}   /* Task View sits flush against the pinned icons, as on Windows 10 */
+.tb-tv svg,.tba svg{width:24px;height:24px;}
+.tb-tv:hover,.tba:hover{background:rgba(255,255,255,.1);}
+.tba{display:none;}
+.tba.pin,.tba.on{display:flex;}
+.tba.on::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:#0078d7;}   /* has an open window */
+.tba.act{background:rgba(255,255,255,.16);}                                                                /* focused */
+.tba.act:hover{background:rgba(255,255,255,.22);}
+#tbtip{position:absolute;bottom:56px;z-index:7000;padding:4px 8px;background:#2b2b2b;border:1px solid #767676;color:#fff;font-size:12px;white-space:nowrap;pointer-events:none;display:none;}
+.tb-tray{display:flex;align-items:center;gap:10px;background:none;padding:0 0 0 10px;height:48px;border-left:0;flex-shrink:0;}
+.tb-tray a{display:flex;width:16px;height:16px;color:rgba(255,255,255,.85);text-decoration:none;}
+.tb-tray a svg{width:16px;height:16px;}
 .tb-tray a:hover{color:#fff;}
-.ct{font-size:12px;color:#fff;font-weight:600;line-height:1.2;text-align:right;}
-.cd{font-size:9px;color:rgba(255,255,255,.8);line-height:1.2;text-align:right;}
+.tb-ico{display:flex;width:16px;height:16px;padding:0;border:0;background:none;color:rgba(255,255,255,.85);}
+.tb-ico svg{width:16px;height:16px;}
+button.tb-ico{cursor:pointer;}
+#tb-ac{position:relative;}
+/* Windows 10 notification count: a small white number at the icon's lower right, no red circle */
+.ac-n{position:absolute;right:-6px;bottom:-4px;font-size:9px;font-weight:600;line-height:1;color:#fff;text-shadow:0 0 2px rgba(0,0,0,.8);pointer-events:none;}
+.ac-n:empty{display:none;}
+button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
+.tb-lang{font-size:11px;color:rgba(255,255,255,.85);}
+.tb-clock{display:flex;flex-direction:column;justify-content:center;height:48px;padding:0 6px;border:0;background:none;font:inherit;cursor:pointer;}
+.tb-clock:hover,.tb-clock[aria-expanded="true"]{background:rgba(255,255,255,.1);}
+.tb-sd{width:5px;height:48px;padding:0;border:0;border-left:1px solid rgba(255,255,255,.3);background:transparent;cursor:pointer;flex-shrink:0;}
+.tb-sd:hover{background:rgba(255,255,255,.3);}
+/* Flyouts: clock/calendar and action center. One open at a time. */
+.fly{position:absolute;z-index:8000;background:rgba(32,36,42,.97);color:#fff;box-shadow:0 0 18px rgba(0,0,0,.45);visibility:hidden;opacity:0;
+  transition:opacity .15s ease,transform .25s cubic-bezier(.1,.9,.2,1),visibility 0s linear .25s;}
+.fly.on{visibility:visible;opacity:1;transform:none;transition:opacity .15s ease,transform .25s cubic-bezier(.1,.9,.2,1),visibility 0s;}
+#fly-cal{right:0;bottom:48px;width:320px;padding:18px 20px 20px;transform:translateY(12px);}
+.cal-time{font-size:42px;font-weight:300;line-height:1.1;}
+.cal-date{font-size:13px;color:#9fd0ff;margin-top:4px;}
+.cal-month{font-size:14px;margin:18px 0 8px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:12px;}
+.cal-grid .wd{color:#ccc;padding:6px 0;}
+.cal-grid .d{padding:8px 0;}
+.cal-grid .d.out{color:#7a7f86;}
+.cal-grid .d.today{background:#0078d7;color:#fff;}
+#fly-ac{right:0;top:0;bottom:48px;width:360px;display:flex;flex-direction:column;gap:8px;padding:12px;transform:translateX(100%);border-left:1px solid rgba(255,255,255,.08);}
+#fly-cal.on,#fly-ac.on{transform:none;}
+.ac-toast{display:flex;gap:12px;padding:12px 14px;background:#2b2b2b;border:1px solid #3a3a3a;}
+.ac-toast .ic{margin-top:2px;}
+.ac-t{font-size:13px;font-weight:600;}
+.ac-b{font-size:12px;color:#ccc;line-height:1.45;margin-top:2px;}
+.ac-tiles{margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+.ac-tile{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;height:64px;padding:8px;border:0;background:rgba(255,255,255,.1);color:#fff;font:inherit;font-size:11px;text-align:left;cursor:pointer;}
+.ac-tile:hover{background:rgba(255,255,255,.2);}
+.ac-tile svg{width:16px;height:16px;}
+.ct{font-size:11px;color:#fff;font-weight:400;line-height:1.3;text-align:right;}
+.cd{font-size:10px;color:#ccc;line-height:1.3;text-align:right;}
+
+/* ══ REDUCED MOTION ══ */
+@media (prefers-reduced-motion:reduce){
+  .win{animation:none;}
+  .boot-ring i{animation:none;opacity:1;}
+  #lock{transition:opacity .4s ease;}
+  #lock.up{transform:none;opacity:0;}
+  .fly,.fly.on{transition:none;}
+  .mp-marq{animation:none;padding-left:0;display:inline;}
+  .mp-title{text-overflow:ellipsis;}
+  .boot-ring i:nth-child(2){transform:rotate(72deg)}.boot-ring i:nth-child(3){transform:rotate(144deg)}.boot-ring i:nth-child(4){transform:rotate(216deg)}.boot-ring i:nth-child(5){transform:rotate(288deg)}
+}
 </style>
 </head>
 <body>
 
-<!-- BOOT -->
-<div id="boot">
-  <div class="boot-logo"><h1>SruthiOS</h1><p>Personal Portfolio System</p></div>
-  <div class="boot-bar"><div class="boot-fill"></div></div>
-  <div class="boot-copy">© 2026 Sruthi Raghavan · NYU Tandon</div>
-</div>
+<!-- ICONS: drawn once, used everywhere via <use>. Not display:none, or the gradients stop resolving. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fb4ea"/><stop offset="1" stop-color="#3a78c2"/></linearGradient>
+<linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4e7f9"/><stop offset="1" stop-color="#8db9e4"/></linearGradient>
+<linearGradient id="g-grey" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7f8"/><stop offset="1" stop-color="#c8ccd2"/></linearGradient>
+<linearGradient id="g-slate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f7a88"/><stop offset="1" stop-color="#46505c"/></linearGradient>
+<linearGradient id="g-paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e4e8ec"/></linearGradient>
+<linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1d892"/><stop offset="1" stop-color="#c39a45"/></linearGradient>
+<linearGradient id="g-red" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9645f"/><stop offset="1" stop-color="#b3342f"/></linearGradient>
+<linearGradient id="g-term" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b434d"/><stop offset="1" stop-color="#1f252c"/></linearGradient>
+<linearGradient id="g-glass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e3e9ef"/><stop offset=".5" stop-color="#fbfcfd"/><stop offset="1" stop-color="#cdd6e0"/></linearGradient>
+<linearGradient id="g-folder" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde76e"/><stop offset="1" stop-color="#e8b830"/></linearGradient>
+<linearGradient id="g-hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc66a"/><stop offset="1" stop-color="#5b9a3f"/></linearGradient>
+<symbol id="i-pc" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="9" rx="1" fill="url(#g-grey)" stroke="#7d848e"/><rect x="3" y="4" width="10" height="6" fill="url(#g-blue)"/><path d="M6 12h4v1.5H6z" fill="#9aa1aa"/><rect x="4" y="13.5" width="8" height="1.5" fill="#7d848e"/></symbol>
+<symbol id="i-nodes" viewBox="0 0 16 16"><path d="M4 11.5 8 4.5l4 7z" fill="none" stroke="#5a6b80"/><circle cx="8" cy="4.5" r="2.5" fill="url(#g-blue)" stroke="#2a5f9e"/><circle cx="4" cy="11.5" r="2.5" fill="url(#g-blue)" stroke="#2a5f9e"/><circle cx="12" cy="11.5" r="2.5" fill="url(#g-blue)" stroke="#2a5f9e"/></symbol>
+<symbol id="i-brief" viewBox="0 0 16 16"><path d="M5.5 4.5v-1a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1" fill="none" stroke="#46505c"/><rect x="1.5" y="4.5" width="13" height="9" rx="1" fill="url(#g-slate)" stroke="#343b45"/><path d="M1.5 8.5h13" stroke="#343b45"/><rect x="7" y="7.5" width="2" height="2" fill="#d9dde2"/></symbol>
+<symbol id="i-pdf" viewBox="0 0 16 16"><path d="M3.5 1.5h6l3 3v10h-9z" fill="url(#g-paper)" stroke="#8a9099"/><path d="M9.5 1.5v3h3" fill="#dfe3e8" stroke="#8a9099"/><rect x="2" y="9" width="9" height="4" fill="url(#g-red)"/></symbol>
+<symbol id="i-term" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="1" fill="url(#g-term)" stroke="#1a1f25"/><path d="M2 3h12v2H2z" fill="#5d6874"/><path d="M4 7.5l2 1.5-2 1.5" fill="none" stroke="#6fd36f" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 11h3" stroke="#6fd36f" stroke-linecap="round"/></symbol>
+<symbol id="i-mail" viewBox="0 0 16 16"><rect x="1.5" y="3.5" width="13" height="9" rx="1" fill="url(#g-paper)" stroke="#5f7fa6"/><path d="M2 4l6 4.5L14 4" fill="none" stroke="#3a78c2"/></symbol>
+<symbol id="i-chat" viewBox="0 0 16 16"><path d="M2.5 2.5h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H7l-3 3v-3H2.5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z" fill="url(#g-blue)" stroke="#2a5f9e" stroke-linejoin="round"/><path d="M4.5 5.5h7M4.5 7.5h5" stroke="#eaf3fc" stroke-linecap="round"/></symbol>
+<symbol id="i-game" viewBox="0 0 16 16"><path d="M4.5 4.5h7a3.5 3.5 0 0 1 3.4 4.3l-.6 2.6a1.6 1.6 0 0 1-2.7.8L10 10.5H6l-1.6 1.7a1.6 1.6 0 0 1-2.7-.8l-.6-2.6A3.5 3.5 0 0 1 4.5 4.5z" fill="url(#g-grey)" stroke="#7d848e" stroke-linejoin="round"/><path d="M5 6.5v3M3.5 8h3" stroke="#5a6470"/><circle cx="10.5" cy="7.3" r=".9" fill="#3a78c2"/><circle cx="12" cy="8.8" r=".9" fill="#3a78c2"/></symbol>
+<symbol id="i-display" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="1" fill="url(#g-sky)" stroke="#5f7fa6"/><path d="M2 11c2.5-2.6 5.5-3.6 12-1.6V13H2z" fill="url(#g-hill)"/><circle cx="11" cy="5.5" r="1.3" fill="#fff"/></symbol>
+<symbol id="i-mic" viewBox="0 0 16 16"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5" fill="none" stroke="currentColor"/><path d="M3.5 7.5a4.5 4.5 0 0 0 9 0M8 12v2.5M5.5 14.5h5" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+<symbol id="i-chat-l" viewBox="0 0 40 40"><path d="M6.5 6.5h27a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H17l-7 7v-7H6.5a3 3 0 0 1-3-3v-15a3 3 0 0 1 3-3z" fill="url(#g-blue)" stroke="#2a5f9e" stroke-linejoin="round"/><path d="M10 13.5h20M10 19.5h14" stroke="#eaf3fc" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="i-gh" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol>
+<symbol id="i-in" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M2 1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM4 6.5h1.8v6H4zM4.9 3.5a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1zM7.2 6.5h1.7v.8c.3-.5.9-1 1.9-1 1.5 0 2.2.9 2.2 2.6v3.6h-1.8V9.3c0-.8-.3-1.3-1-1.3-.8 0-1.2.6-1.2 1.4v3.1H7.2z"/></symbol>
+<symbol id="i-chev" viewBox="0 0 16 16"><path d="M4.5 10l3.5-3.5 3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-net" viewBox="0 0 16 16"><path d="M1.8 6.6a8.8 8.8 0 0 1 12.4 0M4 8.9a5.6 5.6 0 0 1 8 0M6.3 11.2a2.4 2.4 0 0 1 3.4 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="13.4" r="1.1" fill="currentColor"/></symbol>
+<symbol id="i-notif" viewBox="0 0 16 16"><path d="M2.5 3h11v8.5h-4.5L6 14v-2.5H2.5z" fill="none" stroke="currentColor" stroke-linejoin="round"/><path d="M5 6h6M5 8.5h4" stroke="currentColor" stroke-linecap="round"/></symbol>
+<symbol id="i-bin" viewBox="0 0 16 16"><path d="M3.5 4.5h9l-.9 9.6a1 1 0 0 1-1 .9H5.4a1 1 0 0 1-1-.9z" fill="url(#g-glass)" stroke="#7f8b99" stroke-linejoin="round"/><path d="M2.5 2.5h11v2h-11z" fill="url(#g-grey)" stroke="#7f8b99"/><path d="M6.5 6.5v6M9.5 6.5v6" stroke="#a9b3bf"/></symbol>
+<symbol id="i-bin-l" viewBox="0 0 40 40"><path d="M9.5 10.5h21l-2.2 25a2 2 0 0 1-2 1.8H13.7a2 2 0 0 1-2-1.8z" fill="url(#g-glass)" stroke="#7f8b99" stroke-linejoin="round"/><path d="M8 7.5h24a1 1 0 0 1 1 1v1.5a.5.5 0 0 1-.5.5h-25a.5.5 0 0 1-.5-.5V8.5a1 1 0 0 1 1-1z" fill="url(#g-grey)" stroke="#7f8b99"/><path d="M15.5 14v19M20 14v19M24.5 14v19" stroke="#a9b3bf" stroke-linecap="round"/></symbol>
+<symbol id="i-tview" viewBox="0 0 16 16"><rect x="4.5" y="3.5" width="7" height="9" fill="none" stroke="currentColor"/><path d="M2 5.5v5M14 5.5v5" stroke="currentColor" stroke-linecap="round"/></symbol>
+<symbol id="i-star" viewBox="0 0 16 16"><path d="M8 1.6l1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.3l-4 2.3 1-4.4-3.4-3 4.5-.5z" fill="#1e88e5"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 16 16"><path d="M13 8H3.5M7.5 4L3.5 8l4 4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.5 3.5h5l1.5 1.5h6.5v8.5h-13z" fill="#e8b830" stroke="#c49a2c" stroke-linejoin="round"/><path d="M1.5 6.5h13v7h-13z" fill="url(#g-folder)"/></symbol>
+<symbol id="i-docs" viewBox="0 0 16 16"><path d="M4 1.5h5.5l3 3v10H4z" fill="none" stroke="currentColor" stroke-linejoin="round"/><path d="M9.5 1.5v3h3M6 8h4.5M6 10.5h4.5" fill="none" stroke="currentColor"/></symbol>
+<symbol id="i-media" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2.5" fill="#0078d7"/><path d="M6 4.5v7L11.5 8z" fill="#fff"/></symbol>
+<symbol id="i-spk" viewBox="0 0 16 16"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12 3.5a6 6 0 0 1 0 9" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
+<symbol id="i-spk-mute" viewBox="0 0 16 16"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M10.5 6l4 4M14.5 6l-4 4" stroke="currentColor" stroke-linecap="round"/></symbol>
+</defs></svg>
 
+<!-- SIGN-IN (revealed when the lock screen slides away) -->
+<div id="signin" aria-hidden="true">
+  <img class="si-photo" src="./photo.jpeg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+  <div class="si-init">SR</div>
+  <div class="si-name">Sruthi Raghavan</div>
+  <div class="si-wel"><div class="boot-ring" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>Welcome</div>
+</div>
+<!-- LOCK SCREEN: click, press any key, or swipe up -->
+<div id="lock" role="button" tabindex="0" aria-label="Lock screen. Click, press any key, or swipe up to sign in.">
+  <div class="lk-clock"><div class="lk-time" id="lk-time">--:--</div><div class="lk-date" id="lk-date"></div></div>
+</div>
 <!-- DESKTOP -->
 <div id="desktop">
   <img id="wallpaper" src="./download.webp" alt="" onerror="this.style.display='none';document.getElementById('wpfb').style.display='block'">
   <div id="wpfb" style="background:linear-gradient(180deg,#3a9bd5 0%,#87ceeb 55%,#6abf3a 100%)"></div>
 
   <div class="icon-grid">
+    <div class="icon" id="ic-bin" ondblclick="openW('bin')" onclick="selIco('bin')">
+      <div class="ii"><svg class="ic-d"><use href="#i-bin-l"/></svg></div><span>Recycle Bin</span>
+    </div>
     <div class="icon" id="ic-pc" ondblclick="openW('pc')" onclick="selIco('pc')">
       <div class="ii"><div class="ico-mon"><div class="ico-mon-s"></div></div><div class="ico-stand"></div></div><span>This PC</span>
     </div>
     <div class="icon" id="ic-proj" ondblclick="openW('proj')" onclick="selIco('proj')">
-      <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb" style="background:linear-gradient(to bottom,#fde76e,#e8b830)"></div><div class="fbd">🧠</div></div></div><span>My Projects</span>
+      <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb"></div></div></div><span>My Projects</span>
     </div>
     <div class="icon" id="ic-exp" ondblclick="openW('exp')" onclick="selIco('exp')">
-      <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb" style="background:linear-gradient(to bottom,#fdd87a,#e0a020)"></div><div class="fbd">💼</div></div></div><span>Experience</span>
+      <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb"></div></div></div><span>Experience</span>
     </div>
-    <div class="icon" id="ic-res" ondblclick="openW('res')" onclick="selIco('res')">
+    <div class="icon" id="ic-res" ondblclick="openResume()" onclick="selIco('res')">
       <div class="ii"><div class="ico-pdf"><div class="ico-pdf-b">PDF</div></div></div><span>Resume.pdf</span>
     </div>
     <div class="icon" id="ic-sk" ondblclick="openW('sk')" onclick="selIco('sk')">
       <div class="ii"><div class="ico-t"><div class="ico-t-x">C:\>_<br>skills</div></div></div><span>Skills.exe</span>
     </div>
-    <div class="icon" id="ic-tr" ondblclick="openW('tr')" onclick="selIco('tr')">
-      <div class="ii"><div class="ico-tr">🏆</div></div><span>Awards</span>
+    <div class="icon" id="ic-sgpt" ondblclick="openW('sgpt')" onclick="selIco('sgpt')">
+      <div class="ii"><svg class="ic-d"><use href="#i-chat-l"/></svg></div><span>Assistant</span>
     </div>
     <div class="icon" id="ic-mail" ondblclick="openW('mail')" onclick="selIco('mail')">
       <div class="ii"><div class="ico-m"></div></div><span>Mail</span>
     </div>
-    <div class="icon" id="ic-sgpt" ondblclick="openW('sgpt')" onclick="selIco('sgpt')">
-      <div class="ii"><div class="ico-ai">✦</div></div><span>SruthiGPT</span>
+  </div>
+
+  <!-- RECYCLE BIN -->
+  <div class="win" id="win-bin" style="top:60px;left:260px;width:480px;">
+    <div class="win-tb" onmousedown="dragS(event,'bin')">
+      <div class="win-title"><svg class="ic"><use href="#i-bin"/></svg>Recycle Bin</div>
+      <div class="win-btns"><div class="wb" onclick="minW('bin')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('bin')">✕</div></div>
     </div>
-    <div class="icon" id="ic-hire" ondblclick="showHire()" onclick="selIco('hire')">
-      <div class="ii"><div class="ico-h">🤝</div></div><span>Hire Me.exe</span>
-    </div>
+    <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
+    <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">Recycle Bin</div></div>
+    <div class="win-body bin-body"><div class="bin-empty">Recycle Bin is empty.</div></div>
+    <div class="win-status">0 items</div>
   </div>
 
   <!-- THIS PC -->
-  <div class="win" id="win-pc" style="top:26px;left:120px;width:470px;">
+  <div class="win" id="win-pc" style="top:26px;left:120px;width:640px;">
     <div class="win-tb" onmousedown="dragS(event,'pc')">
-      <div class="win-title"><div style="width:14px;height:12px;background:linear-gradient(135deg,#4a9eed,#2176c7)"></div>This PC</div>
+      <div class="win-title"><svg class="ic"><use href="#i-pc"/></svg>This PC</div>
       <div class="win-btns"><div class="wb" onclick="minW('pc')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('pc')">✕</div></div>
     </div>
-    <div class="win-menu"><span>File</span><span>Edit</span><span>View</span><span>Help</span></div>
-    <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\This PC</div></div>
-    <div class="win-body" style="height:300px;">
-      <div class="win-side">
-        <div class="side-p">
+    <div class="x-rib"><span class="x-tab x-file">File</span><span class="x-tab">Computer</span><span class="x-tab">View</span></div>
+    <div class="x-bar">
+      <span class="x-nb" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span><span class="x-nb x-fwd" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span><span class="x-nb x-up" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span>
+      <div class="x-crumb"><svg class="ic" aria-hidden="true"><use href="#i-pc"/></svg><span class="x-seg">This PC</span><span class="x-sep" aria-hidden="true">›</span><span class="x-seg">Sruthi Raghavan</span></div>
+    </div>
+    <div class="win-body" style="height:320px;">
+      <nav class="x-nav" aria-label="Navigation pane">
+        <div class="x-qa"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg>Quick access</div>
+        <button class="x-ni" type="button" onclick="openW('proj')"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg>My Projects</button>
+        <button class="x-ni" type="button" onclick="openW('exp')"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg>Experience</button>
+        <button class="x-ni" type="button" onclick="openAch()"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg>Awards</button>
+        <button class="x-ni" type="button" onclick="openResume()"><svg class="ic" aria-hidden="true"><use href="#i-pdf"/></svg>Resume</button>
+      </nav>
+      <div class="win-content">
+        <div class="x-prof">
           <img src="./photo.jpeg" alt="Sruthi Raghavan" class="side-photo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="side-init">SR</div>
-          <div class="side-n">Sruthi Raghavan</div>
-          <div class="side-s">NYU Tandon · ML/AI</div>
+          <div>
+            <div class="side-n">Sruthi Raghavan</div>
+            <div class="side-s">NYU Tandon · ML/AI</div>
+            <div class="x-links">
+              <a href="https://drive.google.com/file/d/1t7i41QWmSZAXLQ1chOzQshWyow7BHyhQ/view?usp=sharing" target="_blank" rel="noopener">→ View Resume</a>
+              <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener">→ GitHub</a>
+              <a href="https://www.linkedin.com/in/sruthi-raghavan-340642221/" target="_blank" rel="noopener">→ LinkedIn</a>
+              <a href="mailto:sruthiraghavan2002@gmail.com">→ Send Email</a>
+            </div>
+          </div>
         </div>
-        <div class="side-l">
-          <p>System tasks</p>
-          <a href="https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing" target="_blank" rel="noopener">→ View Resume</a>
-          <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener">→ GitHub</a>
-          <a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener">→ LinkedIn</a>
-          <a href="mailto:sruthiraghavan2002@gmail.com">→ Send Email</a>
-        </div>
-      </div>
-      <div class="win-content">
         <p class="sec">System Information</p>
         <div class="itab">
           <span class="k">Name:</span><span class="v">Sruthi Raghavan</span>
@@ -314,44 +595,56 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
           <span class="k">Location:</span><span class="v">Jersey City, NJ</span>
           <span class="k">Status:</span><span class="v" style="color:#16a34a;font-weight:700">Open to opportunities ✓</span>
         </div>
+        <p class="sec">Selected results</p>
+        <div class="sres">
+          <div class="sr"><span class="sr-n">73,441 records</span> — OCR pipeline over 1935–1975 mortgage archives (Qwen2.5-VL, 6-GPU SLURM)</div>
+          <div class="sr"><span class="sr-n">4.2% → 70.3%</span> — compute utilization gain traced via Nsight kernel profiling (GoRA vs. LoRA)</div>
+          <div class="sr"><span class="sr-n">3rd of 50+ teams</span> — Anti-Slopathon, SiteIQ</div>
+        </div>
         <p class="sec">About</p>
         <p style="line-height:1.65;color:#333;margin-bottom:10px;">ML/AI engineer working at the intersection of vision-language models, LLM fine-tuning, and computer vision. Currently a Graduate Research Assistant at NYU's Faber Lab building OCR pipelines over 73,000+ historical mortgage records, and a Data Program Intern at The GovLab shipping tools adopted by UNESCO.</p>
         <p class="sec">Campus Activities</p>
         <p style="line-height:1.65;color:#444;">Exam Proctor (Courant) · HackNYU Volunteer · NYU Hyperloop (Electrical &amp; CAD Team) · Delish VITCC (Content Lead) · Capsule VITCC (Content Writer)</p>
       </div>
     </div>
+    <div class="win-status" id="pc-status"></div>
   </div>
 
   <!-- PROJECTS -->
   <div class="win" id="win-proj" style="top:34px;left:132px;width:450px;">
     <div class="win-tb" onmousedown="dragS(event,'proj')">
-      <div class="win-title">🧠 My Projects</div>
+      <div class="win-title"><svg class="ic"><use href="#i-nodes"/></svg>My Projects</div>
       <div class="win-btns"><div class="wb" onclick="minW('proj')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('proj')">✕</div></div>
     </div>
     <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
     <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\My Projects</div></div>
     <div class="win-body" style="flex-direction:column;padding:12px;height:300px;overflow-y:auto;">
       <div class="pcard">
-        <div class="pname">⚙ Training Efficiency Benchmarking for LLM Fine-Tuning <span style="color:#888;font-weight:400;font-size:10px;">· 2025</span></div>
+        <div class="pname">Training Efficiency Benchmarking for LLM Fine-Tuning <span style="color:#888;font-weight:400;font-size:10px;">· 2025</span></div>
         <div class="pdesc">
-          A config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct / GSM8K, with versioned outputs and structured logging for reproducibility.
-          <ul>
+          <ul class="lead">
             <li>GoRA delivered ~15% higher throughput at comparable accuracy (10,965 → 12,698 tok/s)</li>
             <li>QLoRA cut peak GPU memory by 7.3%; gradient checkpointing cut it ~57%</li>
             <li>Nsight Compute kernel profiling traced GoRA's gain to compute utilization rising from 4.2% → 70.3%</li>
           </ul>
+          <p>A config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct / GSM8K, with versioned outputs and structured logging for reproducibility.</p>
         </div>
         <div class="ptags"><span class="ptag">PyTorch</span><span class="ptag">Hugging Face PEFT</span><span class="ptag">Nsight Systems</span><span class="ptag">SLURM</span></div>
       </div>
       <div class="pcard">
-        <div class="pname">🏙 SiteIQ — Real-Estate Intelligence Agent <span style="color:#888;font-weight:400;font-size:10px;">· 3rd Place, Anti-Slopathon</span></div>
+        <div class="pname">SiteIQ — Real-Estate Intelligence Agent <span style="color:#888;font-weight:400;font-size:10px;">· 3rd Place, Anti-Slopathon</span></div>
         <div class="pdesc">An agent that produces structured investment verdicts from map-based property search. Placed 3rd out of 50+ teams.</div>
         <div class="ptags"><span class="ptag">LLM Agents</span><span class="ptag">Python</span><span class="ptag">REST APIs</span></div>
       </div>
       <div class="pcard">
-        <div class="pname">📊 UNESCO Data Governance Self-Assessment Tool</div>
+        <div class="pname">UNESCO Data Governance Self-Assessment Tool</div>
         <div class="pdesc">An interactive assessment tool spanning 56 questions across 4 dimensions — deployed live under The GovLab, adopted for course use, and praised directly by UNESCO. Built as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard.</div>
         <div class="ptags"><span class="ptag">JavaScript</span><span class="ptag">PWA</span><span class="ptag">Frontend</span></div>
+      </div>
+      <p class="sec psec" id="proj-ach">Achievements</p>
+      <div class="pcard" style="margin-bottom:0;">
+        <div class="pname">3rd Place — Anti-Slopathon</div>
+        <div class="pdesc">Out of 50+ teams, for <strong>SiteIQ</strong> — a real-estate intelligence agent producing structured investment verdicts from map-based property search.</div>
       </div>
     </div>
   </div>
@@ -359,7 +652,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
   <!-- EXPERIENCE -->
   <div class="win" id="win-exp" style="top:34px;left:132px;width:460px;">
     <div class="win-tb" onmousedown="dragS(event,'exp')">
-      <div class="win-title">💼 Experience</div>
+      <div class="win-title"><svg class="ic"><use href="#i-brief"/></svg>Experience</div>
       <div class="win-btns"><div class="wb" onclick="minW('exp')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('exp')">✕</div></div>
     </div>
     <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
@@ -420,38 +713,10 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
     </div>
   </div>
 
-  <!-- AWARDS -->
-  <div class="win" id="win-tr" style="top:60px;left:160px;width:360px;">
-    <div class="win-tb" onmousedown="dragS(event,'tr')">
-      <div class="win-title">🏆 Achievements</div>
-      <div class="win-btns"><div class="wb" onclick="minW('tr')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('tr')">✕</div></div>
-    </div>
-    <div class="win-body" style="flex-direction:column;padding:14px;">
-      <div class="pcard" style="margin-bottom:0;">
-        <div class="pname">🥉 3rd Place — Anti-Slopathon</div>
-        <div class="pdesc">Out of 50+ teams, for <strong>SiteIQ</strong> — a real-estate intelligence agent producing structured investment verdicts from map-based property search.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RESUME -->
-  <div class="win" id="win-res" style="top:50px;left:150px;width:320px;">
-    <div class="win-tb" onmousedown="dragS(event,'res')">
-      <div class="win-title">📄 Resume.pdf</div>
-      <div class="win-btns"><div class="wb" onclick="minW('res')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('res')">✕</div></div>
-    </div>
-    <div class="win-body res-body">
-      <div style="font-size:48px">📄</div>
-      <div style="font-size:13px;color:#333;font-weight:600">Sruthi_Raghavan_Resume.pdf</div>
-      <div style="font-size:11px;color:#888;text-align:center">Opens in Google Drive</div>
-      <a href="https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing" target="_blank" rel="noopener" style="background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;padding:7px 20px;font-size:12px;border:1px solid #1a5fa0;text-decoration:none;">Open Resume ↗</a>
-    </div>
-  </div>
-
   <!-- SKILLS -->
   <div class="win" id="win-sk" style="top:40px;left:140px;width:420px;">
     <div class="win-tb" onmousedown="dragS(event,'sk')" style="background:linear-gradient(to right,#1a1a1a,#2a2a2a)">
-      <div class="win-title" style="font-family:monospace">⚡ C:\&gt; Skills.exe</div>
+      <div class="win-title" style="font-family:monospace"><svg class="ic"><use href="#i-term"/></svg>C:\&gt; Skills.exe</div>
       <div class="win-btns"><div class="wb" onclick="minW('sk')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('sk')">✕</div></div>
     </div>
     <div class="win-body term-body" style="flex-direction:column;height:290px;">
@@ -478,37 +743,39 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
   </div>
 
   <!-- MAIL -->
-  <div class="win" id="win-mail" style="top:45px;left:145px;width:370px;">
+  <div class="win" id="win-mail" style="top:45px;left:145px;width:560px;">
     <div class="win-tb" onmousedown="dragS(event,'mail')">
-      <div class="win-title">✉ Mail — Sruthi Raghavan</div>
+      <div class="win-title"><svg class="ic"><use href="#i-mail"/></svg>Mail — Sruthi Raghavan</div>
       <div class="win-btns"><div class="wb" onclick="minW('mail')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('mail')">✕</div></div>
     </div>
-    <div class="win-body" style="flex-direction:column;">
-      <div class="mail-body">
-        <div style="font-size:13px;font-weight:600;color:#333;margin-bottom:4px">Get in touch 👋</div>
-        <div class="mrow"><span class="mk">📧 Email:</span><a href="mailto:sruthiraghavan2002@gmail.com">sruthiraghavan2002@gmail.com</a></div>
-        <div class="mrow"><span class="mk">💻 GitHub:</span><a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener">github.com/Sruthi-2002</a></div>
-        <div class="mrow"><span class="mk">🔗 LinkedIn:</span><a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener">linkedin.com/in/sruthi-raghavan</a></div>
-        <div class="mrow"><span class="mk">📄 Resume:</span><a href="https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing" target="_blank" rel="noopener">View on Google Drive</a></div>
-        <div class="mrow"><span class="mk">📍 Based in:</span><span style="color:#333">Jersey City, NJ</span></div>
-        <div class="mbtns">
-          <a href="mailto:sruthiraghavan2002@gmail.com" class="mbtn pri">📧 Send Email</a>
-          <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" class="mbtn">GitHub ↗</a>
-          <a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener" class="mbtn">LinkedIn ↗</a>
-        </div>
+    <div class="win-body mc-body">
+      <div class="mc-side">
+        <div class="mc-name">Sruthi Raghavan</div>
+        <a class="mc-link" href="mailto:sruthiraghavan2002@gmail.com" title="sruthiraghavan2002@gmail.com"><svg class="ic"><use href="#i-mail"/></svg>Email</a>
+        <a class="mc-link" href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" title="github.com/Sruthi-2002"><svg class="ic gh"><use href="#i-gh"/></svg>GitHub</a>
+        <a class="mc-link" href="https://www.linkedin.com/in/sruthi-raghavan-340642221/" target="_blank" rel="noopener" title="LinkedIn profile"><svg class="ic li"><use href="#i-in"/></svg>LinkedIn</a>
+        <a class="mc-link" href="https://drive.google.com/file/d/1t7i41QWmSZAXLQ1chOzQshWyow7BHyhQ/view?usp=sharing" target="_blank" rel="noopener" title="Resume (Google Drive)"><svg class="ic"><use href="#i-pdf"/></svg>Resume</a>
+        <div class="mc-note">Jersey City, NJ</div>
+        <div class="mc-note">Open to ML/AI engineering roles</div>
+      </div>
+      <div class="mc-main">
+        <div class="mc-bar"><button class="mc-send" id="mc-send" type="button" onclick="mailSend()">Send</button></div>
+        <label class="mc-row"><span>To:</span><input id="mc-to" type="text" value="sruthiraghavan2002@gmail.com" readonly></label>
+        <input class="mc-subj" id="mc-subj" type="text" placeholder="Subject" aria-label="Subject" autocomplete="off">
+        <textarea class="mc-msg" id="mc-msg" placeholder="Write your message" aria-label="Message"></textarea>
       </div>
     </div>
   </div>
 
-  <!-- SRUTHIGPT -->
+  <!-- ASSISTANT -->
   <div class="win" id="win-sgpt" style="top:22px;left:125px;width:375px;">
     <div class="win-tb" onmousedown="dragS(event,'sgpt')" style="background:linear-gradient(to right,#4c1d95,#7c3aed)">
-      <div class="win-title"><span style="font-size:14px">✦</span> SruthiGPT — Ask me anything!</div>
+      <div class="win-title"><svg class="ic"><use href="#i-chat"/></svg>Assistant</div>
       <div class="win-btns"><div class="wb" onclick="minW('sgpt')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('sgpt')">✕</div></div>
     </div>
-    <div class="sg-st"><div class="sdot"></div>SruthiGPT is online and ready</div>
+    <div class="sg-st"><div class="sdot"></div>Assistant is online and ready</div>
     <div class="sg-chat" id="sg-chat">
-      <div class="smsg"><div class="sav ai">S</div><div class="sbub ai">Hey! 👋 I'm <strong>SruthiGPT</strong> — I know everything about Sruthi. Ask me about her research, projects, ML work, or whether she's open to opportunities!</div></div>
+      <div class="smsg"><div class="sav ai">S</div><div class="sbub ai">Ask me about Sruthi's research, projects, or experience.</div></div>
     </div>
     <div class="sg-chips" id="sg-chips">
       <div class="chip" onclick="useChip(this)">What research is she doing?</div>
@@ -518,15 +785,41 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
     </div>
     <div class="sg-inp">
       <textarea class="sinput" id="sg-in" placeholder="Ask about Sruthi..." rows="1" onkeydown="gptKey(event)"></textarea>
-      <button class="s-mic" id="mic" onclick="toggleMic()" title="Voice input">🎤</button>
+      <button class="s-mic" id="mic" onclick="toggleMic()" title="Voice input" aria-label="Voice input"><svg class="ic"><use href="#i-mic"/></svg></button>
       <button class="s-send" id="gs" onclick="gptSend()">Send →</button>
+    </div>
+  </div>
+
+  <!-- MEDIA PLAYER: everything is synthesised live with Web Audio; no files, no URLs -->
+  <div class="win" id="win-mp" style="top:70px;left:240px;width:340px;">
+    <div class="win-tb" onmousedown="dragS(event,'mp')">
+      <div class="win-title"><svg class="ic"><use href="#i-media"/></svg>Media Player</div>
+      <div class="win-btns"><div class="wb" onclick="minW('mp')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('mp')">✕</div></div>
+    </div>
+    <div class="win-body mp-body">
+      <div class="mp-lcd muted">
+        <div class="mp-title"><span class="mp-marq" id="mp-title"></span></div>
+        <div class="mp-vizw"><canvas class="mp-viz" id="mp-viz" aria-hidden="true"></canvas></div>
+        <div class="mp-info"><span id="mp-state">STOPPED</span><span id="mp-mute">MUTE</span><span id="mp-time">00:00 / 00:00</span></div>
+      </div>
+      <input class="mp-seek" id="mp-seek" type="range" min="0" max="1000" value="0" aria-label="Seek" oninput="mpSeek(this.value/1000)">
+      <div class="mp-ctl">
+        <div class="mp-btns">
+          <button class="mp-b prev" type="button" onclick="mpSkip(-1)" title="Previous" aria-label="Previous track"></button>
+          <button class="mp-b play" id="mp-play" type="button" onclick="mpPlay()" title="Play" aria-label="Play"></button>
+          <button class="mp-b pause" id="mp-pause" type="button" onclick="mpPause()" title="Pause" aria-label="Pause"></button>
+          <button class="mp-b stop" type="button" onclick="mpStop()" title="Stop" aria-label="Stop"></button>
+          <button class="mp-b next" type="button" onclick="mpSkip(1)" title="Next" aria-label="Next track"></button>
+        </div>
+        <label class="mp-vol">Vol <input id="mp-vol" type="range" min="0" max="100" value="70" aria-label="Volume" oninput="mpVolume(this.value/100)"></label>
+      </div>
     </div>
   </div>
 
   <!-- SNAKE -->
   <div class="win" id="win-snake" style="top:28px;left:120px;width:300px;">
     <div class="win-tb" onmousedown="dragS(event,'snake')" style="background:linear-gradient(to right,#111,#2a2a2a)">
-      <div class="win-title" style="font-family:monospace">🐍 Snake</div>
+      <div class="win-title" style="font-family:monospace"><svg class="ic"><use href="#i-game"/></svg>Snake</div>
       <div class="win-btns"><div class="wb" onclick="minW('snake')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('snake');stopSnake()">✕</div></div>
     </div>
     <div class="sn-wrap">
@@ -543,45 +836,65 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
     </div>
   </div>
 
-  <!-- START MENU -->
+  <!-- START MENU: Windows 10 layout (rail, alphabetical app list, tiles) -->
   <div id="smenu">
-    <div class="sm-h">
-      <img src="./photo.jpeg" alt="" class="sm-av" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="sm-av-i">SR</div>
-      <div><div class="sm-n">Sruthi Raghavan</div><div class="sm-s">NYU Tandon · ML/AI Engineer</div></div>
+    <div class="sm-rail">
+      <div class="sm-ri sm-user" onclick="openFM('pc')" title="Sruthi Raghavan"><span class="sm-ric"><img src="./photo.jpeg" alt="" class="sm-av" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="sm-av-i">SR</span></span><span class="sm-rl"><span class="sm-n">Sruthi Raghavan</span><span class="sm-s">NYU Tandon · ML/AI Engineer</span></span></div>
+      <div class="sm-ri sm-bottom" onclick="openFM('proj')" title="Documents"><span class="sm-ric"><svg><use href="#i-docs"/></svg></span><span class="sm-rl">Documents</span></div>
+      <div class="sm-ri" onclick="showWP()" title="Settings"><span class="sm-ric"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="8" cy="8" r="1.8" stroke-width="1.1"/><circle cx="8" cy="8" r="4.6" stroke-width="1.1"/><path stroke-width="1.8" d="M8 3.4V1.6M8 12.6v1.8M3.4 8H1.6M12.6 8h1.8M4.75 4.75 3.47 3.47M11.25 11.25l1.28 1.28M4.75 11.25l-1.28 1.28M11.25 4.75l1.28-1.28"/></svg></span><span class="sm-rl">Settings</span></div>
+      <div class="sm-ri" onclick="trigSS()" title="Power"><span class="sm-ric"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 1.5V8"/><path d="M4.9 3.6a5.5 5.5 0 1 0 6.2 0"/></svg></span><span class="sm-rl">Power</span></div>
     </div>
-    <div>
-      <div class="smi" onclick="openFM('pc')">💻 This PC</div>
-      <div class="smi" onclick="openFM('proj')">🧠 My Projects</div>
-      <div class="smi" onclick="openFM('exp')">💼 Experience</div>
-      <div class="smi" onclick="openFM('tr')">🏆 Achievements</div>
-      <div class="smi" onclick="openFM('res')">📄 Resume.pdf</div>
-      <div class="smi" onclick="openFM('sk')">⚡ Skills.exe</div>
-      <div class="smi" onclick="openFM('sgpt')">✦ SruthiGPT</div>
-      <div class="sm-d"></div>
-      <div class="smi" onclick="openFM('snake')">🐍 Games › Snake</div>
-      <div class="smi" onclick="showHire()">🤝 Hire Me.exe</div>
-      <div class="sm-d"></div>
-      <div class="smi" onclick="showWP()">🎨 Change Wallpaper</div>
+    <div class="sm-apps">
+      <div class="sm-hd">A</div>
+      <div class="smi" onclick="openFM('sgpt')"><span class="smi-i"><svg class="ic"><use href="#i-chat"/></svg></span> Assistant</div>
+      <div class="sm-hd">C</div>
+      <div class="smi" onclick="showWP()"><span class="smi-i"><svg class="ic"><use href="#i-display"/></svg></span> Change Wallpaper</div>
+      <div class="sm-hd">E</div>
+      <div class="smi" onclick="openFM('exp')"><span class="smi-i"><svg class="ic"><use href="#i-brief"/></svg></span> Experience</div>
+      <div class="sm-hd">G</div>
+      <div class="smi sm-folder" onclick="smFolder(this)" aria-expanded="false"><span class="smi-i"><svg class="ic"><use href="#i-folder"/></svg></span> Games<span class="sm-chev" aria-hidden="true"></span></div>
+      <div class="smi sm-sub" onclick="openFM('snake')" hidden><span class="smi-i"><svg class="ic"><use href="#i-game"/></svg></span> Snake</div>
+      <div class="sm-hd">M</div>
+      <div class="smi" onclick="openFM('mail')"><span class="smi-i"><svg class="ic"><use href="#i-mail"/></svg></span> Mail</div>
+      <div class="smi" onclick="openFM('mp')"><span class="smi-i"><svg class="ic"><use href="#i-media"/></svg></span> Media Player</div>
+      <div class="smi" onclick="openFM('proj')"><span class="smi-i"><svg class="ic"><use href="#i-nodes"/></svg></span> My Projects</div>
+      <div class="sm-hd">R</div>
+      <div class="smi" onclick="openFM('bin')"><span class="smi-i"><svg class="ic"><use href="#i-bin"/></svg></span> Recycle Bin</div>
+      <div class="smi" onclick="openResume();closeSM()"><span class="smi-i"><svg class="ic"><use href="#i-pdf"/></svg></span> Resume.pdf</div>
+      <div class="sm-hd">S</div>
+      <div class="smi" onclick="openFM('sk')"><span class="smi-i"><svg class="ic"><use href="#i-term"/></svg></span> Skills.exe</div>
+      <div class="sm-hd">T</div>
+      <div class="smi" onclick="openFM('pc')"><span class="smi-i"><svg class="ic"><use href="#i-pc"/></svg></span> This PC</div>
     </div>
-    <div class="sm-f">
-      <div class="sm-fb" onclick="openFM('mail')">✉ Contact</div>
-      <div class="sm-fb" onclick="trigSS()">🔒 Screensaver</div>
+    <div class="sm-tiles">
+      <div class="sm-tt">Selected work</div>
+      <div class="sm-grid">
+        <div class="tile num" onclick="openFM('exp')"><span class="tn">73,441</span><span class="tc">records transcribed</span></div>
+        <div class="tile num d1" onclick="openFM('proj')"><span class="tn">70.3%</span><span class="tc">compute utilization</span></div>
+        <div class="tile num d2" onclick="openAch()"><span class="tn">3rd</span><span class="tc">of 50+ teams</span></div>
+        <div class="tile" onclick="openFM('pc')"><svg class="tic"><use href="#i-pc"/></svg><span class="tl">This PC</span></div>
+        <div class="tile" onclick="openFM('mail')"><svg class="tic"><use href="#i-mail"/></svg><span class="tl">Mail</span></div>
+        <div class="tile" onclick="openResume();closeSM()"><svg class="tic"><use href="#i-pdf"/></svg><span class="tl">Resume</span></div>
+      </div>
     </div>
   </div>
 
-  <!-- CONTEXT MENU -->
+  <!-- CONTEXT MENU: Windows 10 desktop menu -->
   <div id="ctx">
-    <div class="ci" onclick="showWP();closeCtx()">🎨 Change Wallpaper</div>
-    <div class="ci" onclick="openFM('pc');closeCtx()">💻 View Info</div>
+    <div class="ci sub">View</div>
+    <div class="ci sub">Sort by</div>
+    <div class="ci" onclick="refreshDesktop();closeCtx()">Refresh</div>
     <div class="cs"></div>
-    <div class="ci" onclick="openFM('mail');closeCtx()">✉ Contact Sruthi</div>
-    <div class="ci" onclick="window.open('https://drive.google.com/file/d/11N7kd0cAMSyFMksN3t7YVRZTI963rMXj/view?usp=sharing','_blank');closeCtx()">📄 Download Resume</div>
+    <div class="ci" onclick="showWP();closeCtx()"><svg class="ic"><use href="#i-pc"/></svg>Display settings</div>
+    <div class="ci" onclick="showWP();closeCtx()"><svg class="ic"><use href="#i-display"/></svg>Personalize</div>
+    <div class="cs"></div>
+    <div class="ci" onclick="openResume();closeCtx()"><svg class="ic"><use href="#i-pdf"/></svg>Open resume</div>
+    <div class="ci" onclick="openFM('mail');closeCtx()"><svg class="ic"><use href="#i-mail"/></svg>Contact Sruthi</div>
   </div>
 
   <!-- WALLPAPER PICKER -->
   <div id="wpp">
-    <div class="wpp-tb"><span>🎨 Display Properties — Wallpaper</span><div class="wb x" onclick="closeWP()">✕</div></div>
+    <div class="wpp-tb"><span><svg class="ic"><use href="#i-display"/></svg>Display Properties — Wallpaper</span><div class="wb x" onclick="closeWP()">✕</div></div>
     <div class="wpp-b">
       <div class="wpo-row">
         <div class="wpo sel" id="wpo-bliss" onclick="selWP('bliss')"><div class="pv" style="background:linear-gradient(180deg,#87ceeb 40%,#6abf3a 100%)"></div><div class="lb">Bliss</div></div>
@@ -592,25 +905,35 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
     </div>
   </div>
 
-  <!-- HIRE DIALOG -->
-  <div id="dlg">
-    <div class="dlg-tb"><span>🤝 Hire Me.exe</span><div class="wb x" onclick="closeDlg()">✕</div></div>
-    <div class="dlg-b">
-      <div class="dlg-i">🚀</div>
-      <div class="dlg-t">Would you like to hire <strong>Sruthi Raghavan</strong> for an ML/AI or software engineering role?<br><br>She brings PyTorch, vision-language models, LLM fine-tuning, distributed training, and HPC experience to the table.<br><br><em>M.S. Computer Engineering · NYU Tandon</em></div>
-    </div>
-    <div class="dlg-btns">
-      <div class="dlg-btn" onclick="closeDlg();window.location.href='mailto:sruthiraghavan2002@gmail.com'">Yes, let's talk! 🎉</div>
-      <div class="dlg-btn" onclick="closeDlg();window.location.href='mailto:sruthiraghavan2002@gmail.com'">Absolutely Yes! 🔥</div>
+  <!-- CLOCK / CALENDAR FLYOUT -->
+  <div class="fly" id="fly-cal" role="dialog" aria-label="Clock and calendar">
+    <div class="cal-time" id="cal-time">--:--:--</div>
+    <div class="cal-date" id="cal-date"></div>
+    <div class="cal-month" id="cal-month"></div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <!-- ACTION CENTER -->
+  <div class="fly" id="fly-ac" role="dialog" aria-label="Action center">
+    <div class="ac-toast"><svg class="ic"><use href="#i-brief"/></svg><div><div class="ac-t">Open to ML/AI engineering roles</div><div class="ac-b">Graduating December 2026. Reach me at sruthiraghavan2002@gmail.com</div></div></div>
+    <div class="ac-toast"><svg class="ic"><use href="#i-pc"/></svg><div><div class="ac-t">Currently</div><div class="ac-b">Graduate Research Assistant at NYU Faber Lab and Data Program Intern at The GovLab</div></div></div>
+    <div class="ac-tiles">
+      <button class="ac-tile" type="button" onclick="acDo(()=>openW('mail'))"><svg aria-hidden="true"><use href="#i-mail"/></svg>Mail</button>
+      <button class="ac-tile" type="button" onclick="acDo(openResume)"><svg aria-hidden="true"><use href="#i-pdf"/></svg>Resume</button>
+      <button class="ac-tile" type="button" onclick="acDo(()=>window.open(GH_URL,'_blank','noopener'))"><svg aria-hidden="true"><use href="#i-gh"/></svg>GitHub</button>
+      <button class="ac-tile" type="button" onclick="acDo(()=>window.open(LI_URL,'_blank','noopener'))"><svg aria-hidden="true"><use href="#i-in"/></svg>LinkedIn</button>
+      <button class="ac-tile" type="button" onclick="acDo(()=>openW('sgpt'))"><svg aria-hidden="true"><use href="#i-chat"/></svg>Assistant</button>
     </div>
   </div>
 
   <!-- BALLOON -->
   <div id="bal">
     <span class="bal-x" onclick="document.getElementById('bal').style.display='none'">✕</span>
-    💼 <strong>Sruthi is actively looking for SDE/AI roles!</strong><br>
-    <span style="font-size:10px;color:#888">Double-click icons to explore her portfolio</span>
+    <div class="bal-row"><svg class="ic"><use href="#i-brief"/></svg><div><strong>Open to ML/AI engineering roles — graduating December 2026.</strong><br>
+    <span style="font-size:10px;color:#888">Double-click an icon to get started.</span></div></div>
   </div>
+
+  <div id="tbtip" role="tooltip"></div>
 
   <!-- SCREENSAVER -->
   <div id="ss"><div id="ss-t">Sruthi.exe</div></div>
@@ -622,70 +945,364 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
         <div class="slogo"><div style="background:#ff5722"></div><div style="background:#4caf50"></div><div style="background:#2196f3"></div><div style="background:#ffc107"></div></div>
         <span class="slbl">start</span>
       </div>
+      <div class="tb-search" aria-hidden="true"><span class="tb-search-ico"></span>Type here to search</div>
       <div class="tb-apps">
-        <div class="tba" id="tb-pc" onclick="togW('pc')">💻 This PC</div>
-        <div class="tba" id="tb-proj" onclick="togW('proj')">🧠 Projects</div>
-        <div class="tba" id="tb-exp" onclick="togW('exp')">💼 Experience</div>
-        <div class="tba" id="tb-tr" onclick="togW('tr')">🏆 Awards</div>
-        <div class="tba" id="tb-res" onclick="togW('res')">📄 Resume</div>
-        <div class="tba" id="tb-sk" onclick="togW('sk')">⚡ Skills</div>
-        <div class="tba" id="tb-mail" onclick="togW('mail')">✉ Mail</div>
-        <div class="tba" id="tb-sgpt" onclick="togW('sgpt')">✦ SruthiGPT</div>
-        <div class="tba" id="tb-snake" onclick="togW('snake')">🐍 Snake</div>
+        <button class="tb-tv" id="tb-tv" type="button" aria-label="Task View" data-tip="Task View"><svg aria-hidden="true"><use href="#i-tview"/></svg></button>
+        <!-- pinned -->
+        <button class="tba pin" id="tb-pc" type="button" onclick="togW('pc')"><svg class="ic" aria-hidden="true"><use href="#i-pc"/></svg></button>
+        <button class="tba pin" id="tb-mail" type="button" onclick="togW('mail')"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></button>
+        <button class="tba pin" id="tb-sgpt" type="button" onclick="togW('sgpt')"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></button>
+        <button class="tba pin" id="tb-mp" type="button" onclick="togW('mp')"><svg class="ic" aria-hidden="true"><use href="#i-media"/></svg></button>
+        <!-- shown only while their window is open, in the order they were opened -->
+        <button class="tba" id="tb-proj" type="button" onclick="togW('proj')"><svg class="ic" aria-hidden="true"><use href="#i-nodes"/></svg></button>
+        <button class="tba" id="tb-exp" type="button" onclick="togW('exp')"><svg class="ic" aria-hidden="true"><use href="#i-brief"/></svg></button>
+        <button class="tba" id="tb-sk" type="button" onclick="togW('sk')"><svg class="ic" aria-hidden="true"><use href="#i-term"/></svg></button>
+        <button class="tba" id="tb-snake" type="button" onclick="togW('snake')"><svg class="ic" aria-hidden="true"><use href="#i-game"/></svg></button>
+        <button class="tba" id="tb-bin" type="button" onclick="togW('bin')"><svg class="ic" aria-hidden="true"><use href="#i-bin"/></svg></button>
       </div>
     </div>
     <div class="tb-tray">
-      <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" title="GitHub">⌨</a>
-      <a href="https://linkedin.com/in/sruthi-raghavan" target="_blank" rel="noopener" title="LinkedIn">🔗</a>
-      <div><div class="ct" id="ct">--:--</div><div class="cd" id="cd">---</div></div>
+      <span class="tb-ico" aria-hidden="true"><svg><use href="#i-chev"/></svg></span>
+      <span class="tb-ico" aria-hidden="true"><svg><use href="#i-net"/></svg></span>
+      <button class="tb-vol" id="tb-vol" type="button" onclick="toggleMute()" title="Sound off — click to turn on" aria-label="Mute" aria-pressed="true"><svg aria-hidden="true"><use href="#i-spk-mute"/></svg></button>
+      <a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-gh"/></svg></a>
+      <a href="https://www.linkedin.com/in/sruthi-raghavan-340642221/" target="_blank" rel="noopener" title="LinkedIn" aria-label="LinkedIn"><svg aria-hidden="true"><use href="#i-in"/></svg></a>
+      <span class="tb-lang" aria-hidden="true">ENG</span>
+      <button class="tb-clock" id="tb-clock" type="button" aria-label="Clock and calendar" aria-expanded="false" onclick="toggleFly('cal')"><div class="ct" id="ct">--:--</div><div class="cd" id="cd">---</div></button>
+      <button class="tb-ico" id="tb-ac" type="button" aria-label="Action center" aria-expanded="false" onclick="toggleFly('ac')"><svg aria-hidden="true"><use href="#i-notif"/></svg><span class="ac-n" id="ac-n" aria-hidden="true"></span></button>
+      <button class="tb-sd" id="tb-sd" type="button" title="Show desktop" aria-label="Show desktop" onclick="showDesktop()"></button>
     </div>
   </div>
 </div>
 
 <script>
-// ══ BOOT ══
-setTimeout(()=>{
-  const b=document.getElementById('boot');b.classList.add('out');
-  setTimeout(()=>{
-    b.style.display='none';
-    document.getElementById('desktop').style.display='block';
-    tick();setInterval(tick,60000);
-    setTimeout(showBal,4000);
-    resetSS();
-  },1200);
-},3200);
-
+// ══ LOCK SCREEN -> SIGN-IN -> DESKTOP ══
+// Locked until a click, key press or upward swipe, or 2.5 s without one. Slide 400 ms, "Welcome" 1.2 s, fade 400 ms: ~2 s to the desktop.
+let lockState='locked';
+function lockClock(){
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
+  document.getElementById('lk-time').textContent=p(n.getHours())+':'+p(n.getMinutes());
+  document.getElementById('lk-date').textContent=n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+}
+lockClock();
+const lockTimer=setInterval(lockClock,1000);
+// Auto-advance 2.5 s after the lock screen is first on screen (not from script start: the full-screen wallpaper can delay that first paint).
+let lockAuto=0;
+function lockArm(){if(lockState==='locked'&&!lockAuto)lockAuto=setTimeout(unlockScreen,2500);}
+if(window.PerformanceObserver&&(PerformanceObserver.supportedEntryTypes||[]).includes('paint')){
+  new PerformanceObserver((l,o)=>{if(l.getEntriesByName('first-contentful-paint').length){o.disconnect();lockArm();}}).observe({type:'paint',buffered:true});
+  setTimeout(lockArm,2000);   // safety net if no paint entry ever arrives
+}else requestAnimationFrame(()=>setTimeout(lockArm,0));   // no Paint Timing: count from the first frame
+function unlockScreen(){
+  if(lockState!=='locked')return;
+  lockState='signing';clearInterval(lockTimer);clearTimeout(lockAuto);
+  const lk=document.getElementById('lock');let moved=false;
+  const next=()=>{   // runs once: when the slide/fade ends, or via the fallback if no transition runs (e.g. a background tab)
+    if(moved)return;moved=true;
+    lk.remove();
+    document.getElementById('signin').classList.add('go');   // spinner + "Welcome"
+    const shown=performance.now();
+    // let the spinner paint, build the desktop underneath it, then fade once "Welcome" has shown for 1.2 s
+    requestAnimationFrame(()=>setTimeout(()=>{enterDesktop();setTimeout(revealDesktop,Math.max(0,1200-(performance.now()-shown)));},0));
+  };
+  lk.addEventListener('transitionend',e=>{if(e.target===lk)next();});
+  setTimeout(next,1000);
+  lk.classList.add('up');   // slides up over 400 ms (reduced motion: fades)
+}
+function enterDesktop(){   // runs hidden under the sign-in screen
+  document.getElementById('desktop').style.display='block';
+  tick();setInterval(tick,60000);
+  setTimeout(showBal,4000);
+  resetSS();
+  openW('pc');   // greet visitors with This PC, centred in the viewport (kept clear of the taskbar) and focused
+  const pc=document.getElementById('win-pc');
+  pc.style.left=Math.max(0,Math.round((innerWidth-pc.offsetWidth)/2))+'px';
+  pc.style.top=Math.max(0,Math.min(Math.round((innerHeight-pc.offsetHeight)/2),innerHeight-TBH-pc.offsetHeight))+'px';
+}
+function revealDesktop(){
+  const si=document.getElementById('signin');si.classList.add('out');
+  setTimeout(()=>{si.remove();lockState='done';},400);
+}
+(function(){
+  const lk=document.getElementById('lock');let y0=null;
+  lk.addEventListener('pointerdown',e=>{y0=e.clientY;lk.setPointerCapture(e.pointerId);});
+  lk.addEventListener('pointermove',e=>{if(y0!==null&&y0-e.clientY>60){y0=null;unlockScreen();}});   // upward swipe
+  lk.addEventListener('pointerup',()=>{if(y0!==null){y0=null;unlockScreen();}});                    // click or tap
+  document.addEventListener('keydown',e=>{   // any key; swallowed so nothing behind the lock screen reacts
+    if(lockState==='locked'){e.preventDefault();e.stopPropagation();unlockScreen();}
+  },true);
+})();
 // ══ CLOCK ══
 function tick(){
-  const n=new Date(),h=n.getHours(),m=n.getMinutes();
-  document.getElementById('ct').textContent=`${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
-  const D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('cd').textContent=`${D[n.getDay()]} ${M[n.getMonth()]} ${n.getDate()}`;
+  const n=new Date(),p=v=>String(v).padStart(2,'0');
+  document.getElementById('ct').textContent=`${p(n.getHours())}:${p(n.getMinutes())}`;
+  document.getElementById('cd').textContent=`${p(n.getDate())}-${p(n.getMonth()+1)}-${n.getFullYear()}`;
 }
 
 // ══ WINDOWS ══
-const WS=['pc','proj','exp','tr','res','sk','mail','sgpt','snake'];
-const mini={};let zz=20;
+const WS=['pc','proj','exp','sk','mail','sgpt','snake','mp','bin'];
+const mini={};let zz=20,curWin=null;
 function selIco(id){document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel'));document.getElementById('ic-'+id)?.classList.add('sel');}
-function openW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(!w)return;w.classList.add('open');w.style.display='flex';mini[id]=false;t&&t.classList.add('on');front(id);if(id==='snake')initSnake();}
-function closeW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.classList.remove('open');w.style.display='none';}if(t)t.classList.remove('on','act');mini[id]=false;}
-function minW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w)w.style.display='none';if(t)t.classList.remove('act');mini[id]=true;}
-function togW(id){const w=document.getElementById('win-'+id);if(!w)return;if(mini[id]||w.style.display==='none'){w.style.display='flex';mini[id]=false;front(id);}else minW(id);}
-function front(id){const w=document.getElementById('win-'+id);if(w)w.style.zIndex=++zz;WS.forEach(x=>document.getElementById('tb-'+x)?.classList.remove('act'));document.getElementById('tb-'+id)?.classList.add('act');}
+function openW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(!w)return;w.classList.add('open');w.style.display='flex';mini[id]=false;if(t&&!t.classList.contains('pin')&&!t.classList.contains('on'))t.parentNode.appendChild(t);t&&t.classList.add('on');front(id);if(id==='snake')initSnake();if(id==='mp')mpDraw(true);}
+function closeW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.classList.remove('open','foc');w.classList.add('blur');w.style.display='none';}if(t)t.classList.remove('on','act');mini[id]=false;if(curWin===id)curWin=null;if(id==='snake')stopSnake();if(id==='mp')mpPause();}
+function minW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.style.display='none';w.classList.remove('foc');w.classList.add('blur');}if(t)t.classList.remove('act');mini[id]=true;if(curWin===id)curWin=null;if(id==='snake')stopSnake();if(id==='mp')mpPause();}
+function togW(id){   // taskbar click: open it; restore it; bring it forward; or, if it is already the focused window, minimize it
+  const w=document.getElementById('win-'+id);if(!w)return;
+  if(!w.classList.contains('open'))openW(id);
+  else if(mini[id]||w.style.display==='none'){w.style.display='flex';mini[id]=false;front(id);}
+  else if(curWin===id)minW(id);
+  else front(id);
+}
+// Taskbar tooltips: the window title, in a small box above the button
+(function(){
+  const tip=document.getElementById('tbtip'),tb=document.getElementById('tb');let tmr=0,cur=null;
+  const label=b=>b.dataset.tip||document.querySelector('#win-'+b.id.slice(3)+' .win-title').textContent.trim();
+  document.querySelectorAll('.tba').forEach(b=>b.setAttribute('aria-label',label(b)));
+  const show=b=>{cur=b;tip.textContent=label(b);tip.style.display='block';
+    const r=b.getBoundingClientRect(),w=tip.offsetWidth;tip.style.left=Math.max(4,Math.min(innerWidth-w-4,r.left+r.width/2-w/2))+'px';};
+  const hide=()=>{clearTimeout(tmr);cur=null;tip.style.display='none';};
+  tb.addEventListener('pointerover',e=>{const b=e.target.closest('.tba,.tb-tv');if(!b||b===cur)return;hide();cur=b;tmr=setTimeout(()=>show(b),300);});
+  tb.addEventListener('pointerout',e=>{const b=e.target.closest('.tba,.tb-tv');if(b&&!b.contains(e.relatedTarget))hide();});
+  tb.addEventListener('pointerdown',hide);
+  tb.addEventListener('focusin',e=>{const b=e.target.closest('.tba,.tb-tv');if(b&&b.matches(':focus-visible'))show(b);});
+  tb.addEventListener('focusout',hide);
+})();
+function front(id){
+  const w=document.getElementById('win-'+id);if(w)w.style.zIndex=++zz;
+  WS.forEach(x=>document.getElementById('tb-'+x)?.classList.remove('act'));
+  document.getElementById('tb-'+id)?.classList.add('act');
+  curWin=id;
+  WS.forEach(x=>{const q=document.getElementById('win-'+x);if(!q)return;q.classList.toggle('foc',x===id);q.classList.toggle('blur',x!==id);});
+}
 WS.forEach(id=>{const w=document.getElementById('win-'+id);if(w)w.addEventListener('mousedown',()=>front(id));});
 function openFM(id){openW(id);closeSM();}
 
-// ══ DRAG ══
-let drag=null,ox=0,oy=0;
-function dragS(e,id){const w=document.getElementById('win-'+id);front(id);const r=w.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;drag=w;e.preventDefault();}
-document.addEventListener('mousemove',e=>{
-  if(!drag)return;
-  let nx=e.clientX-ox,ny=e.clientY-oy;
-  nx=Math.max(0,Math.min(nx,window.innerWidth-drag.offsetWidth));
-  ny=Math.max(0,Math.min(ny,window.innerHeight-36-drag.offsetHeight));
-  drag.style.left=nx+'px';drag.style.top=ny+'px';
+// ══ DRAG / RESIZE / MAXIMIZE / DESKTOP SELECT ══
+// One shared mousemove + mouseup pair drives all three interactions.
+const MINW=280,MINH=180,TBH=48;
+let drag=null,dragId=null,ox=0,oy=0,dsx=0,dsy=0;
+let rsz=null,rw0=0,rh0=0,rx0=0,ry0=0;
+let selOn=false,ssx=0,ssy=0,selMoved=false;
+
+// An explicitly sized window needs its scrollable body to flex instead of
+// keeping the fixed height it was authored with.
+function sizeOn(w){w.classList.add('sized');}
+
+// Aero Snap: cursor at the left/right edge previews that half, at the top edge previews maximize; release snaps.
+const SNAP_EDGE=8,snapPrev=document.createElement('div');snapPrev.id='snapprev';document.getElementById('desktop').appendChild(snapPrev);
+let snapZone=null;
+function snapRect(z){const W=innerWidth,H=innerHeight-TBH,half=Math.floor(W/2);return z==='left'?{l:0,t:0,w:half,h:H}:z==='right'?{l:half,t:0,w:W-half,h:H}:{l:0,t:0,w:W,h:H};}
+function showSnap(z){
+  if(z===snapZone)return;snapZone=z;
+  if(!z){snapPrev.style.display='none';return;}
+  const r=snapRect(z);   // just under the dragged window, inset like the Windows preview
+  Object.assign(snapPrev.style,{left:r.l+6+'px',top:r.t+6+'px',width:r.w-12+'px',height:r.h-12+'px',zIndex:String((+drag.style.zIndex||20)-1),display:'block'});
+}
+function snapTo(id,z){
+  const w=document.getElementById('win-'+id);
+  if(z==='top'){if(!w.classList.contains('max'))toggleMax(id);return;}
+  if(!w.classList.contains('snapped'))w._snapPre={w:w.style.width,h:w.style.height,sized:w.classList.contains('sized')};
+  const r=snapRect(z);sizeOn(w);w.classList.add('snapped');w.dataset.snap=z;
+  w.style.left=r.l+'px';w.style.top=r.t+'px';w.style.width=r.w+'px';w.style.height=r.h+'px';
+}
+function unsnap(w){
+  const p=w._snapPre||{};w.classList.remove('snapped');delete w.dataset.snap;
+  w.style.width=p.w||'';w.style.height=p.h||'';if(!p.sized)w.classList.remove('sized');
+}
+function dragS(e,id){
+  if(e.button!==0)return;
+  const w=document.getElementById('win-'+id);if(!w)return;
+  front(id);
+  const r=w.getBoundingClientRect();
+  ox=e.clientX-r.left;oy=e.clientY-r.top;
+  dsx=e.clientX;dsy=e.clientY;
+  drag=w;dragId=id;
+  e.preventDefault();
+}
+
+function rzS(e,id){
+  if(e.button!==0)return;
+  const w=document.getElementById('win-'+id);if(!w||w.classList.contains('max'))return;
+  front(id);
+  const r=w.getBoundingClientRect();
+  sizeOn(w);
+  w.style.width=r.width+'px';w.style.height=r.height+'px';
+  rsz=w;rw0=r.width;rh0=r.height;rx0=e.clientX;ry0=e.clientY;
+  e.preventDefault();e.stopPropagation();
+}
+
+function toggleMax(id){
+  const w=document.getElementById('win-'+id);if(!w)return;
+  if(w.classList.contains('max'))unmax(id);
+  else{
+    w._pre={t:w.style.top,l:w.style.left,w:w.style.width,h:w.style.height};
+    sizeOn(w);w.classList.add('max');
+    w.style.top='0px';w.style.left='0px';
+    w.style.width=window.innerWidth+'px';
+    w.style.height=(window.innerHeight-TBH)+'px';
+  }
+  front(id);
+}
+function unmax(id){
+  const w=document.getElementById('win-'+id);if(!w||!w.classList.contains('max'))return;
+  const p=w._pre||{};
+  w.classList.remove('max');
+  w.style.top=p.t||'';w.style.left=p.l||'';w.style.width=p.w||'';w.style.height=p.h||'';
+  if(!p.h)w.classList.remove('sized');
+}
+
+// Selection rectangle element
+const selBox=document.createElement('div');selBox.id='selr';
+document.getElementById('desktop').appendChild(selBox);
+
+// Per-window wiring: resize grip, titlebar dbl-click, maximize button
+WS.forEach(id=>{
+  const w=document.getElementById('win-'+id);if(!w)return;
+  const g=document.createElement('div');g.className='win-rz';g.title='Resize';
+  g.addEventListener('mousedown',e=>rzS(e,id));
+  w.appendChild(g);
+  const tb=w.querySelector('.win-tb');
+  if(tb)tb.addEventListener('dblclick',ev=>{if(ev.target.closest('.wb'))return;toggleMax(id);});
+  const mx=Array.from(w.querySelectorAll('.win-tb .wb')).find(b=>b.textContent.trim()==='□');
+  if(mx)mx.addEventListener('click',ev=>{ev.stopPropagation();toggleMax(id);});
 });
-document.addEventListener('mouseup',()=>drag=null);
+
+document.addEventListener('mousemove',e=>{
+  if(rsz){
+    let nw=Math.max(MINW,rw0+(e.clientX-rx0));
+    let nh=Math.max(MINH,rh0+(e.clientY-ry0));
+    nw=Math.max(MINW,Math.min(nw,window.innerWidth-rsz.offsetLeft));
+    nh=Math.max(MINH,Math.min(nh,window.innerHeight-TBH-rsz.offsetTop));
+    rsz.style.width=nw+'px';rsz.style.height=nh+'px';
+    return;
+  }
+  if(drag){
+    if(drag.classList.contains('max')){
+      // A real drag (not a dbl-click) restores first, then follows the cursor.
+      if(Math.abs(e.clientX-dsx)<5&&Math.abs(e.clientY-dsy)<5)return;
+      const ratio=e.clientX/Math.max(1,window.innerWidth);
+      unmax(dragId);if(drag.classList.contains('snapped'))unsnap(drag);   // maximized from a snapped half: go back to the floating size
+      ox=Math.max(12,Math.min(drag.offsetWidth-12,drag.offsetWidth*ratio));
+      oy=Math.max(0,Math.min(e.clientY,20));
+    }else if(drag.classList.contains('snapped')){
+      // dragging a snapped window away restores its pre-snap size, keeping the cursor at the same spot on the titlebar
+      if(Math.abs(e.clientX-dsx)<5&&Math.abs(e.clientY-dsy)<5)return;
+      const ratio=ox/Math.max(1,drag.offsetWidth);
+      unsnap(drag);
+      ox=Math.max(12,Math.min(drag.offsetWidth-12,drag.offsetWidth*ratio));
+      oy=Math.max(0,Math.min(oy,20));
+    }
+    let nx=e.clientX-ox,ny=e.clientY-oy;
+    nx=Math.max(0,Math.min(nx,window.innerWidth-drag.offsetWidth));
+    ny=Math.max(0,Math.min(ny,window.innerHeight-TBH-drag.offsetHeight));
+    drag.style.left=nx+'px';drag.style.top=ny+'px';
+    showSnap(e.clientX<=SNAP_EDGE?'left':e.clientX>=innerWidth-1-SNAP_EDGE?'right':e.clientY<=SNAP_EDGE?'top':null);
+    return;
+  }
+  if(selOn){
+    const x=Math.min(e.clientX,ssx),y=Math.min(e.clientY,ssy);
+    const wd=Math.abs(e.clientX-ssx),ht=Math.abs(e.clientY-ssy);
+    if(wd>3||ht>3)selMoved=true;
+    selBox.style.left=x+'px';selBox.style.top=y+'px';
+    selBox.style.width=wd+'px';selBox.style.height=ht+'px';
+    document.querySelectorAll('.icon').forEach(ic=>{
+      const r=ic.getBoundingClientRect();
+      ic.classList.toggle('sel',r.left<x+wd&&r.right>x&&r.top<y+ht&&r.bottom>y);
+    });
+  }
+});
+
+document.addEventListener('mouseup',()=>{
+  if(drag&&snapZone)snapTo(dragId,snapZone);
+  showSnap(null);
+  drag=null;dragId=null;rsz=null;
+  if(selOn){
+    selOn=false;selBox.style.display='none';
+    if(!selMoved)document.querySelectorAll('.icon').forEach(ic=>ic.classList.remove('sel'));
+  }
+});
+
+// Marquee starts only on bare desktop
+document.getElementById('desktop').addEventListener('mousedown',e=>{
+  if(e.button!==0)return;
+  if(e.target.closest('.win,.icon,#tb,#smenu,#ctx,#wpp,#bal,.fly'))return;
+  e.preventDefault(); // the wallpaper is an <img>; without this the browser starts a native image drag
+  selOn=true;selMoved=false;ssx=e.clientX;ssy=e.clientY;
+  selBox.style.left=ssx+'px';selBox.style.top=ssy+'px';
+  selBox.style.width='0px';selBox.style.height='0px';selBox.style.display='block';
+  document.querySelectorAll('.icon').forEach(ic=>ic.classList.remove('sel'));
+});
+
+window.addEventListener('resize',()=>{
+  WS.forEach(id=>{
+    const w=document.getElementById('win-'+id);
+    if(w&&w.classList.contains('max')){w.style.width=window.innerWidth+'px';w.style.height=(window.innerHeight-TBH)+'px';}
+    else if(w&&w.classList.contains('snapped')){const r=snapRect(w.dataset.snap);w.style.left=r.l+'px';w.style.width=r.w+'px';w.style.height=r.h+'px';}
+  });
+});
+
+// ══ KEYBOARD SHORTCUTS ══
+// Arrow keys are deliberately untouched (Snake owns them).
+document.addEventListener('keydown',e=>{
+  if(e.target&&e.target.closest&&e.target.closest('input,textarea'))return;
+  if(e.key==='Escape'&&flyOpen){closeFly();e.preventDefault();return;}
+  // Escape minimizes: closing is destructive and Windows never bound Escape to close.
+  if(e.key==='Escape'&&curWin){minW(curWin);e.preventDefault();}
+});
+
+// ══ FLYOUTS (clock/calendar, action center) — one at a time ══
+const GH_URL='https://github.com/Sruthi-2002',LI_URL='https://www.linkedin.com/in/sruthi-raghavan-340642221/';
+let flyOpen=null,calTimer=0;
+function calTick(){const n=new Date(),p=v=>String(v).padStart(2,'0');document.getElementById('cal-time').textContent=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());}
+function calRender(){   // month grid, Sunday first, 6 weeks; today in #0078d7
+  const n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay();
+  document.getElementById('cal-date').textContent=n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('cal-month').textContent=n.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  let h=['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>'<div class="wd">'+d+'</div>').join('');
+  for(let i=0;i<42;i++){
+    const d=new Date(y,m,1-first+i),today=d.toDateString()===n.toDateString();
+    h+='<div class="d'+(d.getMonth()!==m?' out':'')+(today?' today" aria-current="date':'')+'">'+d.getDate()+'</div>';
+  }
+  document.getElementById('cal-grid').innerHTML=h;calTick();
+}
+function openFly(id){
+  flyOpen=id;
+  document.getElementById('bal').style.display='none';
+  if(id==='cal'){calRender();calTimer=setInterval(calTick,1000);}
+  document.getElementById('fly-'+id).classList.add('on');
+  document.getElementById(id==='cal'?'tb-clock':'tb-ac').setAttribute('aria-expanded','true');
+  if(id==='ac'&&!acSeen){acSeen=true;acBadge();}
+}
+function acBadge(){   // unseen notifications = the toasts in the action center; opening it marks them seen, as on Windows 10
+  const k=acSeen?0:document.querySelectorAll('#fly-ac .ac-toast').length,b=document.getElementById('tb-ac');
+  document.getElementById('ac-n').textContent=k?String(k):'';
+  b.setAttribute('aria-label',k?'Action center, '+k+' new notifications':'Action center');
+}
+let acSeen=false;acBadge();
+function closeFly(){
+  if(!flyOpen)return;
+  document.getElementById('fly-'+flyOpen).classList.remove('on');
+  document.getElementById(flyOpen==='cal'?'tb-clock':'tb-ac').setAttribute('aria-expanded','false');
+  clearInterval(calTimer);flyOpen=null;
+}
+function toggleFly(id){const was=flyOpen;closeFly();closeSM();closeCtx();if(was!==id)openFly(id);}
+function acDo(fn){closeFly();fn();}
+document.addEventListener('click',e=>{if(flyOpen&&!e.target.closest('.fly,#tb-clock,#tb-ac'))closeFly();});   // click outside
+document.addEventListener('contextmenu',e=>{if(flyOpen&&!e.target.closest('.fly'))closeFly();});
+
+// ══ SHOW DESKTOP (strip at the far right of the taskbar) ══
+let sdSaved=null;
+function showDesktop(){
+  closeFly();closeSM();
+  const shown=WS.filter(x=>{const w=document.getElementById('win-'+x);return w.classList.contains('open')&&w.style.display!=='none';});
+  if(!shown.length&&sdSaved){   // second click: bring back what we hid, in the same stacking order
+    sdSaved.filter(x=>document.getElementById('win-'+x).classList.contains('open'))
+      .sort((a,b)=>(+document.getElementById('win-'+a).style.zIndex||0)-(+document.getElementById('win-'+b).style.zIndex||0))
+      .forEach(x=>{document.getElementById('win-'+x).style.display='flex';mini[x]=false;front(x);});
+    sdSaved=null;return;
+  }
+  sdSaved=shown;shown.forEach(minW);
+}
 
 // ══ START MENU ══
 function toggleSM(){const m=document.getElementById('smenu');m.style.display=m.style.display==='flex'?'none':'flex';}
@@ -695,14 +1312,23 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#ctx'))closeCtx();
 });
 
+{const k=document.querySelectorAll('#win-pc .x-ni').length;document.getElementById('pc-status').textContent=k+' items';}   // This PC status bar: the items under Quick access
+function openAch(){   // the "3rd of 50+ teams" tile: My Projects, scrolled to its Achievements section
+  openFM('proj');
+  const b=document.querySelector('#win-proj .win-body'),a=document.getElementById('proj-ach');
+  b.scrollTop+=a.getBoundingClientRect().top-b.getBoundingClientRect().top-12;
+}
+function smFolder(el){const open=el.getAttribute('aria-expanded')!=='true';el.setAttribute('aria-expanded',String(open));el.nextElementSibling.hidden=!open;}
+function refreshDesktop(){const g=document.querySelector('.icon-grid');g.style.visibility='hidden';setTimeout(()=>{g.style.visibility='';},120);}   // icons blink, as in Windows
+
 // ══ RIGHT CLICK ══
 document.getElementById('desktop').addEventListener('contextmenu',e=>{
-  if(e.target.closest('.win')||e.target.closest('#tb')||e.target.closest('.icon'))return;
+  if(e.target.closest('.win')||e.target.closest('#tb')||e.target.closest('.icon')||e.target.closest('.fly'))return;
   e.preventDefault();
   const m=document.getElementById('ctx');
-  m.style.left=Math.min(e.clientX,window.innerWidth-180)+'px';
-  m.style.top=Math.min(e.clientY,window.innerHeight-160)+'px';
   m.style.display='block';
+  m.style.left=Math.max(0,Math.min(e.clientX,window.innerWidth-m.offsetWidth-4))+'px';
+  m.style.top=Math.max(0,Math.min(e.clientY,window.innerHeight-TBH-m.offsetHeight-4))+'px';
 });
 function closeCtx(){document.getElementById('ctx').style.display='none';}
 
@@ -719,32 +1345,295 @@ function applyWP(){
   closeWP();
 }
 
-// ══ HIRE / BALLOON ══
-function showHire(){const d=document.getElementById('dlg');d.style.display='flex';d.style.zIndex=++zz;closeSM();}
-function closeDlg(){document.getElementById('dlg').style.display='none';}
+// ══ RESUME / MAIL / BALLOON ══
+const RESUME_URL='https://drive.google.com/file/d/1t7i41QWmSZAXLQ1chOzQshWyow7BHyhQ/view?usp=sharing',MAIL_TO='sruthiraghavan2002@gmail.com';
+function openResume(){window.open(RESUME_URL,'_blank','noopener');}
+function mailURL(){   // RFC 6068: subject/body percent-encoded, line breaks as CRLF; no params at all when both are empty
+  const s=document.getElementById('mc-subj').value,b=document.getElementById('mc-msg').value,q=[];
+  if(s)q.push('subject='+encodeURIComponent(s));
+  if(b)q.push('body='+encodeURIComponent(b.replace(/\r?\n/g,'\r\n')));
+  return 'mailto:'+MAIL_TO+(q.length?'?'+q.join('&'):'');
+}
+function mailSend(){const a=document.createElement('a');a.href=mailURL();a.hidden=true;document.body.appendChild(a);a.click();a.remove();}
 function showBal(){const b=document.getElementById('bal');b.style.display='block';setTimeout(()=>b.style.display='none',7000);}
 
 // ══ SCREENSAVER ══
-let ssT=null,ssOn=false,sx=60,sy=60,dx=1.8,dy=1.3;
-function resetSS(){clearTimeout(ssT);if(!ssOn)ssT=setTimeout(trigSS,30000);}
-function trigSS(){ssOn=true;document.getElementById('ss').style.display='block';animSS();closeSM();}
-function dismissSS(){ssOn=false;document.getElementById('ss').style.display='none';resetSS();}
-function animSS(){
-  if(!ssOn)return;
-  const ss=document.getElementById('ss'),t=document.getElementById('ss-t');
-  const mw=ss.offsetWidth-t.offsetWidth-10,mh=ss.offsetHeight-t.offsetHeight-10;
-  sx+=dx;sy+=dy;
-  if(sx<=0||sx>=mw){dx*=-1;t.style.color=rnd();}
-  if(sy<=0||sy>=mh){dy*=-1;t.style.color=rnd();}
-  t.style.left=Math.max(0,sx)+'px';t.style.top=Math.max(0,sy)+'px';
-  requestAnimationFrame(animSS);
+const SSIDLE=90000,RM=window.matchMedia('(prefers-reduced-motion: reduce)');
+let ssT=null,ssOn=false,ssLast=0;
+// Throttled to 500ms: mousemove fires this continuously during a window drag.
+function resetSS(force){
+  const n=Date.now();
+  if(!force&&n-ssLast<500)return;
+  ssLast=n;clearTimeout(ssT);
+  if(!ssOn)ssT=setTimeout(idleSS,SSIDLE);
 }
-function rnd(){return['#4a9eed','#a78bfa','#22c55e','#f59e0b','#ef4444','#ec4899','#0f0'][Math.floor(Math.random()*7)];}
+// Idle path only. trigSS() stays unguarded so the Start menu item always works.
+function idleSS(){
+  if(ssOn)return;
+  if(lockState!=='done'){ssT=setTimeout(idleSS,SSIDLE);return;}
+  const vis=WS.some(x=>{const w=document.getElementById('win-'+x);return w&&w.classList.contains('open')&&w.style.display!=='none';});
+  if(vis){ssT=setTimeout(idleSS,SSIDLE);return;}
+  trigSS();
+}
+function trigSS(){
+  ssOn=true;closeSM();stopPipes();
+  const ss=document.getElementById('ss');ss.classList.remove('gl');ss.style.display='block';
+  if(RM.matches)return;   // reduced motion: static centred text, Three.js is never fetched
+  const run=++ssRun;      // a dismiss while the library downloads must not start a scene afterwards
+  loadThree().then(T=>{if(ssOn&&run===ssRun)startPipes(T,ss);},()=>{});   // load failure: the static text stays up
+}
+function dismissSS(){ssOn=false;ssRun++;stopPipes();document.getElementById('ss').style.display='none';resetSS(true);}
+
+// ══ 3D PIPES (Three.js, fetched the first time the screensaver runs) ══
+const THREE_URL='https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js',
+      THREE_SRI='sha384-RRHfJ6w1mTlKUBMYT/hvnRiOzEB/vyRV3DrQOseb6oYfvaZSfdd0byS4bHps0k2R';
+const PIPE_COLORS=[0x4a6f9a,0x3d5c84,0x7f97b1,0x8b9198,0x5c636c,0x6a8099],PIPE_BRASS=0xa88b52;
+const DIRS=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+let threeP=null,pipes=null,ssRun=0;
+function loadThree(){
+  if(window.THREE)return Promise.resolve(window.THREE);
+  return threeP||(threeP=new Promise((ok,fail)=>{
+    const s=document.createElement('script');
+    s.src=THREE_URL;s.integrity=THREE_SRI;s.crossOrigin='anonymous';
+    s.onload=()=>{if(window.THREE)ok(window.THREE);else{threeP=null;fail(new Error('THREE missing'));}};
+    s.onerror=()=>{s.remove();threeP=null;fail(new Error('Three.js failed to load'));};   // the next trigger retries
+    document.head.appendChild(s);
+  }));
+}
+function startPipes(T,ss){
+  let gl;
+  // failIfMajorPerformanceCaveat: without a GPU, software WebGL stalls the page, so the static text stays instead
+  const cv=document.createElement('canvas'),opt={antialias:true,powerPreference:'low-power',failIfMajorPerformanceCaveat:true};
+  const ctx=cv.getContext('webgl2',opt)||cv.getContext('webgl',opt);
+  if(!ctx)return;
+  try{gl=new T.WebGLRenderer({canvas:cv,context:ctx,antialias:true});}catch(e){return;}
+  gl.setPixelRatio(Math.min(window.devicePixelRatio||1,2));gl.setSize(innerWidth,innerHeight);gl.setClearColor(0x000000,1);
+  gl.domElement.className='ss-gl';ss.appendChild(gl.domElement);
+  const scene=new T.Scene(),cam=new T.PerspectiveCamera(50,innerWidth/innerHeight,0.1,200),group=new T.Group();
+  const key=new T.DirectionalLight(0xffffff,0.85),fill=new T.DirectionalLight(0x9fb4cc,0.3);
+  key.position.set(1,1.6,1.2);fill.position.set(-1.2,-0.5,-1);
+  scene.add(group,key,fill,new T.AmbientLight(0xffffff,0.35));
+  const X=9,Y=6,Z=9,SPEED=7,cyl=new T.CylinderGeometry(.3,.3,1,20),ball=new T.SphereGeometry(.38,24,16);   // grid half-extents, cells/s
+  const mats=[...PIPE_COLORS,PIPE_BRASS].map(c=>new T.MeshPhongMaterial({color:c,specular:0x777777,shininess:60}));
+  const st=pipes={gl,scene,cam,group,geos:[cyl,ball],mats,used:new Set(),runs:[],cells:0,resets:0,frames:0,turns:0,t:0,last:performance.now(),raf:0,
+    limit:Math.round((2*X+1)*(2*Y+1)*(2*Z+1)*.2)};   // "crowded" = a fifth of the grid filled
+  const id=p=>p.join(','),step=(p,d)=>p.map((v,i)=>v+DIRS[d][i]),rint=n=>Math.floor(Math.random()*(2*n+1))-n;
+  const free=p=>Math.abs(p[0])<=X&&Math.abs(p[1])<=Y&&Math.abs(p[2])<=Z&&!st.used.has(id(p));
+  const take=p=>{st.used.add(id(p));st.cells++;};
+  const joint=(p,m)=>{const b=new T.Mesh(ball,m);b.position.set(...p);group.add(b);};
+  const segment=(p,d,m)=>{const s=new T.Mesh(cyl,m);if(d<2)s.rotation.z=Math.PI/2;else if(d>3)s.rotation.x=Math.PI/2;group.add(s);return{from:p,d,mesh:s,steps:0};};
+  function spawn(){
+    for(let i=0;i<40;i++){
+      const p=[rint(X),rint(Y),rint(Z)];if(!free(p))continue;
+      const opts=[0,1,2,3,4,5].filter(d=>free(step(p,d)));if(!opts.length)continue;
+      const m=Math.random()<.1?mats[6]:mats[Math.floor(Math.random()*6)],d=opts[Math.floor(Math.random()*opts.length)],next=step(p,d);
+      take(p);take(next);joint(p,m);st.runs.push({p,next,m,seg:segment(p,d,m),frac:0});return true;
+    }
+    return false;
+  }
+  const place=(s,len)=>{const v=DIRS[s.d];s.mesh.scale.y=Math.max(len,.001);s.mesh.position.set(s.from[0]+v[0]*len/2,s.from[1]+v[1]*len/2,s.from[2]+v[2]*len/2);};
+  function advance(r){   // the head reached r.next: choose the next cell, preferring to run straight
+    r.p=r.next;r.seg.steps++;r.frac-=1;
+    const d=r.seg.d,opts=[0,1,2,3,4,5].filter(k=>free(step(r.p,k)));
+    if(!opts.length){place(r.seg,r.seg.steps);joint(r.p,r.m);return false;}   // boxed in: cap it, a new pipe starts
+    const nd=opts.includes(d)&&Math.random()<.75?d:opts[Math.floor(Math.random()*opts.length)];
+    if(nd!==d){place(r.seg,r.seg.steps);joint(r.p,r.m);r.seg=segment(r.p,nd,r.m);st.turns++;}   // right-angle turn, rounded joint
+    r.next=step(r.p,nd);take(r.next);return true;
+  }
+  function reset(){st.group.clear();st.used.clear();st.runs=[];st.cells=0;st.resets++;spawn();spawn();}
+  function grow(dt){
+    for(const r of st.runs.slice()){
+      r.frac+=dt*SPEED;
+      let alive=true;
+      while(alive&&r.frac>=1)alive=advance(r);
+      if(alive)place(r.seg,r.seg.steps+r.frac);else st.runs.splice(st.runs.indexOf(r),1);
+    }
+    while(st.runs.length<2&&spawn());
+    if(st.cells>=st.limit||!st.runs.length)reset();   // crowded (or nowhere left to start): clear and begin again
+  }
+  function frame(now){
+    st.raf=requestAnimationFrame(frame);
+    const dt=Math.max(0,Math.min(.05,(now-st.last)/1000));st.last=now;st.t+=dt;st.frames++;
+    grow(dt);
+    const a=st.t*.05;cam.position.set(Math.cos(a)*19,4+Math.sin(st.t*.11)*2.5,Math.sin(a)*19);cam.lookAt(0,0,0);   // slow drift
+    gl.render(scene,cam);
+    if(st.frames===1)ss.classList.add('gl');
+  }
+  st.onResize=()=>{gl.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();};
+  addEventListener('resize',st.onResize);
+  spawn();spawn();st.raf=requestAnimationFrame(frame);
+}
+function stopPipes(){   // release everything: a leaked WebGL context degrades the page on every later trigger
+  const st=pipes;if(!st)return;pipes=null;
+  cancelAnimationFrame(st.raf);removeEventListener('resize',st.onResize);
+  st.group.clear();st.scene.clear();st.geos.forEach(g=>g.dispose());st.mats.forEach(m=>m.dispose());
+  st.gl.dispose();st.gl.forceContextLoss();st.gl.domElement.remove();
+}
 document.addEventListener('mousemove',()=>{ssOn?dismissSS():resetSS();});
-document.addEventListener('keydown',()=>{ssOn?dismissSS():resetSS();});
+document.addEventListener('keydown',e=>{if(ssOn){dismissSS();return;}if(!(e.target.closest&&e.target.closest('input,textarea')))resetSS();});   // typing is not idle-reset input
 
 // ══ CURSOR ══
 let bo=true;setInterval(()=>{const c=document.getElementById('cur');if(c){c.style.opacity=bo?'1':'0';bo=!bo;}},500);
+
+// ══ MEDIA PLAYER ══
+// Three short loops written for this site, synthesised live with Web Audio: no files, no URLs.
+// Chords are MIDI triads, one per bar of 16 sixteenth-steps. Lead: one token per step; note = new note, '-' = hold, '.' = rest.
+// Each track plays its 4-bar phrase twice: the second pass arpeggiates downward and ends on a snare fill.
+const MP_BARS=18,MP_TRACKS=[
+  {title:'Boot Sequence',bpm:112,chords:[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],drums:'k.h.s.h.k.h.s.hh',
+   lead:'E5 - - G5 - E5 D5 - C5 - - - . . D5 E5 | C5 - - E5 - C5 B4 - A4 - - - . . B4 C5 | A4 - C5 - F5 - E5 D5 C5 - A4 - . . C5 D5 | D5 - - B4 - G4 - - . . G4 A4 B4 - D5 -'},
+  {title:'Night Build',bpm:96,chords:[[57,60,64],[53,57,60],[50,53,57],[52,56,59]],drums:'k..hs..hk.k.s..h',
+   lead:'A4 - - - C5 - B4 - A4 - - - E4 - - - | F4 - A4 - C5 - - - B4 - A4 - G4 - - - | D4 - F4 - A4 - D5 - C5 - - - A4 - - - | G#4 - - - B4 - - - E5 - D5 - B4 - G#4 -'},
+  {title:'Gradient Descent',bpm:132,chords:[[62,65,69],[58,62,65],[60,64,67],[57,61,64]],drums:'k.hhs.hhk.hhs.hk',
+   lead:'A5 - G5 - F5 - E5 - D5 - - - . . . . | F5 - E5 - D5 - C5 - Bb4 - - - . . . . | G5 - F5 - E5 - D5 - C5 - - - E5 - G5 - | E5 - D5 - C#5 - B4 - A4 - - - . . . .'}
+];
+MP_TRACKS.forEach(tr=>{   // parse the lead into {midi, length-in-steps} at each note onset
+  const NOTE={C:0,D:2,E:4,F:5,G:7,A:9,B:11};let last=null;
+  tr.len=128;tr.notes=[];tr.tokens=tr.lead.split('|').flatMap(b=>b.trim().split(/\s+/));
+  tr.tokens.forEach((x,i)=>{const m=x.match(/^([A-G])([#b]?)(\d)$/);
+    if(m)last=tr.notes[i]={m:12*(+m[3]+1)+NOTE[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0),len:1};
+    else if(x==='-'&&last)last.len++;else last=null;});
+});
+let soundMuted=true,muteTouched=false;   // all site audio starts muted; the tray speaker is the one switch
+const MP={ctx:null,track:0,playing:false,paused:false,step:0,next:0,timer:0,raf:0,vol:.7,frames:0,
+  bars:new Array(MP_BARS).fill(0),peaks:new Array(MP_BARS).fill(0)};
+const midiHz=m=>440*Math.pow(2,(m-69)/12);
+function mpCtx(){   // created inside the first Play click, so the browser lets it run
+  if(MP.ctx)return MP.ctx;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;
+  const c=MP.ctx=new C();
+  MP.bus=c.createGain();MP.bus.gain.value=.8;
+  MP.an=c.createAnalyser();MP.an.fftSize=2048;MP.an.smoothingTimeConstant=.78;MP.an.minDecibels=-90;MP.an.maxDecibels=-25;
+  MP.volG=c.createGain();MP.volG.gain.value=MP.vol;
+  MP.out=c.createGain();MP.out.gain.value=soundMuted?0:1;
+  MP.bus.connect(MP.an);MP.an.connect(MP.volG);MP.volG.connect(MP.out);MP.out.connect(c.destination);   // mix -> analyser -> volume -> mute
+  MP.freq=new Uint8Array(MP.an.frequencyBinCount);
+  const n=32,re=new Float32Array(n),im=new Float32Array(n);   // 25% pulse wave, the classic chip lead
+  for(let k=1;k<n;k++)re[k]=2/(k*Math.PI)*Math.sin(k*Math.PI*.25);
+  MP.p25=c.createPeriodicWave(re,im);
+  MP.noise=c.createBuffer(1,c.sampleRate,c.sampleRate);
+  const d=MP.noise.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  return c;
+}
+function mpTone(w,f,t,d,vol,dest){
+  const c=MP.ctx,o=c.createOscillator(),g=c.createGain();
+  if(typeof w==='string')o.type=w;else o.setPeriodicWave(w);
+  o.frequency.value=f;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.004);g.gain.setTargetAtTime(vol*.55,t+.02,.08);g.gain.setTargetAtTime(0,t+d,.02);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+d+.15);
+  o.onended=()=>{o.disconnect();g.disconnect();};
+}
+function mpKick(t,v){
+  const c=MP.ctx,o=c.createOscillator(),g=c.createGain();
+  o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);
+  g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);
+  o.connect(g);g.connect(v);o.start(t);o.stop(t+.22);o.onended=()=>{o.disconnect();g.disconnect();};
+}
+function mpNoise(t,v,type,f,vol,dec){
+  const c=MP.ctx,s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain();
+  s.buffer=MP.noise;fl.type=type;fl.frequency.value=f;
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dec);
+  s.connect(fl);fl.connect(g);g.connect(v);s.start(t,Math.random()*.5);s.stop(t+dec+.02);
+  s.onended=()=>{s.disconnect();fl.disconnect();g.disconnect();};
+}
+function mpStep(tr,s,t,sp){
+  const bar=s>>4,i=s&15,ch=tr.chords[bar&3],v=MP.voice,arp=[ch[0],ch[1],ch[2],ch[0]+12];
+  mpTone(MP.p25,midiHz(arp[bar<4?i%4:3-i%4]+12),t,sp*.9,.045,v);
+  if(i%4===0)mpTone('triangle',midiHz(ch[0]-24+(i%8?12:0)),t,sp*3.6,.24,v);
+  const n=tr.notes[s&63];if(n)mpTone('square',midiHz(n.m),t,n.len*sp*.92,.06,v);
+  const dr=bar===7&&i>=8?(i%2?'.':'s'):tr.drums[i];
+  if(dr==='k')mpKick(t,v);else if(dr==='s')mpNoise(t,v,'bandpass',1800,.28,.14);else if(dr==='h')mpNoise(t,v,'highpass',7000,.08,.04);
+}
+function mpVoice(){   // a fresh sub-bus per start/seek/skip, so notes already queued ahead are dropped cleanly
+  const c=MP.ctx;
+  if(MP.voice){const old=MP.voice;old.gain.setTargetAtTime(0,c.currentTime,.01);setTimeout(()=>old.disconnect(),80);}
+  MP.voice=c.createGain();MP.voice.connect(MP.bus);
+}
+function mpTick(){   // lookahead scheduler; looks further ahead in a background tab, where timers are throttled
+  const c=MP.ctx,tr=MP_TRACKS[MP.track],sp=60/tr.bpm/4,ahead=document.hidden?1.5:.12;
+  while(MP.next<c.currentTime+ahead){mpStep(tr,MP.step,MP.next,sp);MP.next+=sp;MP.step=(MP.step+1)%tr.len;}
+  mpUI();
+}
+function mpPlay(){
+  const c=mpCtx();if(!c||MP.playing)return;
+  if(soundMuted&&!muteTouched)setMuted(false);   // Play is a request for sound; a mute chosen in the tray is respected
+  c.resume();
+  if(!MP.paused){mpVoice();MP.next=c.currentTime;}
+  MP.playing=true;MP.paused=false;
+  clearInterval(MP.timer);MP.timer=setInterval(mpTick,25);mpTick();
+  mpVizStart();mpUI();
+}
+function mpPause(){   // also called when the window is closed or minimised
+  if(!MP.playing)return;
+  MP.playing=false;MP.paused=true;clearInterval(MP.timer);MP.ctx.suspend();mpVizStop();mpUI();
+}
+function mpStop(){
+  MP.playing=false;MP.paused=false;clearInterval(MP.timer);
+  if(MP.ctx){mpVoice();MP.ctx.suspend();}
+  MP.step=0;mpVizStop();mpUI();
+}
+function mpSkip(d){
+  MP.track=(MP.track+d+MP_TRACKS.length)%MP_TRACKS.length;MP.step=0;
+  if(MP.ctx){mpVoice();MP.next=MP.ctx.currentTime;}
+  mpUI(true);
+}
+function mpSeek(f){
+  MP.step=Math.min(127,Math.max(0,Math.floor(f*128)));
+  if(MP.ctx){mpVoice();MP.next=MP.ctx.currentTime;}
+  mpUI();
+}
+function mpVolume(v){MP.vol=v;if(MP.volG)MP.volG.gain.setTargetAtTime(v,MP.ctx.currentTime,.02);}
+function mpPos(){   // the audible position in steps: the scheduler runs ahead, so subtract what is queued but not yet heard
+  const tr=MP_TRACKS[MP.track],sp=60/tr.bpm/4;
+  return MP.ctx&&(MP.playing||MP.paused)?((MP.step-(MP.next-MP.ctx.currentTime)/sp)%tr.len+tr.len)%tr.len:MP.step;
+}
+function mpUI(retitle){
+  const tr=MP_TRACKS[MP.track],sp=60/tr.bpm/4,mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');
+  const t=document.getElementById('mp-title'),pos=mpPos(),seek=document.getElementById('mp-seek');
+  if(retitle||!t.textContent)t.textContent=String(MP.track+1).padStart(2,'0')+'. '+tr.title+'  ·  generated live in your browser with the Web Audio API';
+  document.getElementById('mp-state').textContent=(MP.playing?'PLAYING':MP.paused?'PAUSED':'STOPPED')+'  '+(MP.track+1)+'/'+MP_TRACKS.length;
+  document.getElementById('mp-time').textContent=mmss(pos*sp)+' / '+mmss(tr.len*sp);
+  if(!seek.matches(':active'))seek.value=Math.round(pos/tr.len*1000);
+  document.getElementById('mp-play').classList.toggle('on',MP.playing);
+  document.getElementById('mp-pause').classList.toggle('on',MP.paused);
+}
+function mpVizStart(){if(MP.raf)return;const f=()=>{MP.raf=requestAnimationFrame(f);mpDraw();};MP.raf=requestAnimationFrame(f);}
+function mpVizStop(){cancelAnimationFrame(MP.raf);MP.raf=0;MP.bars.fill(0);MP.peaks.fill(0);mpDraw(true);}
+function mpDraw(idle){   // bars come straight from the AnalyserNode on the mix bus: log-spaced 60 Hz - 12 kHz
+  const cv=document.getElementById('mp-viz'),dpr=Math.min(window.devicePixelRatio||1,2),W=Math.round(cv.clientWidth*dpr),H=Math.round(cv.clientHeight*dpr);
+  if(!W||!H)return;
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
+  if(!idle&&MP.an){
+    MP.an.getByteFrequencyData(MP.freq);
+    const bins=MP.freq.length,ny=MP.ctx.sampleRate/2,span=12000/60;
+    for(let b=0;b<MP_BARS;b++){
+      const i0=Math.floor(60*Math.pow(span,b/MP_BARS)/ny*bins),i1=Math.max(i0+1,Math.ceil(60*Math.pow(span,(b+1)/MP_BARS)/ny*bins));
+      let m=0;for(let i=i0;i<i1;i++)m=Math.max(m,MP.freq[i]);
+      MP.bars[b]=m/255;MP.peaks[b]=Math.max(MP.peaks[b]-.012,MP.bars[b]);
+    }
+    MP.frames++;
+  }
+  const g=cv.getContext('2d'),gap=2*dpr,bw=(W-gap*(MP_BARS-1))/MP_BARS,grad=g.createLinearGradient(0,H,0,0);
+  grad.addColorStop(0,'#3f9a55');grad.addColorStop(.6,'#b8b04a');grad.addColorStop(1,'#c46a45');
+  g.clearRect(0,0,W,H);
+  for(let b=0;b<MP_BARS;b++){
+    const x=b*(bw+gap),h=Math.round(MP.bars[b]*H);
+    g.fillStyle='rgba(143,212,155,.08)';g.fillRect(x,0,bw,H);
+    g.fillStyle=grad;g.fillRect(x,H-h,bw,h);
+    if(MP.peaks[b]>.02){g.fillStyle='#cfd8cf';g.fillRect(x,H-Math.round(MP.peaks[b]*H)-dpr,bw,dpr);}
+  }
+}
+function setMuted(m){
+  soundMuted=m;
+  if(MP.out)MP.out.gain.setTargetAtTime(m?0:1,MP.ctx.currentTime,.01);
+  const b=document.getElementById('tb-vol');
+  b.setAttribute('aria-pressed',String(m));b.title=m?'Sound off — click to turn on':'Sound on — click to mute';
+  b.querySelector('use').setAttribute('href',m?'#i-spk-mute':'#i-spk');
+  document.querySelector('.mp-lcd').classList.toggle('muted',m);
+}
+function toggleMute(){muteTouched=true;setMuted(!soundMuted);}
+mpUI(true);
+new ResizeObserver(()=>{if(!MP.playing)mpDraw(true);}).observe(document.getElementById('mp-viz'));
 
 // ══ SNAKE ══
 const CELL=12,COLS=20,ROWS=20;
@@ -774,7 +1663,7 @@ function startSnake(){
   },110);
 }
 document.addEventListener('keydown',e=>{
-  if(!sg||!si)return;const d=sg.dir;
+  if(!sg||!si||(e.target.closest&&e.target.closest('input,textarea')))return;const d=sg.dir;
   if(e.key==='ArrowUp'&&d.y!==1){sg.dir={x:0,y:-1};e.preventDefault();}
   if(e.key==='ArrowDown'&&d.y!==-1){sg.dir={x:0,y:1};e.preventDefault();}
   if(e.key==='ArrowLeft'&&d.x!==1){sg.dir={x:-1,y:0};e.preventDefault();}
@@ -789,37 +1678,37 @@ function rf(sn){let f;do{f={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.r
 // Ordered: the most specific topics are checked first, general ones last.
 const KB=[
   {keywords:['research','faber','ocr','redlining','qwen'],
-   answer:"I'm a Graduate Research Assistant at NYU's Faber Lab working on redlining research. I built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records — about 150,000 page images spanning 1935 to 1975 — into analysis-ready data for housing-discrimination research. I parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster with SLURM and finished all 30 batches in roughly two weeks."},
+   answer:"Sruthi is a Graduate Research Assistant at NYU's Faber Lab working on redlining research. She built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records — about 150,000 page images spanning 1935 to 1975 — into analysis-ready data for housing-discrimination research. She parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster with SLURM and finished all 30 batches in roughly two weeks."},
   {keywords:['govlab','unesco','pwa'],
-   answer:"At The GovLab I designed and built an interactive UNESCO Data Governance self-assessment tool — 56 questions across 4 dimensions. It's deployed live under The GovLab, has been adopted for course use, and got direct positive feedback from UNESCO. I built it as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard."},
+   answer:"At The GovLab Sruthi designed and built an interactive UNESCO Data Governance self-assessment tool — 56 questions across 4 dimensions. It's deployed live under The GovLab, has been adopted for course use, and got direct positive feedback from UNESCO. She built it as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard."},
   {keywords:['llm','fine-tuning','lora','qlora','gora','benchmark','pytorch'],
-   answer:"I built a config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct with GSM8K. GoRA gave about 15% higher throughput at comparable accuracy — 10,965 to 12,698 tokens per second. QLoRA cut peak GPU memory by 7.3% and gradient checkpointing cut it by about 57%. Nsight Compute profiling traced GoRA's gain to compute utilization rising from 4.2% to 70.3%."},
-  {keywords:['siteiq','hackathon','award','achievement','prize','won'],
-   answer:"I won 3rd place at Anti-Slopathon out of 50+ teams with SiteIQ — a real-estate intelligence agent that produces structured investment verdicts from map-based property search."},
+   answer:"Sruthi built a config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct with GSM8K. GoRA gave about 15% higher throughput at comparable accuracy — 10,965 to 12,698 tokens per second. QLoRA cut peak GPU memory by 7.3% and gradient checkpointing cut it by about 57%. Nsight Compute profiling traced GoRA's gain to compute utilization rising from 4.2% to 70.3%."},
+  {keywords:['siteiq','hackathon','award','achievement','prize'],
+   answer:"Sruthi won 3rd place at Anti-Slopathon out of 50+ teams with SiteIQ — a real-estate intelligence agent that produces structured investment verdicts from map-based property search."},
   {keywords:['computer vision','yolo','drone','crack','multid'],
-   answer:"At MultiD I designed a drone-assisted infrastructure crack detection system using YOLOv8 to automate manual visual inspection. I curated and annotated a 150-image crack dataset and tuned the hyperparameters to improve detection accuracy over the baseline configuration."},
+   answer:"At MultiD Sruthi designed a drone-assisted infrastructure crack detection system using YOLOv8 to automate manual visual inspection. She curated and annotated a 150-image crack dataset and tuned the hyperparameters to improve detection accuracy over the baseline configuration."},
   {keywords:['hcl','tesseract','handwriting','qr','defect'],
-   answer:"At HCL Technologies I was an AI Intern. I built a handwriting-recognition and QR-code detection system using OCR and Tesseract on real-time webcam input, and developed a car-defect detection system benchmarking YOLO against Faster R-CNN — we went with YOLO for faster inference at comparable accuracy."},
+   answer:"At HCL Technologies Sruthi was an AI Intern. She built a handwriting-recognition and QR-code detection system using OCR and Tesseract on real-time webcam input, and developed a car-defect detection system benchmarking YOLO against Faster R-CNN — we went with YOLO for faster inference at comparable accuracy."},
   {keywords:['nus','singapore','hpe','stock','lstm'],
-   answer:"At NUS and Hewlett-Packard Enterprise in Singapore I built a Flask web app that predicts next-day stock movements by combining historical price data with financial news, using LSTM and sentiment analysis."},
+   answer:"At NUS and Hewlett-Packard Enterprise in Singapore Sruthi built a Flask web app that predicts next-day stock movements by combining historical price data with financial news, using LSTM and sentiment analysis."},
   {keywords:['project','projects','built','portfolio'],
-   answer:"My main projects are the LLM fine-tuning efficiency benchmarking framework, SiteIQ (3rd place at Anti-Slopathon), and the UNESCO Data Governance self-assessment tool I built at The GovLab. Ask me about any of them!"},
+   answer:"Sruthi's main projects are the LLM fine-tuning efficiency benchmarking framework, SiteIQ (3rd place at Anti-Slopathon), and the UNESCO Data Governance self-assessment tool she built at The GovLab. Ask about any of them."},
   {keywords:['skill','stack','tech','language','tool','know'],
    answer:"Languages: Python, C++, SQL, JavaScript, HTML/CSS. On the ML side: PyTorch, Hugging Face PEFT, LoRA/QLoRA, distributed training with DDP/FSDP, vision-language models, TensorFlow, YOLO/YOLOv8, Faster R-CNN, OpenCV, Tesseract OCR, scikit-learn, and NLP. Tooling: Pandas, NumPy, Git, Docker, Flask, REST APIs, PostgreSQL, Linux, HPC/SLURM, Nsight Systems, and Bash."},
   {keywords:['education','study','school','university','nyu','vit','degree','gpa'],
-   answer:"I'm doing my M.S. in Computer Engineering at NYU Tandon, graduating December 2026, with a 3.5 GPA. Before that I did my B.Tech in Computer Science & Engineering with a specialization in AI and Robotics at VIT Chennai, where I had an 8.5/10."},
+   answer:"Sruthi is doing her M.S. in Computer Engineering at NYU Tandon, graduating December 2026, with a 3.5 GPA. Before that she did her B.Tech in Computer Science & Engineering with a specialization in AI and Robotics at VIT Chennai, where she had an 8.5/10."},
   {keywords:['hire','hiring','available','open to work','looking','opportunit','recruit'],
-   answer:"Yes! I'm open to ML/AI and software engineering opportunities. The fastest way to reach me is sruthiraghavan2002@gmail.com."},
+   answer:"Sruthi is open to ML/AI and software engineering roles. The best way to reach her is sruthiraghavan2002@gmail.com."},
   {keywords:['contact','email','reach','github','linkedin','resume'],
-   answer:"You can reach me at sruthiraghavan2002@gmail.com, or find me on GitHub at github.com/Sruthi-2002 and LinkedIn at linkedin.com/in/sruthi-raghavan. My resume is on the desktop as Resume.pdf."},
+   answer:"You can reach Sruthi at sruthiraghavan2002@gmail.com, or find her on GitHub at github.com/Sruthi-2002 and LinkedIn at https://www.linkedin.com/in/sruthi-raghavan-340642221/. Her resume is on the desktop as Resume.pdf."},
   {keywords:['intern','internship','experience','worked','job','career'],
-   answer:"I've worked at NYU's Faber Lab (Graduate Research Assistant), The GovLab (Data Program Intern), NYU's CV Starr Center (Graduate Administrative Assistant), HCL Technologies (AI Intern), MultiD (Project Intern on drone-assisted crack detection), and NUS with Hewlett-Packard Enterprise (Data Science Intern). Ask about any of them for details."},
+   answer:"Sruthi has worked at NYU's Faber Lab (Graduate Research Assistant), The GovLab (Data Program Intern), NYU's CV Starr Center (Graduate Administrative Assistant), HCL Technologies (AI Intern), MultiD (Project Intern on drone-assisted crack detection), and NUS with Hewlett-Packard Enterprise (Data Science Intern). Ask about any of them for details."},
   {keywords:['location','where','based','live','city'],
-   answer:"I'm based in Jersey City, NJ, right across from Manhattan — and I study at NYU Tandon in Brooklyn."},
+   answer:"Sruthi is based in Jersey City, NJ, right across from Manhattan — and she studies at NYU Tandon in Brooklyn."},
   {keywords:['who','about','yourself','tell me about','intro','hello','hi','hey'],
-   answer:"I'm Sruthi Raghavan — an ML/AI engineer finishing my M.S. in Computer Engineering at NYU Tandon. I work on vision-language models, LLM fine-tuning, and computer vision. Right now I'm a Graduate Research Assistant at NYU's Faber Lab and a Data Program Intern at The GovLab. Ask me about my research, projects, or experience!"}
+   answer:"Sruthi Raghavan is an ML/AI engineer finishing her M.S. in Computer Engineering at NYU Tandon. She works on vision-language models, LLM fine-tuning, and computer vision. Right now she's a Graduate Research Assistant at NYU's Faber Lab and a Data Program Intern at The GovLab. Ask about her research, projects, or experience."}
 ];
-const FALLBACK="I don't have anything on that. For anything I haven't covered, email Sruthi directly at sruthiraghavan2002@gmail.com!";
+const FALLBACK="I don't have anything on that. For anything I haven't covered, email Sruthi directly at sruthiraghavan2002@gmail.com.";
 // Keywords match at a word start, so short ones like "hi" don't fire inside "this".
 function hasKw(msg,kw){return new RegExp('\\b'+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(msg);}
 function findAnswer(txt){
