@@ -33,12 +33,31 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .si-wel .boot-ring{width:26px;height:26px;}
 .si-wel .boot-ring i::after{width:3px;height:3px;margin-left:-1.5px;}
 #signin.out{opacity:0;pointer-events:none;}
+#lock.now,#signin.now{transition:none;}   /* re-shown over the desktop (Lock, wake from Sleep): no slide-down */
 /* Windows 10 boot spinner: five dots chasing round a ring */
 .boot-ring{position:relative;width:44px;height:44px;}
 .boot-ring i{position:absolute;inset:0;opacity:0;animation:w10spin 5.5s infinite;}
 .boot-ring i::after{content:'';position:absolute;top:0;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#fff;}
 .boot-ring i:nth-child(2){animation-delay:.24s}.boot-ring i:nth-child(3){animation-delay:.48s}.boot-ring i:nth-child(4){animation-delay:.72s}.boot-ring i:nth-child(5){animation-delay:.96s}
 @keyframes w10spin{0%{transform:rotate(225deg);opacity:1;animation-timing-function:ease-out}7%{transform:rotate(345deg);animation-timing-function:linear}30%{transform:rotate(455deg);animation-timing-function:ease-in-out}39%{transform:rotate(690deg);animation-timing-function:linear}70%{transform:rotate(815deg);opacity:1;animation-timing-function:ease-out}75%{transform:rotate(945deg);animation-timing-function:ease-out}76%{transform:rotate(945deg);opacity:0}100%{transform:rotate(945deg);opacity:0}}
+
+/* ══ POWER: Start menu flyout, sleep, restart / shut down screens ══ */
+.sm-pw{position:absolute;left:4px;bottom:52px;z-index:5;width:200px;padding:4px 0;background:#2b2b2b;border:1px solid #3d3d3d;box-shadow:0 4px 16px rgba(0,0,0,.5);display:none;}
+.sm-pw.on{display:block;}
+.pw-i{display:flex;align-items:center;gap:12px;width:100%;height:36px;padding:0 14px;border:0;background:none;color:#fff;font:inherit;font-size:13px;text-align:left;cursor:pointer;}
+.pw-i:hover,.pw-i:focus-visible{background:rgba(255,255,255,.1);outline:none;}
+.pw-i svg{width:16px;height:16px;flex-shrink:0;}
+#pwr{position:fixed;inset:0;z-index:100001;background:#000;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-size:20px;font-weight:300;user-select:none;}
+#pwr.on{display:flex;}
+#pwr-off{display:none;flex-direction:column;align-items:center;gap:28px;}
+#pwr.off .boot-ring,#pwr.off #pwr-msg{display:none;}
+#pwr.off #pwr-off{display:flex;}
+.pw-on{padding:10px 32px;font:inherit;font-size:15px;font-weight:400;color:#fff;background:#0078d7;border:2px solid #0078d7;cursor:pointer;}
+.pw-on:hover{background:#1a86d9;border-color:#1a86d9;}
+.pw-on:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+#sleep{position:fixed;inset:0;z-index:100002;background:#000;opacity:0;transition:opacity .5s ease;cursor:none;display:none;}
+#sleep.on{opacity:1;}
+#sleep.waking{pointer-events:none;}
 
 /* ══ DESKTOP ══ */
 #desktop{position:fixed;inset:0;overflow:hidden;display:none;}
@@ -445,6 +464,7 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   .boot-ring i{animation:none;opacity:1;}
   #lock{transition:opacity .4s ease;}
   #lock.up{transform:none;opacity:0;}
+  #sleep{transition:none;}
   .fly,.fly.on{transition:none;}
   .mp-marq{animation:none;padding-left:0;display:inline;}
   .mp-title{text-overflow:ellipsis;}
@@ -488,6 +508,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 <symbol id="i-tview" viewBox="0 0 16 16"><rect x="4.5" y="3.5" width="7" height="9" fill="none" stroke="currentColor"/><path d="M2 5.5v5M14 5.5v5" stroke="currentColor" stroke-linecap="round"/></symbol>
 <symbol id="i-star" viewBox="0 0 16 16"><path d="M8 1.6l1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.3l-4 2.3 1-4.4-3.4-3 4.5-.5z" fill="#1e88e5"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M13 8H3.5M7.5 4L3.5 8l4 4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-plock" viewBox="0 0 16 16"><rect x="3.5" y="7" width="9" height="7" rx="1" fill="none" stroke="currentColor"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor"/><circle cx="8" cy="10.5" r=".9" fill="currentColor"/></symbol>
+<symbol id="i-sleep" viewBox="0 0 16 16"><path d="M13.2 9.8A5.6 5.6 0 1 1 6.2 2.8a4.5 4.5 0 0 0 7 7z" fill="none" stroke="currentColor" stroke-linejoin="round"/></symbol>
+<symbol id="i-restart" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6" fill="none" stroke="currentColor" stroke-linecap="round"/><path d="M11.9 1.6v3.1H8.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-shut" viewBox="0 0 16 16"><path d="M8 1.5V8M4.9 3.6a5.5 5.5 0 1 0 6.2 0" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></symbol>
 <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.5 3.5h5l1.5 1.5h6.5v8.5h-13z" fill="#e8b830" stroke="#c49a2c" stroke-linejoin="round"/><path d="M1.5 6.5h13v7h-13z" fill="url(#g-folder)"/></symbol>
 <symbol id="i-docs" viewBox="0 0 16 16"><path d="M4 1.5h5.5l3 3v10H4z" fill="none" stroke="currentColor" stroke-linejoin="round"/><path d="M9.5 1.5v3h3M6 8h4.5M6 10.5h4.5" fill="none" stroke="currentColor"/></symbol>
 <symbol id="i-media" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2.5" fill="#0078d7"/><path d="M6 4.5v7L11.5 8z" fill="#fff"/></symbol>
@@ -506,6 +530,13 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 <div id="lock" role="button" tabindex="0" aria-label="Lock screen. Click, press any key, or swipe up to sign in.">
   <div class="lk-clock"><div class="lk-time" id="lk-time">--:--</div><div class="lk-date" id="lk-date"></div></div>
 </div>
+<!-- POWER: restarting / shutting down / safe to close, and the sleep blackout -->
+<div id="pwr" aria-live="polite">
+  <div class="boot-ring" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div id="pwr-msg"></div>
+  <div id="pwr-off"><div>It's now safe to close this tab.</div><button class="pw-on" id="pw-on" type="button" onclick="pwRestart()">Turn on</button></div>
+</div>
+<div id="sleep" aria-hidden="true"></div>
 <!-- DESKTOP -->
 <div id="desktop">
   <img id="wallpaper" src="./download.webp" alt="" onerror="this.style.display='none';document.getElementById('wpfb').style.display='block'">
@@ -842,7 +873,13 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
       <div class="sm-ri sm-user" onclick="openFM('pc')" title="Sruthi Raghavan"><span class="sm-ric"><img src="./photo.jpeg" alt="" class="sm-av" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="sm-av-i">SR</span></span><span class="sm-rl"><span class="sm-n">Sruthi Raghavan</span><span class="sm-s">NYU Tandon · ML/AI Engineer</span></span></div>
       <div class="sm-ri sm-bottom" onclick="openFM('proj')" title="Documents"><span class="sm-ric"><svg><use href="#i-docs"/></svg></span><span class="sm-rl">Documents</span></div>
       <div class="sm-ri" onclick="showWP()" title="Settings"><span class="sm-ric"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="8" cy="8" r="1.8" stroke-width="1.1"/><circle cx="8" cy="8" r="4.6" stroke-width="1.1"/><path stroke-width="1.8" d="M8 3.4V1.6M8 12.6v1.8M3.4 8H1.6M12.6 8h1.8M4.75 4.75 3.47 3.47M11.25 11.25l1.28 1.28M4.75 11.25l-1.28 1.28M11.25 4.75l1.28-1.28"/></svg></span><span class="sm-rl">Settings</span></div>
-      <div class="sm-ri" onclick="trigSS()" title="Power"><span class="sm-ric"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 1.5V8"/><path d="M4.9 3.6a5.5 5.5 0 1 0 6.2 0"/></svg></span><span class="sm-rl">Power</span></div>
+      <div class="sm-ri" onclick="pwMenu()" title="Power" role="button" aria-haspopup="menu" aria-expanded="false"><span class="sm-ric"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M8 1.5V8"/><path d="M4.9 3.6a5.5 5.5 0 1 0 6.2 0"/></svg></span><span class="sm-rl">Power</span></div>
+    </div>
+    <div class="sm-pw" id="sm-pw" role="menu" aria-label="Power options">
+      <button class="pw-i" type="button" role="menuitem" onclick="pwLock()"><svg aria-hidden="true"><use href="#i-plock"/></svg>Lock</button>
+      <button class="pw-i" type="button" role="menuitem" onclick="pwSleep()"><svg aria-hidden="true"><use href="#i-sleep"/></svg>Sleep</button>
+      <button class="pw-i" type="button" role="menuitem" onclick="pwRestart()"><svg aria-hidden="true"><use href="#i-restart"/></svg>Restart</button>
+      <button class="pw-i" type="button" role="menuitem" onclick="pwShutdown()"><svg aria-hidden="true"><use href="#i-shut"/></svg>Shut down</button>
     </div>
     <div class="sm-apps">
       <div class="sm-hd">A</div>
@@ -978,14 +1015,15 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 <script>
 // ══ LOCK SCREEN -> SIGN-IN -> DESKTOP ══
 // Locked until a click, key press or upward swipe, or 2.5 s without one. Slide 400 ms, "Welcome" 1.2 s, fade 400 ms: ~2 s to the desktop.
-let lockState='locked';
+let lockState='locked',resumeMode=false;   // resumeMode: unlocking returns to the desktop as it was (Lock, wake) instead of building it
+const LK=document.getElementById('lock'),SI=document.getElementById('signin');
 function lockClock(){
   const n=new Date(),p=v=>String(v).padStart(2,'0');
   document.getElementById('lk-time').textContent=p(n.getHours())+':'+p(n.getMinutes());
   document.getElementById('lk-date').textContent=n.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 }
 lockClock();
-const lockTimer=setInterval(lockClock,1000);
+let lockTimer=setInterval(lockClock,1000);
 // Auto-advance 2.5 s after the lock screen is first on screen (not from script start: the full-screen wallpaper can delay that first paint).
 let lockAuto=0;
 function lockArm(){if(lockState==='locked'&&!lockAuto)lockAuto=setTimeout(unlockScreen,2500);}
@@ -1003,15 +1041,16 @@ function unlockScreen(){
     document.getElementById('signin').classList.add('go');   // spinner + "Welcome"
     const shown=performance.now();
     // let the spinner paint, build the desktop underneath it, then fade once "Welcome" has shown for 1.2 s
-    requestAnimationFrame(()=>setTimeout(()=>{enterDesktop();setTimeout(revealDesktop,Math.max(0,1200-(performance.now()-shown)));},0));
+    requestAnimationFrame(()=>setTimeout(()=>{if(!resumeMode)enterDesktop();setTimeout(revealDesktop,Math.max(0,1200-(performance.now()-shown)));},0));
   };
   lk.addEventListener('transitionend',e=>{if(e.target===lk)next();});
   setTimeout(next,1000);
   lk.classList.add('up');   // slides up over 400 ms (reduced motion: fades)
+  if(lk.classList.contains('now'))next();   // re-shown with reduced motion: no transition to wait for
 }
 function enterDesktop(){   // runs hidden under the sign-in screen
   document.getElementById('desktop').style.display='block';
-  tick();setInterval(tick,60000);
+  tick();clearInterval(clockTimer);clockTimer=setInterval(tick,60000);
   setTimeout(showBal,4000);
   resetSS();
   openW('pc');   // greet visitors with This PC, centred in the viewport (kept clear of the taskbar) and focused
@@ -1019,9 +1058,26 @@ function enterDesktop(){   // runs hidden under the sign-in screen
   pc.style.left=Math.max(0,Math.round((innerWidth-pc.offsetWidth)/2))+'px';
   pc.style.top=Math.max(0,Math.min(Math.round((innerHeight-pc.offsetHeight)/2),innerHeight-TBH-pc.offsetHeight))+'px';
 }
+let clockTimer=0;
 function revealDesktop(){
-  const si=document.getElementById('signin');si.classList.add('out');
-  setTimeout(()=>{si.remove();lockState='done';},400);
+  const si=SI;si.classList.add('out');
+  setTimeout(()=>{si.remove();LK.classList.remove('now');si.classList.remove('now');lockState='done';
+    if(resumeMode){resumeMode=false;resetSS(true);}},si.classList.contains('now')?0:400);
+}
+// Show the lock screen again over the desktop (Lock, wake from Sleep). Windows stay exactly as they are underneath.
+// 'lock' waits for a click or key; 'wake' also moves on by itself after 2.5 s, like first load; 'boot' builds a fresh desktop after sign-in.
+function relock(mode){
+  closeSM();closeFly();closeCtx();clearTimeout(ssT);
+  const rm=matchMedia('(prefers-reduced-motion: reduce)').matches,desk=document.getElementById('desktop');
+  resumeMode=mode!=='boot';
+  LK.classList.add('now');SI.classList.add('now');LK.classList.remove('up');SI.classList.remove('go','out');
+  document.body.insertBefore(SI,desk);document.body.insertBefore(LK,desk);
+  LK.offsetWidth;   // commit the reset state before transitions come back
+  if(!rm){LK.classList.remove('now');SI.classList.remove('now');}
+  lockState='locked';lockClock();clearInterval(lockTimer);lockTimer=setInterval(lockClock,1000);
+  clearTimeout(lockAuto);lockAuto=mode==='lock'?-1:0;   // -1: never auto-advance a deliberate Lock
+  if(mode!=='lock')lockArm();
+  LK.focus({preventScroll:true});
 }
 (function(){
   const lk=document.getElementById('lock');let y0=null;
@@ -1245,6 +1301,7 @@ window.addEventListener('resize',()=>{
 // Arrow keys are deliberately untouched (Snake owns them).
 document.addEventListener('keydown',e=>{
   if(e.target&&e.target.closest&&e.target.closest('input,textarea'))return;
+  if(e.key==='Escape'&&document.getElementById('sm-pw').classList.contains('on')){pwMenu(false);e.preventDefault();return;}
   if(e.key==='Escape'&&flyOpen){closeFly();e.preventDefault();return;}
   // Escape minimizes: closing is destructive and Windows never bound Escape to close.
   if(e.key==='Escape'&&curWin){minW(curWin);e.preventDefault();}
@@ -1305,8 +1362,8 @@ function showDesktop(){
 }
 
 // ══ START MENU ══
-function toggleSM(){const m=document.getElementById('smenu');m.style.display=m.style.display==='flex'?'none':'flex';}
-function closeSM(){document.getElementById('smenu').style.display='none';}
+function toggleSM(){const m=document.getElementById('smenu');m.style.display=m.style.display==='flex'?'none':'flex';if(m.style.display==='none')pwMenu(false);}
+function closeSM(){document.getElementById('smenu').style.display='none';pwMenu(false);}
 document.addEventListener('click',e=>{
   if(!e.target.closest('#smenu')&&!e.target.closest('#sb'))closeSM();
   if(!e.target.closest('#ctx'))closeCtx();
@@ -1356,6 +1413,63 @@ function mailURL(){   // RFC 6068: subject/body percent-encoded, line breaks as 
 }
 function mailSend(){const a=document.createElement('a');a.href=mailURL();a.hidden=true;document.body.appendChild(a);a.click();a.remove();}
 function showBal(){const b=document.getElementById('bal');b.style.display='block';setTimeout(()=>b.style.display='none',7000);}
+
+// ══ POWER OPTIONS (Start > Power) ══
+// No Alt+F4 / Win+L bindings: the browser and OS take both, and Alt+F4 would close the visitor's real tab.
+function pwMenu(open){
+  const m=document.getElementById('sm-pw'),b=document.querySelector('.sm-ri[title="Power"]');
+  if(open===undefined)open=!m.classList.contains('on');
+  m.classList.toggle('on',open);b.setAttribute('aria-expanded',String(open));
+}
+document.getElementById('smenu').addEventListener('click',e=>{if(!e.target.closest('.sm-pw,.sm-ri[title="Power"]'))pwMenu(false);});
+const pwRM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+function pwLock(){if(lockState!=='done')return;pauseSnake();relock('lock');}
+// Sleep: black over 500 ms, cursor hidden; any mouse move, click or key wakes into the lock screen.
+let sleepArmed=false,sleepXY=null,lastXY=null;
+document.addEventListener('mousemove',e=>{   // remembers the pointer, and wakes from Sleep on a real move (not a synthetic 0px one)
+  if(lockState==='asleep'&&sleepArmed&&(!sleepXY||Math.hypot(e.clientX-sleepXY[0],e.clientY-sleepXY[1])>3))pwWake();
+  lastXY=[e.clientX,e.clientY];
+},{capture:true,passive:true});
+function pwSleep(){
+  if(lockState!=='done')return;
+  closeSM();closeFly();closeCtx();
+  lockState='asleep';clearTimeout(ssT);mpPause();pauseSnake();
+  const s=document.getElementById('sleep');s.classList.remove('waking');s.style.display='block';s.offsetWidth;s.classList.add('on');
+  setTimeout(()=>{sleepArmed=true;sleepXY=lastXY;},pwRM()?0:500);   // wake-able once dark
+}
+function pwWake(){
+  if(lockState!=='asleep'||!sleepArmed)return;sleepArmed=false;
+  relock('wake');   // the lock screen comes up under the black, which then fades away
+  const s=document.getElementById('sleep');s.classList.add('waking');s.classList.remove('on');
+  setTimeout(()=>{s.style.display='none';s.classList.remove('waking');},pwRM()?0:500);
+}
+document.addEventListener('pointerdown',e=>{if(lockState==='asleep'){e.preventDefault();pwWake();}},true);
+document.addEventListener('keydown',e=>{
+  if(lockState==='asleep'){e.preventDefault();e.stopImmediatePropagation();pwWake();}
+  else if(lockState==='off'&&e.target.id!=='pw-on'){e.preventDefault();e.stopImmediatePropagation();const b=document.getElementById('pw-on');if(b.offsetParent)b.focus();}
+},true);
+// Restart / Shut down: everything closed and stopped first.
+function pwTeardown(){
+  closeSM();closeFly();closeCtx();closeWP();
+  WS.forEach(closeW);mpStop();stopSnake();if(ssOn)dismissSS();
+  clearTimeout(ssT);clearInterval(clockTimer);clearInterval(lockTimer);clearTimeout(lockAuto);clearInterval(curBlink);
+  document.getElementById('bal').style.display='none';lockState='off';
+}
+function pwScreen(msg){const p=document.getElementById('pwr');p.classList.remove('off');document.getElementById('pwr-msg').textContent=msg;p.classList.add('on');}
+function pwRestart(){
+  pwTeardown();pwScreen('Restarting');
+  setTimeout(()=>{
+    // A reload is a true fresh start: the lock screen sequence exactly as on first load. Offline, a reload could strand
+    // the visitor on a browser error page, so boot again in place instead.
+    if(navigator.onLine===false&&/^https?:/.test(location.protocol)){
+      document.getElementById('desktop').style.display='none';document.getElementById('pwr').classList.remove('on');relock('boot');
+    }else location.reload();
+  },2000);
+}
+function pwShutdown(){
+  pwTeardown();pwScreen('Shutting down');
+  setTimeout(()=>{document.getElementById('pwr').classList.add('off');document.getElementById('pw-on').focus();},1500);
+}
 
 // ══ SCREENSAVER ══
 const SSIDLE=90000,RM=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -1473,7 +1587,7 @@ document.addEventListener('mousemove',()=>{ssOn?dismissSS():resetSS();});
 document.addEventListener('keydown',e=>{if(ssOn){dismissSS();return;}if(!(e.target.closest&&e.target.closest('input,textarea')))resetSS();});   // typing is not idle-reset input
 
 // ══ CURSOR ══
-let bo=true;setInterval(()=>{const c=document.getElementById('cur');if(c){c.style.opacity=bo?'1':'0';bo=!bo;}},500);
+let bo=true;const curBlink=setInterval(()=>{const c=document.getElementById('cur');if(c){c.style.opacity=bo?'1':'0';bo=!bo;}},500);
 
 // ══ MEDIA PLAYER ══
 // Three short loops written for this site, synthesised live with Web Audio: no files, no URLs.
@@ -1644,8 +1758,10 @@ function startSnake(){
   const st=[{x:10,y:10}];
   sg={sn:st,dir:{x:1,y:0},food:rf(st),sc:0};
   document.getElementById('sn-sc').textContent=0;
-  const ctx=document.getElementById('snc').getContext('2d');
-  si=setInterval(()=>{
+  snPaused=false;si=setInterval(snStep,110);
+}
+function snStep(){
+    const ctx=document.getElementById('snc').getContext('2d');
     const{sn,dir,food}=sg;
     const hd={x:sn[0].x+dir.x,y:sn[0].y+dir.y};
     if(hd.x<0||hd.x>=COLS||hd.y<0||hd.y>=ROWS||sn.some(s=>s.x===hd.x&&s.y===hd.y)){
@@ -1660,17 +1776,25 @@ function startSnake(){
     ctx.fillStyle='#111';ctx.fillRect(0,0,240,240);
     ctx.fillStyle='#f00';ctx.fillRect(sg.food.x*CELL,sg.food.y*CELL,CELL-1,CELL-1);
     sn.forEach((s,i)=>{ctx.fillStyle=i===0?'#0f0':'#1a7a1a';ctx.fillRect(s.x*CELL,s.y*CELL,CELL-1,CELL-1);});
-  },110);
 }
+let snPaused=false;
+function pauseSnake(){   // freeze a running game in place (Lock, Sleep); an arrow key or the on-screen pad resumes it
+  if(!si)return;clearInterval(si);si=null;snPaused=true;
+  const x=document.getElementById('snc').getContext('2d');
+  x.fillStyle='rgba(0,0,0,.75)';x.fillRect(0,85,240,70);x.fillStyle='#0f0';x.textAlign='center';
+  x.font='bold 14px monospace';x.fillText('Paused',120,115);x.font='11px monospace';x.fillText('Press an arrow key to resume',120,135);
+}
+function snResume(){if(!sg||!snPaused)return;snPaused=false;si=setInterval(snStep,110);}
 document.addEventListener('keydown',e=>{
+  if(snPaused&&/^Arrow/.test(e.key)&&!(e.target.closest&&e.target.closest('input,textarea')))snResume();
   if(!sg||!si||(e.target.closest&&e.target.closest('input,textarea')))return;const d=sg.dir;
   if(e.key==='ArrowUp'&&d.y!==1){sg.dir={x:0,y:-1};e.preventDefault();}
   if(e.key==='ArrowDown'&&d.y!==-1){sg.dir={x:0,y:1};e.preventDefault();}
   if(e.key==='ArrowLeft'&&d.x!==1){sg.dir={x:-1,y:0};e.preventDefault();}
   if(e.key==='ArrowRight'&&d.x!==-1){sg.dir={x:1,y:0};e.preventDefault();}
 });
-function sDir(x,y){if(!sg)return;const d=sg.dir;if(x!==0&&d.x===0)sg.dir={x:x,y:0};if(y!==0&&d.y===0)sg.dir={x:0,y:y};}
-function stopSnake(){if(si){clearInterval(si);si=null;}sg=null;initSnake();document.getElementById('sn-sc').textContent=0;}
+function sDir(x,y){if(!sg)return;if(snPaused)snResume();const d=sg.dir;if(x!==0&&d.x===0)sg.dir={x:x,y:0};if(y!==0&&d.y===0)sg.dir={x:0,y:y};}
+function stopSnake(){snPaused=false;if(si){clearInterval(si);si=null;}sg=null;initSnake();document.getElementById('sn-sc').textContent=0;}
 function rf(sn){let f;do{f={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};}while(sn.some(s=>s.x===f.x&&s.y===f.y));return f;}
 
 // ══ SRUTHIGPT ══
