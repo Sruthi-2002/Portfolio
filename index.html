@@ -9,9 +9,20 @@
 <meta property="og:title" content="SruthiOS — Sruthi Raghavan">
 <meta property="og:description" content="ML/AI engineer. M.S. Computer Engineering @ NYU Tandon.">
 <meta property="og:type" content="website">
+<link rel="canonical" href="https://sruthi-2002.github.io/Portfolio/">
+<meta property="og:url" content="https://sruthi-2002.github.io/Portfolio/">
+<meta property="og:image" content="https://sruthi-2002.github.io/Portfolio/photo.jpeg">
+<meta property="og:image:alt" content="Sruthi Raghavan">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0078d7">
+<!-- Without JavaScript: hide the OS layers (the lock screen would otherwise cover everything) and show the plain page below -->
+<noscript><style>
+#lock,#signin,#desktop,#pwr,#sleep{display:none!important;}
+body{overflow:auto!important;background:#fff!important;}
+</style></noscript>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;width:100vw;height:100vh;background:#000;}
+body{font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;width:100vw;height:100vh;background:#000;}
 
 /* ══ LOCK SCREEN -> SIGN-IN -> DESKTOP (replaces the boot screen) ══ */
 #lock,#signin{position:fixed;inset:0;background:#0b1a33 url(./download.webp) center/cover no-repeat;color:#fff;user-select:none;overflow:hidden;}
@@ -59,13 +70,84 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 #sleep.on{opacity:1;}
 #sleep.waking{pointer-events:none;}
 
+/* ══ TASK MANAGER ══ */
+.tm-tabs{display:flex;gap:2px;padding:0 8px;background:#fff;border-bottom:1px solid #d9d9d9;flex-shrink:0;}
+.tm-tabs [role=tab]{height:26px;padding:0 12px;border:0;border-bottom:2px solid transparent;background:none;font:inherit;font-size:12px;color:#000;cursor:pointer;}
+.tm-tabs [role=tab]:hover{background:#e5f3ff;}
+.tm-tabs [role=tab][aria-selected=true]{border-bottom-color:#0078d7;}
+.tm-body{height:400px;flex-direction:column;}
+.tm-pane{flex:1;display:flex;flex-direction:column;min-height:0;}
+.tm-pane[hidden]{display:none;}
+.tm-banner{flex-shrink:0;padding:6px 12px;background:#fff4ce;border-bottom:1px solid #f0d78a;color:#1a1a1a;font-size:12px;}
+.tm-perf{flex:1;display:flex;min-height:0;}
+.tm-list{width:200px;flex-shrink:0;padding:6px 0;border-right:1px solid #e5e5e5;overflow-y:auto;}
+.tm-it{display:flex;align-items:center;gap:8px;width:100%;padding:6px 10px;border:1px solid transparent;background:none;font:inherit;text-align:left;cursor:pointer;color:#000;}
+.tm-it:hover{background:#e5f3ff;}
+.tm-it[aria-selected=true]{background:#cce8ff;border-color:#99d1ff;}
+.tm-it svg{width:56px;height:26px;flex-shrink:0;border:1px solid #9fc7ea;background:#fff;}
+.tm-it b{display:block;font-size:12px;font-weight:400;}
+.tm-it span{display:block;font-size:11px;color:#555;}
+.tm-main{flex:1;min-width:0;padding:10px 14px;overflow-y:auto;}
+.tm-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px;}
+.tm-name{font-size:20px;font-weight:300;color:#000;}
+.tm-sub{font-size:12px;color:#555;}
+.tm-graphrow{display:flex;gap:14px;align-items:stretch;}
+.tm-graph{flex:1;min-width:0;height:180px;border:1px solid #0078d7;background:#fff;}
+.tm-vals{width:150px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;gap:10px;}
+.tm-v small{display:block;font-size:11px;color:#555;}
+.tm-v b{display:block;font-size:24px;font-weight:300;color:#000;line-height:1.15;}
+.tm-v em{display:block;font-style:normal;font-size:11px;color:#0063b1;}
+.tm-axis{display:flex;justify-content:space-between;margin:2px 165px 0 0;font-size:11px;color:#555;}
+.tm-vtab{margin-top:10px;border-collapse:collapse;font-size:11px;color:#000;}
+.tm-vtab caption{text-align:left;font-size:11px;color:#555;padding-bottom:3px;caption-side:top;}
+.tm-vtab th,.tm-vtab td{padding:3px 12px 3px 0;text-align:left;border-bottom:1px solid #e5e5e5;font-weight:400;}
+.tm-vtab thead th{color:#555;}
+.tm-replay{margin-top:10px;height:26px;padding:0 16px;border:1px solid #adadad;background:#e1e1e1;font:inherit;font-size:12px;color:#000;cursor:pointer;}
+.tm-replay:hover{border-color:#0078d7;background:#e5f1fb;}
+.tm-ptab{width:100%;border-collapse:collapse;font-size:12px;}
+.tm-ptab th{padding:6px 10px;text-align:left;font-weight:400;color:#555;border-bottom:1px solid #e5e5e5;border-right:1px solid #e5e5e5;}
+.tm-ptab td{padding:6px 10px;border-bottom:1px solid #f0f0f0;vertical-align:top;}
+.tm-ptab td small{display:block;color:#555;font-size:11px;}
+.tm-ptab tbody tr:hover{background:#e5f3ff;}
+.tm-link{display:inline-block;margin:0 0 6px;padding:0;border:0;background:none;font:inherit;font-size:11px;color:#0066cc;cursor:pointer;}
+.tm-link:hover{text-decoration:underline;}
+#tbctx{position:absolute;z-index:600;min-width:200px;padding:4px 0;background:#2b2b2b;border:1px solid #3d3d3d;box-shadow:0 4px 16px rgba(0,0,0,.5);display:none;}
+#tbctx.on{display:block;}
+.tbc-i{display:flex;align-items:center;gap:12px;width:100%;height:32px;padding:0 14px;border:0;background:none;color:#fff;font:inherit;font-size:12px;text-align:left;cursor:pointer;}
+.tbc-i:hover,.tbc-i:focus-visible{background:rgba(255,255,255,.1);outline:none;}
+.tbc-i svg{width:16px;height:16px;}
+
+/* ══ STICKY NOTE (z-index 15: above the icons, below every window at 20+) ══ */
+#sticky{position:absolute;top:14px;right:14px;z-index:15;width:240px;background:#fff7d1;color:#1a1a1a;font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+#sticky[hidden]{display:none;}
+.st-bar{display:flex;align-items:center;gap:10px;height:28px;padding:0 4px 0 10px;background:#fff2ab;cursor:move;user-select:none;touch-action:none;}
+.st-sp{flex:1;}
+.st-g{width:10px;height:10px;color:#5c5c5c;display:block;}
+.st-x{display:flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer;color:#5c5c5c;}
+.st-x:hover{background:rgba(0,0,0,.08);}
+.st-x .st-g{color:inherit;}
+.st-body{padding:10px 12px 12px;line-height:1.45;}
+.st-body b{font-weight:600;}
+.st-body a{color:#1a1a1a;}
+
+/* ══ KEYBOARD FOCUS ══ */
+button.wb{padding:0;font:inherit;font-size:0;}
+:focus-visible{outline:2px solid #0078d7;outline-offset:1px;}
+#tb :focus-visible,#smenu :focus-visible,.fly :focus-visible,#srch :focus-visible,#tbctx :focus-visible,#lock:focus-visible,#pwr :focus-visible{outline:2px solid #fff;outline-offset:-2px;}
+.wb:focus-visible{outline:1px solid currentColor;outline-offset:-5px;}
+.win:focus-visible{outline:1px solid #0078d7;outline-offset:0;}
+.icon-grid .icon:focus-visible{outline:1px dotted #fff;outline-offset:-2px;}   /* beats .icon.sel / .icon:hover, which come later */
+.smi:focus-visible{background:rgba(255,255,255,.1);}
+.tile:focus-visible{outline-color:#fff;}
+.x-ni:focus-visible,.tm-it:focus-visible,.tm-tabs [role=tab]:focus-visible{outline:2px solid #0078d7;outline-offset:-2px;}
+
 /* ══ DESKTOP ══ */
 #desktop{position:fixed;inset:0;overflow:hidden;display:none;}
 #wallpaper{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
 #wpfb{position:absolute;inset:0;z-index:0;display:none;}
 
 /* ══ ICONS ══ */
-.icon-grid{position:absolute;top:14px;left:14px;display:grid;grid-template-columns:repeat(2,80px);grid-template-rows:repeat(5,88px);grid-auto-flow:column;gap:6px;z-index:10;}
+.icon-grid{position:absolute;top:14px;left:14px;display:grid;grid-auto-columns:80px;grid-template-rows:repeat(var(--rows,5),88px);grid-auto-flow:column;gap:6px;z-index:10;}
 .icon{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:4px 2px 0;border-radius:0;cursor:pointer;width:80px;height:88px;}
 .icon:hover{background:rgba(0,120,215,.15);outline:1px solid rgba(0,120,215,.5);outline-offset:-1px;}
 .icon.sel{background:rgba(0,120,215,.3);outline:1px solid #0078d7;outline-offset:-1px;}
@@ -75,22 +157,23 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .ico-mon-s{position:absolute;top:2px;left:2px;right:2px;bottom:4px;background:linear-gradient(135deg,#4a9eed,#2176c7);}
 .ico-stand{width:10px;height:5px;background:#999;margin:0 auto;}
 .ico-f{width:38px;height:32px;position:relative;}
-.ico-f .ft{width:16px;height:7px;border-radius:3px 3px 0 0;position:absolute;top:0;left:0;background:#f5c842;}
-.ico-f .fb{width:38px;height:26px;border-radius:1px 3px 3px 3px;position:absolute;top:6px;left:0;background:linear-gradient(to bottom,#fde76e,#e8b830);}
+.ico-f::before{content:'';position:absolute;z-index:0;left:0;top:4px;width:38px;height:28px;background:#e8a933;}   /* back panel */
+.ico-f .ft{position:absolute;z-index:0;left:0;top:0;width:15px;height:5px;background:#e8a933;}                   /* tab */
+.ico-f::after{content:'';position:absolute;z-index:1;left:3px;right:3px;top:8px;height:12px;background:#fff;}     /* paper, 3px above the front */
+.ico-f .fb{position:absolute;z-index:2;left:0;top:11px;width:38px;height:21px;background:#ffc83d;}               /* front flap */
 .ico-pdf{width:30px;height:36px;background:#fff;border:1px solid #ccc;position:relative;}
 .ico-pdf::after{content:'';position:absolute;top:0;right:0;border-left:8px solid #ddd;border-top:8px solid transparent;}
 .ico-pdf-b{position:absolute;bottom:4px;left:0;right:0;height:10px;background:#c00;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;font-weight:700;}
-.ico-t{width:36px;height:28px;background:#1a1a1a;border:1px solid #555;border-radius:2px;padding:3px;}
-.ico-t-x{font-size:7px;color:#0f0;font-family:monospace;line-height:1.4;}
-.ico-m{width:34px;height:26px;background:#fff;border:2px solid #4a9eed;position:relative;overflow:hidden;}
-.ico-m::before{content:'';position:absolute;top:0;left:0;right:0;height:13px;background:linear-gradient(135deg,#4a9eed 50%,transparent 50%);}
-.ico-m::after{content:'';position:absolute;top:0;right:0;height:13px;width:50%;background:linear-gradient(225deg,#4a9eed 50%,transparent 50%);}
+.ico-t{width:36px;height:28px;background:#000;border-top:4px solid #c0c0c0;padding:3px;}
+.ico-t-x{font-size:7px;color:#fff;font-family:Consolas,'Courier New',monospace;line-height:1.4;}
+.ico-m{width:34px;height:24px;border:1px solid #0078d7;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 22' preserveAspectRatio='none'%3E%3Cpath d='M0 0L16 11L32 0' fill='none' stroke='%230078d7' stroke-width='1'/%3E%3C/svg%3E") center/100% 100% no-repeat;}
 .ic{width:16px;height:16px;flex-shrink:0;display:inline-block;vertical-align:-3px;}
 .ic-d{width:40px;height:40px;display:block;}
 .ic-l{width:48px;height:48px;display:block;}
 
 /* ══ WINDOWS ══ */
-.win{position:absolute;background:#fff;border:1px solid #d0d0d0;box-shadow:0 8px 24px rgba(0,0,0,.22);display:none;flex-direction:column;z-index:20;animation:wo .15s ease;max-height:calc(100vh - 50px);}
+.win{position:absolute;background:#fff;border:1px solid #d0d0d0;box-shadow:0 8px 24px rgba(0,0,0,.22);display:none;flex-direction:column;z-index:20;animation:wo .15s ease;max-width:calc(100vw - 16px);max-height:calc(100vh - 48px - 16px);}
+.win.max,.win.snapped{max-width:none;max-height:none;}   /* these fill their area exactly */
 .win.open{display:flex;}
 @keyframes wo{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
 /* !important: Skills, Assistant and Snake carry inline titlebar gradients */
@@ -98,15 +181,10 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .win-title{font-size:12px;color:#000;font-weight:400;display:flex;align-items:center;gap:8px;line-height:16px;}
 .win-btns{display:flex;gap:0;}
 /* Caption buttons: the text glyphs stay in the DOM, drawn instead as 1px lines */
-.wb{position:relative;width:46px;height:32px;background:transparent;border:0;font-size:0;color:#000;cursor:pointer;flex-shrink:0;}
-.wb::before,.wb::after{content:'';position:absolute;left:50%;top:50%;}
-.win-btns .wb:nth-child(1)::before{width:10px;height:1px;background:currentColor;transform:translate(-50%,-50%);}
-.win-btns .wb:nth-child(2)::before{width:10px;height:10px;border:1px solid currentColor;transform:translate(-50%,-50%);}
-.win.max .win-btns .wb:nth-child(2)::before{width:8px;height:8px;transform:translate(calc(-50% - 1px),calc(-50% + 1px));}
-.win.max .win-btns .wb:nth-child(2)::after{width:8px;height:8px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:translate(calc(-50% + 1px),calc(-50% - 1px));}
-.wb.x::before,.wb.x::after{width:14px;height:1px;background:currentColor;}
-.wb.x::before{transform:translate(-50%,-50%) rotate(45deg);}
-.wb.x::after{transform:translate(-50%,-50%) rotate(-45deg);}
+.wb{position:relative;width:46px;height:32px;background:transparent;border:0;font-size:0;color:#000;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.wg{width:10px;height:10px;display:block;}
+.wb .w-res,.win.max .wb .w-max{display:none;}
+.win.max .wb .w-res{display:block;}
 .wb:hover{background:#e5e5e5;}
 .wb.x:hover,.win.blur .wb.x:hover{background:#e81123;color:#fff;}
 .win-menu{background:#fff;padding:0 4px;display:flex;gap:0;border-bottom:1px solid #e5e5e5;font-size:12px;color:#000;flex-shrink:0;}
@@ -114,7 +192,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .win-menu span:hover{background:#e5e5e5;color:#000;}
 .win-addr{background:#fff;padding:4px 8px;display:flex;align-items:center;gap:6px;border-bottom:1px solid #e5e5e5;font-size:12px;flex-shrink:0;}
 .addr-f{flex:1;background:#fff;border:1px solid #ccc;border-radius:0;padding:2px 8px;font-size:12px;color:#000;}
-.win-body{background:#fff;display:flex;overflow:hidden;}
+.win-body{background:#fff;display:flex;overflow:auto;min-height:0;flex-shrink:1;}
 /* This PC as Windows 10 File Explorer: ribbon tabs, nav arrows + breadcrumb, navigation pane, status bar */
 .x-rib{display:flex;height:24px;background:#fff;border-bottom:1px solid #e5e5e5;font-size:12px;flex-shrink:0;}
 .x-tab{display:flex;align-items:center;padding:0 12px;color:#000;cursor:default;border:1px solid transparent;border-bottom:0;}
@@ -161,8 +239,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .sr-n{font-family:Consolas,'Courier New',monospace;color:#222;}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
 .prog{display:flex;align-items:center;gap:5px;padding:3px;border-radius:1px;}
-.prog:hover{background:#316ac5;}
-.prog:hover .pn{color:#fff;}
+.prog:hover{background:#cce8ff;}
+.prog:hover .pn{color:#000;}
 .pb{width:18px;height:18px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;flex-shrink:0;}
 .pn{font-size:11px;color:#333;}
 .pcard{border:1px solid #ddd;padding:9px;margin-bottom:8px;}
@@ -181,6 +259,17 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .edate{font-size:10px;color:#888;margin:2px 0 4px;}
 .ebul{font-size:11px;color:#444;line-height:1.55;margin-left:14px;}
 .ebul li{margin-bottom:3px;}
+.elink{display:inline-block;margin:2px 0 0 14px;font-size:11px;color:#0066cc;text-decoration:none;}
+.elink:hover{text-decoration:underline;}
+.elink+.elink{display:block;margin-top:0;}   /* a second link sits below the first */
+.pname a{color:inherit;text-decoration:none;}
+.pname a:hover{text-decoration:underline;}
+.pbtn{display:inline-flex;align-items:center;height:28px;margin:2px 0 8px;padding:0 16px;font-size:12px;font-weight:600;color:#fff;background:#0078d7;border:1px solid #0078d7;text-decoration:none;}
+.pbtn:hover{background:#1a86d9;border-color:#1a86d9;}
+.pbtn:active{background:#005a9e;border-color:#005a9e;}
+.pbtn:focus-visible{outline:2px solid #000;outline-offset:2px;}
+.sr a{color:#0066cc;text-decoration:none;}
+.sr a:hover{text-decoration:underline;}
 .term-body{background:#0c0c0c;padding:14px;font-family:'Courier New',monospace;font-size:11px;color:#0f0;line-height:1.7;overflow-y:auto;}
 /* Mail: Windows 10 Mail composing a new message */
 .mc-body{height:300px;}
@@ -238,7 +327,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .chip{font-size:10px;padding:3px 8px;background:#fff;border:1px solid #b0b8d0;border-radius:10px;cursor:pointer;color:#333;}
 .chip:hover{background:#e8f0fe;border-color:#4a9eed;color:#1a4ab5;}
 .sg-inp{display:flex;border-top:1px solid #e5e5e5;background:#f0f0f0;padding:5px 6px;gap:4px;align-items:flex-end;flex-shrink:0;}
-.sinput{flex:1;border:1px solid #ccc;border-radius:0;background:#fff;padding:5px 7px;font-size:11px;font-family:'Segoe UI',Tahoma,sans-serif;resize:none;outline:none;max-height:60px;}
+.sinput{flex:1;border:1px solid #ccc;border-radius:0;background:#fff;padding:5px 7px;font-size:11px;font-family:'Segoe UI',system-ui,sans-serif;resize:none;outline:none;max-height:60px;}
 .sinput:focus{border-color:#0078d7;}
 .s-send{background:#0078d7;border:1px solid #0078d7;color:#fff;font-size:11px;padding:5px 9px;cursor:pointer;height:28px;font-family:inherit;}
 .s-send:hover:not(:disabled){background:#006cc1;border-color:#006cc1;}
@@ -292,7 +381,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .tb-vol svg{width:16px;height:16px;}
 
 /* ══ SNAKE ══ */
-.sn-wrap{background:#111;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px;}
+.sn-wrap{background:#111;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px;overflow:auto;min-height:0;}   /* scrolls if the window is capped */
 .sn-hud{font-size:11px;color:#0f0;font-family:monospace;display:flex;gap:18px;}
 #snc{border:2px solid #333;background:#111;}
 .sn-dpad{display:flex;flex-direction:column;align-items:center;gap:2px;}
@@ -339,6 +428,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 .tile.num{background:#0078d7;justify-content:space-between;}
 .tile.num.d1{background:#005a9e;}
 .tile.num.d2{background:#004578;}
+.tile.wide{grid-column:span 2;color:#fff;text-decoration:none;}
 .tn{font-size:26px;font-weight:300;line-height:1.1;}
 .tc{font-size:11px;line-height:1.3;}
 .tile .tic{width:32px;height:32px;margin:auto;}
@@ -380,6 +470,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 /* inline #888 on the toast subtitle is too faint against #2b2b2b */
 #bal span[style]{color:#bbb!important;}
 .bal-x{position:absolute;top:6px;right:8px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:#ccc;font-weight:400;}
+.tcur{display:inline-block;width:.6em;height:1.1em;vertical-align:-.2em;background:currentColor;}
+.kg{width:10px;height:10px;margin-right:4px;flex-shrink:0;}
+.sn-dpad .kg{margin:0;}
 .bal-x:hover{background:rgba(255,255,255,.1);color:#fff;}
 .bal-row{display:flex;gap:10px;align-items:flex-start;}
 .bal-row .ic{margin-top:2px;}
@@ -396,10 +489,36 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;overflow:hidden;wid
 #sb:hover{background:rgba(255,255,255,.1);}
 .slogo{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;width:16px;height:16px;}
 /* !important: the four logo panes carry inline XP colours */
-.slogo div{background:#fff!important;border-radius:0;}
+.slogo>span{background:#fff;border-radius:0;}
 /* visually hidden, still announced by screen readers */
 .slbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 .tb-search{display:flex;align-items:center;gap:8px;width:200px;height:34px;padding:0 10px;margin-left:4px;background:rgba(255,255,255,.08);color:#bbb;font-size:11px;flex-shrink:0;cursor:default;user-select:none;}
+.tb-search input{flex:1;min-width:0;height:100%;padding:0;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:11px;}
+.tb-search input::placeholder{color:#bbb;opacity:1;}
+.tb-search{cursor:text;}
+.tb-search:focus-within{background:rgba(255,255,255,.16);box-shadow:inset 0 -2px 0 #0078d7;}
+#srch{position:absolute;bottom:48px;left:55px;width:min(480px,100vw);height:min(520px,calc(100vh - 48px));background:rgba(32,36,42,.97);color:#fff;border-radius:0;box-shadow:0 0 18px rgba(0,0,0,.45);z-index:500;display:none;overflow-y:auto;font-size:12px;}
+#srch.on{display:block;}
+#srch-list{padding:8px 0 12px;}
+.s-h{padding:12px 16px 6px;font-size:12px;font-weight:600;color:#fff;}
+.s-r{display:block;padding:7px 16px;cursor:pointer;}
+.s-r:hover,.s-r.act{background:rgba(255,255,255,.12);}
+.s-r.act{box-shadow:inset 2px 0 0 #0078d7;}
+.s-t{font-size:13px;color:#fff;line-height:1.35;}
+.s-best .s-t{font-size:15px;}
+.s-s{margin-top:1px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.s-r mark{background:none;color:#fff;font-weight:700;}
+.s-s mark{color:#ddd;}
+.s-sug{display:inline-block;margin:4px 0 0 16px;padding:6px 12px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;}
+.s-sug:hover,.s-sug.act{background:rgba(255,255,255,.2);}
+.s-none{padding:16px 16px 8px;color:#ddd;font-size:13px;}
+.s-ask{display:inline-block;margin:6px 16px;padding:8px 14px;background:#0078d7;color:#fff;cursor:pointer;}
+.s-ask:hover,.s-ask.act{background:#1a86d9;}
+/* the matching card flashes #cce8ff, then fades */
+@keyframes shit{0%,35%{background-color:#cce8ff;}100%{background-color:transparent;}}
+@keyframes shitd{0%,35%{background-color:#cce8ff;color:#000;}100%{background-color:transparent;}}
+.s-hit{animation:shit 1.6s ease-out;}
+.term-body .s-hit{animation-name:shitd;}
 .tb-search-ico{position:relative;width:12px;height:12px;flex-shrink:0;}
 .tb-search-ico::before{content:'';position:absolute;top:0;right:0;width:8px;height:8px;border:1px solid currentColor;border-radius:50%;}
 .tb-search-ico::after{content:'';position:absolute;bottom:0;left:0;width:7px;height:1px;background:currentColor;transform:rotate(-45deg);transform-origin:left center;}
@@ -465,14 +584,58 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   #lock{transition:opacity .4s ease;}
   #lock.up{transform:none;opacity:0;}
   #sleep{transition:none;}
+  .s-hit{animation:none;background-color:#cce8ff;}
+  .term-body .s-hit{color:#000;}
   .fly,.fly.on{transition:none;}
   .mp-marq{animation:none;padding-left:0;display:inline;}
   .mp-title{text-overflow:ellipsis;}
   .boot-ring i:nth-child(2){transform:rotate(72deg)}.boot-ring i:nth-child(3){transform:rotate(144deg)}.boot-ring i:nth-child(4){transform:rotate(216deg)}.boot-ring i:nth-child(5){transform:rotate(288deg)}
 }
+
+/* ══ MOBILE / TOUCH: one scrolling resume page (built by the loader script; the desktop is never initialised) ══ */
+#mob{display:none;}
+@media (max-width: 767px), (hover: none) and (pointer: coarse){
+  #lock,#signin,#desktop,#pwr,#sleep{display:none!important;}
+  html,body{width:auto;height:auto;overflow:visible;background:#fff;}
+  #mob{display:block;}
+}
+#mob{max-width:680px;margin:0 auto;padding:32px 20px 48px;color:#1a1a1a;background:#fff;font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-wrap:break-word;}
+#mob *{box-sizing:border-box;}
+#mob a{color:#0078d7;}
+#mob .m-photo{width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;}
+#mob .m-init{width:96px;height:96px;border-radius:50%;background:#0078d7;color:#fff;font-size:32px;font-weight:600;display:none;align-items:center;justify-content:center;}
+#mob h1{margin:16px 0 2px;font-size:28px;font-weight:600;line-height:1.25;}
+#mob .m-title{margin:0;color:#1a1a1a;}
+#mob .m-meta{margin:2px 0 0;color:#555;}
+#mob .m-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+#mob .m-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border:1px solid #0078d7;border-radius:4px;color:#0078d7;font-weight:600;text-decoration:none;}
+#mob .m-btn.pri,#mob .pbtn{background:#0078d7;color:#fff;}
+#mob .pbtn{display:inline-flex;align-items:center;min-height:44px;margin:8px 0 4px;padding:0 18px;border-radius:4px;font-weight:600;text-decoration:none;}
+#mob h2{margin:40px 0 0;padding-bottom:8px;border-bottom:1px solid #e5e5e5;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#555;}
+#mob h3{margin:0;font-size:16px;font-weight:600;line-height:1.4;}
+#mob h3 span{color:#555;font-weight:400;}
+#mob .m-desc{margin-top:6px;}
+#mob .m-desc > :first-child{margin-top:0;}
+#mob .m-item{padding:16px 0;border-bottom:1px solid #e5e5e5;}
+#mob .m-item p,#mob .m-item ul{margin:6px 0 0;}
+#mob .m-item ul{padding-left:20px;}
+#mob .m-sub{color:#1a1a1a;}
+#mob .m-date,#mob .m-tags{color:#555;font-size:14px;}
+#mob .m-skill b{display:block;font-weight:600;}
+#mob footer{margin-top:40px;color:#555;font-size:14px;}
 </style>
 </head>
 <body>
+<noscript>
+  <div style="max-width:640px;margin:0 auto;padding:40px 20px;color:#1a1a1a;background:#fff;font:16px/1.6 'Segoe UI',system-ui,sans-serif;">
+    <h1 style="margin:0;font-size:28px;font-weight:600;">Sruthi Raghavan</h1>
+    <p style="margin:4px 0 20px;color:#444;">ML/AI Engineer — M.S. Computer Engineering, NYU Tandon</p>
+    <p style="margin:0;"><a href="mailto:sruthiraghavan2002@gmail.com" style="color:#0078d7;">sruthiraghavan2002@gmail.com</a></p>
+    <p style="margin:0;"><a href="https://github.com/Sruthi-2002" target="_blank" rel="noopener" style="color:#0078d7;">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/sruthi-raghavan-340642221/" target="_blank" rel="noopener" style="color:#0078d7;">LinkedIn</a> ·
+      <a href="https://drive.google.com/file/d/1t7i41QWmSZAXLQ1chOzQshWyow7BHyhQ/view?usp=sharing" target="_blank" rel="noopener" style="color:#0078d7;">Resume</a></p>
+  </div>
+</noscript>
 
 <!-- ICONS: drawn once, used everywhere via <use>. Not display:none, or the gradients stop resolving. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -492,7 +655,7 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 <symbol id="i-brief" viewBox="0 0 16 16"><path d="M5.5 4.5v-1a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1" fill="none" stroke="#46505c"/><rect x="1.5" y="4.5" width="13" height="9" rx="1" fill="url(#g-slate)" stroke="#343b45"/><path d="M1.5 8.5h13" stroke="#343b45"/><rect x="7" y="7.5" width="2" height="2" fill="#d9dde2"/></symbol>
 <symbol id="i-pdf" viewBox="0 0 16 16"><path d="M3.5 1.5h6l3 3v10h-9z" fill="url(#g-paper)" stroke="#8a9099"/><path d="M9.5 1.5v3h3" fill="#dfe3e8" stroke="#8a9099"/><rect x="2" y="9" width="9" height="4" fill="url(#g-red)"/></symbol>
 <symbol id="i-term" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="1" fill="url(#g-term)" stroke="#1a1f25"/><path d="M2 3h12v2H2z" fill="#5d6874"/><path d="M4 7.5l2 1.5-2 1.5" fill="none" stroke="#6fd36f" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 11h3" stroke="#6fd36f" stroke-linecap="round"/></symbol>
-<symbol id="i-mail" viewBox="0 0 16 16"><rect x="1.5" y="3.5" width="13" height="9" rx="1" fill="url(#g-paper)" stroke="#5f7fa6"/><path d="M2 4l6 4.5L14 4" fill="none" stroke="#3a78c2"/></symbol>
+<symbol id="i-mail" viewBox="0 0 16 16"><rect x="1.5" y="3.5" width="13" height="9" fill="#fff" stroke="#0078d7"/><path d="M1.5 3.5L8 8l6.5-4.5" fill="none" stroke="#0078d7" stroke-linejoin="round"/></symbol>
 <symbol id="i-chat" viewBox="0 0 16 16"><path d="M2.5 2.5h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H7l-3 3v-3H2.5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z" fill="url(#g-blue)" stroke="#2a5f9e" stroke-linejoin="round"/><path d="M4.5 5.5h7M4.5 7.5h5" stroke="#eaf3fc" stroke-linecap="round"/></symbol>
 <symbol id="i-game" viewBox="0 0 16 16"><path d="M4.5 4.5h7a3.5 3.5 0 0 1 3.4 4.3l-.6 2.6a1.6 1.6 0 0 1-2.7.8L10 10.5H6l-1.6 1.7a1.6 1.6 0 0 1-2.7-.8l-.6-2.6A3.5 3.5 0 0 1 4.5 4.5z" fill="url(#g-grey)" stroke="#7d848e" stroke-linejoin="round"/><path d="M5 6.5v3M3.5 8h3" stroke="#5a6470"/><circle cx="10.5" cy="7.3" r=".9" fill="#3a78c2"/><circle cx="12" cy="8.8" r=".9" fill="#3a78c2"/></symbol>
 <symbol id="i-display" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" rx="1" fill="url(#g-sky)" stroke="#5f7fa6"/><path d="M2 11c2.5-2.6 5.5-3.6 12-1.6V13H2z" fill="url(#g-hill)"/><circle cx="11" cy="5.5" r="1.3" fill="#fff"/></symbol>
@@ -512,7 +675,15 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 <symbol id="i-sleep" viewBox="0 0 16 16"><path d="M13.2 9.8A5.6 5.6 0 1 1 6.2 2.8a4.5 4.5 0 0 0 7 7z" fill="none" stroke="currentColor" stroke-linejoin="round"/></symbol>
 <symbol id="i-restart" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6" fill="none" stroke="currentColor" stroke-linecap="round"/><path d="M11.9 1.6v3.1H8.8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-shut" viewBox="0 0 16 16"><path d="M8 1.5V8M4.9 3.6a5.5 5.5 0 1 0 6.2 0" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></symbol>
-<symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.5 3.5h5l1.5 1.5h6.5v8.5h-13z" fill="#e8b830" stroke="#c49a2c" stroke-linejoin="round"/><path d="M1.5 6.5h13v7h-13z" fill="url(#g-folder)"/></symbol>
+<symbol id="i-wmin" viewBox="0 0 10 10"><path d="M0 5.5h10" fill="none" stroke="currentColor" shape-rendering="crispEdges"/></symbol>
+<symbol id="i-wmax" viewBox="0 0 10 10"><rect x=".5" y=".5" width="9" height="9" fill="none" stroke="currentColor" shape-rendering="crispEdges"/></symbol>
+<symbol id="i-wres" viewBox="0 0 10 10"><path d="M2.5 2.5v-2h7v7h-2" fill="none" stroke="currentColor" shape-rendering="crispEdges"/><rect x=".5" y="2.5" width="7" height="7" fill="none" stroke="currentColor" shape-rendering="crispEdges"/></symbol>
+<symbol id="i-wclose" viewBox="0 0 10 10"><path d="M.5.5l9 9M9.5.5l-9 9" fill="none" stroke="currentColor"/></symbol>
+<symbol id="i-kplay" viewBox="0 0 10 10"><path d="M2.5 1.5v7l6-3.5z" fill="currentColor"/></symbol>
+<symbol id="i-kreset" viewBox="0 0 10 10"><path d="M8.3 5.5A3.4 3.4 0 1 1 7 2.3" fill="none" stroke="currentColor"/><path d="M5.8.9l1.9 1.5-1.6 1.8" fill="none" stroke="currentColor"/></symbol>
+<symbol id="i-kup" viewBox="0 0 10 10"><path d="M5 2l4 6H1z" fill="currentColor"/></symbol>
+<symbol id="i-tm" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="10" fill="#fff" stroke="#0078d7"/><path d="M3 10l2.5-2.5 2 1.5L10 5.5l3 2.5" fill="none" stroke="#2e9e44" stroke-linejoin="round"/><path d="M5.5 14.5h5" stroke="#0078d7"/></symbol>
+<symbol id="i-folder" viewBox="0 0 16 16"><path d="M1 3h5.5v1.5H15V14H1z" fill="#e8a933"/><rect x="2.5" y="5.5" width="11" height="4" fill="#fff"/><rect x="1" y="7" width="14" height="7" fill="#ffc83d"/></symbol>
 <symbol id="i-docs" viewBox="0 0 16 16"><path d="M4 1.5h5.5l3 3v10H4z" fill="none" stroke="currentColor" stroke-linejoin="round"/><path d="M9.5 1.5v3h3M6 8h4.5M6 10.5h4.5" fill="none" stroke="currentColor"/></symbol>
 <symbol id="i-media" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2.5" fill="#0078d7"/><path d="M6 4.5v7L11.5 8z" fill="#fff"/></symbol>
 <symbol id="i-spk" viewBox="0 0 16 16"><path d="M2 6h2.5L8 3v10L4.5 10H2z" fill="currentColor"/><path d="M10.5 5.5a3.5 3.5 0 0 1 0 5M12 3.5a6 6 0 0 1 0 9" fill="none" stroke="currentColor" stroke-linecap="round"/></symbol>
@@ -542,38 +713,82 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   <img id="wallpaper" src="./download.webp" alt="" onerror="this.style.display='none';document.getElementById('wpfb').style.display='block'">
   <div id="wpfb" style="background:linear-gradient(180deg,#3a9bd5 0%,#87ceeb 55%,#6abf3a 100%)"></div>
 
-  <div class="icon-grid">
-    <div class="icon" id="ic-bin" ondblclick="openW('bin')" onclick="selIco('bin')">
+  <div class="icon-grid" role="group" aria-label="Desktop">
+    <div class="icon" id="ic-bin" role="button" tabindex="0" ondblclick="openW('bin')" onclick="selIco('bin')">
       <div class="ii"><svg class="ic-d"><use href="#i-bin-l"/></svg></div><span>Recycle Bin</span>
     </div>
-    <div class="icon" id="ic-pc" ondblclick="openW('pc')" onclick="selIco('pc')">
+    <div class="icon" id="ic-pc" role="button" tabindex="-1" ondblclick="openW('pc')" onclick="selIco('pc')">
       <div class="ii"><div class="ico-mon"><div class="ico-mon-s"></div></div><div class="ico-stand"></div></div><span>This PC</span>
     </div>
-    <div class="icon" id="ic-proj" ondblclick="openW('proj')" onclick="selIco('proj')">
+    <div class="icon" id="ic-proj" role="button" tabindex="-1" ondblclick="openW('proj')" onclick="selIco('proj')">
       <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb"></div></div></div><span>My Projects</span>
     </div>
-    <div class="icon" id="ic-exp" ondblclick="openW('exp')" onclick="selIco('exp')">
+    <div class="icon" id="ic-exp" role="button" tabindex="-1" ondblclick="openW('exp')" onclick="selIco('exp')">
       <div class="ii"><div class="ico-f"><div class="ft"></div><div class="fb"></div></div></div><span>Experience</span>
     </div>
-    <div class="icon" id="ic-res" ondblclick="openResume()" onclick="selIco('res')">
+    <div class="icon" id="ic-res" role="button" tabindex="-1" ondblclick="openResume()" onclick="selIco('res')">
       <div class="ii"><div class="ico-pdf"><div class="ico-pdf-b">PDF</div></div></div><span>Resume.pdf</span>
     </div>
-    <div class="icon" id="ic-sk" ondblclick="openW('sk')" onclick="selIco('sk')">
-      <div class="ii"><div class="ico-t"><div class="ico-t-x">C:\>_<br>skills</div></div></div><span>Skills.exe</span>
+    <div class="icon" id="ic-sk" role="button" tabindex="-1" ondblclick="openW('sk')" onclick="selIco('sk')">
+      <div class="ii"><div class="ico-t"><div class="ico-t-x">C:\>_</div></div></div><span>Skills.exe</span>
     </div>
-    <div class="icon" id="ic-sgpt" ondblclick="openW('sgpt')" onclick="selIco('sgpt')">
+    <div class="icon" id="ic-sgpt" role="button" tabindex="-1" ondblclick="openW('sgpt')" onclick="selIco('sgpt')">
       <div class="ii"><svg class="ic-d"><use href="#i-chat-l"/></svg></div><span>Assistant</span>
     </div>
-    <div class="icon" id="ic-mail" ondblclick="openW('mail')" onclick="selIco('mail')">
+    <div class="icon" id="ic-mail" role="button" tabindex="-1" ondblclick="openW('mail')" onclick="selIco('mail')">
       <div class="ii"><div class="ico-m"></div></div><span>Mail</span>
     </div>
   </div>
 
+  <!-- STICKY NOTE: below every window; draggable by its bar; closed for the session with its X -->
+  <div id="sticky" role="note" aria-label="Sticky note">
+    <div class="st-bar" id="st-bar">
+      <svg class="st-g" viewBox="0 0 10 10" aria-hidden="true"><path d="M5 1v8M1 5h8" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>
+      <span class="st-sp"></span>
+      <svg class="st-g" viewBox="0 0 10 10" aria-hidden="true"><circle cx="1.6" cy="5" r=".9" fill="currentColor"/><circle cx="5" cy="5" r=".9" fill="currentColor"/><circle cx="8.4" cy="5" r=".9" fill="currentColor"/></svg>
+      <button type="button" class="st-x" aria-label="Close note" title="Close" onclick="stickyClose()"><svg class="st-g" aria-hidden="true"><use href="#i-wclose"/></svg></button>
+    </div>
+    <div class="st-body"><b>Currently</b><br>Graduate Research Assistant — Redlining Lab, NYU<br>Data Program Intern — The GovLab<br><br>Graduating December 2026<br>Open to ML/AI engineering roles<br><a href="mailto:sruthiraghavan2002@gmail.com">sruthiraghavan2002@gmail.com</a></div>
+  </div>
+
+  <!-- TASK MANAGER: a replay of the measured benchmark results from the Projects card — not live data -->
+  <div class="win" id="win-tm" style="top:44px;left:290px;width:680px;" role="dialog" aria-labelledby="wt-tm" tabindex="-1">
+    <div class="win-tb" onmousedown="dragS(event,'tm')">
+      <div class="win-title" id="wt-tm"><svg class="ic"><use href="#i-tm"/></svg>Task Manager</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('tm')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('tm')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
+    </div>
+    <div class="tm-tabs" role="tablist" aria-label="Task Manager">
+      <button type="button" role="tab" id="tm-t-proc" aria-controls="tm-proc" aria-selected="false" onclick="tmTab('proc')">Processes</button>
+      <button type="button" role="tab" id="tm-t-perf" aria-controls="tm-perf" aria-selected="true" onclick="tmTab('perf')">Performance</button>
+    </div>
+    <div class="win-body tm-body">
+      <div class="tm-pane" id="tm-proc" role="tabpanel" aria-labelledby="tm-t-proc" hidden>
+        <table class="tm-ptab"><thead><tr><th scope="col">Name</th><th scope="col">Status</th><th scope="col">Started</th></tr></thead><tbody id="tm-rows"></tbody></table>
+      </div>
+      <div class="tm-pane" id="tm-perf" role="tabpanel" aria-labelledby="tm-t-perf">
+        <div class="tm-banner">Benchmark replay — measured results, Qwen2.5-1.5B-Instruct on GSM8K. Not live data.</div>
+        <div class="tm-perf">
+          <div class="tm-list" id="tm-list" role="tablist" aria-orientation="vertical" aria-label="Measures"></div>
+          <div class="tm-main">
+            <div class="tm-head"><span class="tm-name" id="tm-name"></span><span class="tm-sub">Qwen2.5-1.5B-Instruct · GSM8K</span></div>
+            <div class="tm-graphrow">
+              <svg class="tm-graph" id="tm-graph" viewBox="0 0 400 180" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="tm-vals" id="tm-vals"></div>
+            </div>
+            <div class="tm-axis" id="tm-axis" aria-hidden="true"></div>
+            <table class="tm-vtab" id="tm-vtab"></table>
+            <button type="button" class="tm-replay" onclick="tmPlay()">Replay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- RECYCLE BIN -->
-  <div class="win" id="win-bin" style="top:60px;left:260px;width:480px;">
+  <div class="win" id="win-bin" style="top:60px;left:260px;width:480px;" role="dialog" aria-labelledby="wt-bin" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'bin')">
-      <div class="win-title"><svg class="ic"><use href="#i-bin"/></svg>Recycle Bin</div>
-      <div class="win-btns"><div class="wb" onclick="minW('bin')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('bin')">✕</div></div>
+      <div class="win-title" id="wt-bin"><svg class="ic"><use href="#i-bin"/></svg>Recycle Bin</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('bin')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('bin')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
     <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">Recycle Bin</div></div>
@@ -582,10 +797,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- THIS PC -->
-  <div class="win" id="win-pc" style="top:26px;left:120px;width:640px;">
+  <div class="win" id="win-pc" style="top:26px;left:120px;width:640px;" role="dialog" aria-labelledby="wt-pc" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'pc')">
-      <div class="win-title"><svg class="ic"><use href="#i-pc"/></svg>This PC</div>
-      <div class="win-btns"><div class="wb" onclick="minW('pc')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('pc')">✕</div></div>
+      <div class="win-title" id="wt-pc"><svg class="ic"><use href="#i-pc"/></svg>This PC</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('pc')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('pc')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="x-rib"><span class="x-tab x-file">File</span><span class="x-tab">Computer</span><span class="x-tab">View</span></div>
     <div class="x-bar">
@@ -624,16 +839,17 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
           <span class="k">B.Tech:</span><span class="v">CSE (AI &amp; Robotics), VIT Chennai</span>
           <span class="k">GPA:</span><span class="v">8.5 / 10 · 2020 – 2024</span>
           <span class="k">Location:</span><span class="v">Jersey City, NJ</span>
-          <span class="k">Status:</span><span class="v" style="color:#16a34a;font-weight:700">Open to opportunities ✓</span>
+          <span class="k">Status:</span><span class="v" style="color:#16a34a;font-weight:700">Open to opportunities</span>
         </div>
         <p class="sec">Selected results</p>
         <div class="sres">
           <div class="sr"><span class="sr-n">73,441 records</span> — OCR pipeline over 1935–1975 mortgage archives (Qwen2.5-VL, 6-GPU SLURM)</div>
           <div class="sr"><span class="sr-n">4.2% → 70.3%</span> — compute utilization gain traced via Nsight kernel profiling (GoRA vs. LoRA)</div>
           <div class="sr"><span class="sr-n">3rd of 50+ teams</span> — Anti-Slopathon, SiteIQ</div>
+          <div class="sr"><span class="sr-n">Live</span> — <a class="sr-l" href="https://datagov.opendatapolicylab.org/" target="_blank" rel="noopener">UNESCO Data Governance self-assessment tool</a></div>
         </div>
         <p class="sec">About</p>
-        <p style="line-height:1.65;color:#333;margin-bottom:10px;">ML/AI engineer working at the intersection of vision-language models, LLM fine-tuning, and computer vision. Currently a Graduate Research Assistant at NYU's Faber Lab building OCR pipelines over 73,000+ historical mortgage records, and a Data Program Intern at The GovLab shipping tools adopted by UNESCO.</p>
+        <p style="line-height:1.65;color:#333;margin-bottom:10px;">ML/AI engineer working at the intersection of vision-language models, LLM fine-tuning, and computer vision. Currently a Graduate Research Assistant at NYU's Redlining Lab (Faber Lab) building OCR pipelines over 73,000+ historical mortgage records, and a Data Program Intern at The GovLab shipping tools adopted by UNESCO.</p>
         <p class="sec">Campus Activities</p>
         <p style="line-height:1.65;color:#444;">Exam Proctor (Courant) · HackNYU Volunteer · NYU Hyperloop (Electrical &amp; CAD Team) · Delish VITCC (Content Lead) · Capsule VITCC (Content Writer)</p>
       </div>
@@ -642,10 +858,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- PROJECTS -->
-  <div class="win" id="win-proj" style="top:34px;left:132px;width:450px;">
+  <div class="win" id="win-proj" style="top:34px;left:132px;width:450px;" role="dialog" aria-labelledby="wt-proj" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'proj')">
-      <div class="win-title"><svg class="ic"><use href="#i-nodes"/></svg>My Projects</div>
-      <div class="win-btns"><div class="wb" onclick="minW('proj')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('proj')">✕</div></div>
+      <div class="win-title" id="wt-proj"><svg class="ic"><use href="#i-nodes"/></svg>My Projects</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('proj')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('proj')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
     <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\My Projects</div></div>
@@ -660,6 +876,7 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
           </ul>
           <p>A config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct / GSM8K, with versioned outputs and structured logging for reproducibility.</p>
         </div>
+        <button type="button" class="tm-link" onclick="openTM()">View results in Task Manager</button>
         <div class="ptags"><span class="ptag">PyTorch</span><span class="ptag">Hugging Face PEFT</span><span class="ptag">Nsight Systems</span><span class="ptag">SLURM</span></div>
       </div>
       <div class="pcard">
@@ -670,7 +887,13 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
       <div class="pcard">
         <div class="pname">UNESCO Data Governance Self-Assessment Tool</div>
         <div class="pdesc">An interactive assessment tool spanning 56 questions across 4 dimensions — deployed live under The GovLab, adopted for course use, and praised directly by UNESCO. Built as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard.</div>
+        <a class="pbtn" href="https://datagov.opendatapolicylab.org/" target="_blank" rel="noopener">Open live tool</a>
         <div class="ptags"><span class="ptag">JavaScript</span><span class="ptag">PWA</span><span class="ptag">Frontend</span></div>
+      </div>
+      <p class="sec psec" id="proj-pub">Publications</p>
+      <div class="pcard">
+        <div class="pname"><a href="https://newcommons.ai/blog/identifying-a-global-demand-inside-the-applications-to-our-indigenous-languages-incubator" target="_blank" rel="noopener">Identifying A Global Demand: Inside the Applications to our Indigenous Languages Incubator</a></div>
+        <div class="pdesc">Stefaan Verhulst, <b>Sruthi Raghavan</b>, and Andrew J. Zahuranec<br>Published 28 August 2026 · New Commons — Open Data Policy Lab at The GovLab</div>
       </div>
       <p class="sec psec" id="proj-ach">Achievements</p>
       <div class="pcard" style="margin-bottom:0;">
@@ -681,22 +904,23 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- EXPERIENCE -->
-  <div class="win" id="win-exp" style="top:34px;left:132px;width:460px;">
+  <div class="win" id="win-exp" style="top:34px;left:132px;width:460px;" role="dialog" aria-labelledby="wt-exp" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'exp')">
-      <div class="win-title"><svg class="ic"><use href="#i-brief"/></svg>Experience</div>
-      <div class="win-btns"><div class="wb" onclick="minW('exp')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('exp')">✕</div></div>
+      <div class="win-title" id="wt-exp"><svg class="ic"><use href="#i-brief"/></svg>Experience</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('exp')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('exp')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="win-menu"><span>File</span><span>Edit</span><span>View</span></div>
     <div class="win-addr"><span style="color:#666">Address</span><div class="addr-f">C:\Users\Sruthi\Experience</div></div>
     <div class="win-body" style="flex-direction:column;padding:12px;height:310px;overflow-y:auto;">
       <div class="ecard">
-        <div class="eco">New York University — Faber Lab</div>
+        <div class="eco">New York University — Redlining Lab (Faber Lab)</div>
         <div class="erol">Graduate Research Assistant (Redlining Research)</div>
         <div class="edate">Jun 2026 – Present · Remote</div>
         <ul class="ebul">
           <li>Built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records (~150,000 page images) spanning 1935–1975</li>
           <li>Parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster (SLURM), completing all 30 batches in ~2 weeks — work that would take years manually</li>
         </ul>
+        <a class="elink" href="https://www.redlininglab.org/people" target="_blank" rel="noopener">Lab team page</a>
       </div>
       <div class="ecard">
         <div class="eco">The GovLab</div>
@@ -706,6 +930,8 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
           <li>Designed and built an interactive UNESCO Data Governance self-assessment tool (56 questions, 4 dimensions), deployed live and adopted for course use</li>
           <li>Developed a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard</li>
         </ul>
+        <a class="elink" href="https://datagov.opendatapolicylab.org/" target="_blank" rel="noopener">Live tool</a>
+        <a class="elink" href="https://newcommons.ai/blog/identifying-a-global-demand-inside-the-applications-to-our-indigenous-languages-incubator" target="_blank" rel="noopener">Co-authored article</a>
       </div>
       <div class="ecard">
         <div class="eco">NYU — CV Starr Center for Applied Economics</div>
@@ -745,10 +971,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- SKILLS -->
-  <div class="win" id="win-sk" style="top:40px;left:140px;width:420px;">
+  <div class="win" id="win-sk" style="top:40px;left:140px;width:420px;" role="dialog" aria-labelledby="wt-sk" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'sk')" style="background:linear-gradient(to right,#1a1a1a,#2a2a2a)">
-      <div class="win-title" style="font-family:monospace"><svg class="ic"><use href="#i-term"/></svg>C:\&gt; Skills.exe</div>
-      <div class="win-btns"><div class="wb" onclick="minW('sk')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('sk')">✕</div></div>
+      <div class="win-title" id="wt-sk" style="font-family:monospace"><svg class="ic"><use href="#i-term"/></svg>C:\&gt; Skills.exe</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('sk')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('sk')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="win-body term-body" style="flex-direction:column;height:290px;">
       <div style="color:#aaa">Microsoft Windows XP [Version 5.1.2600]</div>
@@ -769,15 +995,15 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
       <div>&nbsp;&nbsp;HPC / SLURM · Nsight Systems</div>
       <br>
       <div style="color:#0f0">All systems operational. <span style="color:#fff">NYU Tandon · M.S. Computer Engineering</span></div>
-      <div style="margin-top:8px">C:\&gt; <span id="cur">█</span></div>
+      <div style="margin-top:8px">C:\&gt; <span id="cur" class="tcur"></span></div>
     </div>
   </div>
 
   <!-- MAIL -->
-  <div class="win" id="win-mail" style="top:45px;left:145px;width:560px;">
+  <div class="win" id="win-mail" style="top:45px;left:145px;width:560px;" role="dialog" aria-labelledby="wt-mail" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'mail')">
-      <div class="win-title"><svg class="ic"><use href="#i-mail"/></svg>Mail — Sruthi Raghavan</div>
-      <div class="win-btns"><div class="wb" onclick="minW('mail')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('mail')">✕</div></div>
+      <div class="win-title" id="wt-mail"><svg class="ic"><use href="#i-mail"/></svg>Mail — Sruthi Raghavan</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('mail')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('mail')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="win-body mc-body">
       <div class="mc-side">
@@ -799,10 +1025,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- ASSISTANT -->
-  <div class="win" id="win-sgpt" style="top:22px;left:125px;width:375px;">
+  <div class="win" id="win-sgpt" style="top:22px;left:125px;width:375px;" role="dialog" aria-labelledby="wt-sgpt" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'sgpt')" style="background:linear-gradient(to right,#4c1d95,#7c3aed)">
-      <div class="win-title"><svg class="ic"><use href="#i-chat"/></svg>Assistant</div>
-      <div class="win-btns"><div class="wb" onclick="minW('sgpt')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('sgpt')">✕</div></div>
+      <div class="win-title" id="wt-sgpt"><svg class="ic"><use href="#i-chat"/></svg>Assistant</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('sgpt')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('sgpt')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="sg-st"><div class="sdot"></div>Assistant is online and ready</div>
     <div class="sg-chat" id="sg-chat">
@@ -822,10 +1048,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- MEDIA PLAYER: everything is synthesised live with Web Audio; no files, no URLs -->
-  <div class="win" id="win-mp" style="top:70px;left:240px;width:340px;">
+  <div class="win" id="win-mp" style="top:70px;left:240px;width:340px;" role="dialog" aria-labelledby="wt-mp" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'mp')">
-      <div class="win-title"><svg class="ic"><use href="#i-media"/></svg>Media Player</div>
-      <div class="win-btns"><div class="wb" onclick="minW('mp')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('mp')">✕</div></div>
+      <div class="win-title" id="wt-mp"><svg class="ic"><use href="#i-media"/></svg>Media Player</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('mp')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('mp')" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="win-body mp-body">
       <div class="mp-lcd muted">
@@ -848,21 +1074,21 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 
   <!-- SNAKE -->
-  <div class="win" id="win-snake" style="top:28px;left:120px;width:300px;">
+  <div class="win" id="win-snake" style="top:28px;left:120px;width:300px;" role="dialog" aria-labelledby="wt-snake" tabindex="-1">
     <div class="win-tb" onmousedown="dragS(event,'snake')" style="background:linear-gradient(to right,#111,#2a2a2a)">
-      <div class="win-title" style="font-family:monospace"><svg class="ic"><use href="#i-game"/></svg>Snake</div>
-      <div class="win-btns"><div class="wb" onclick="minW('snake')">−</div><div class="wb">□</div><div class="wb x" onclick="closeW('snake');stopSnake()">✕</div></div>
+      <div class="win-title" id="wt-snake" style="font-family:monospace"><svg class="ic"><use href="#i-game"/></svg>Snake</div>
+      <div class="win-btns"><button type="button" class="wb" onclick="minW('snake')" title="Minimize" aria-label="Minimize"><svg class="wg" aria-hidden="true"><use href="#i-wmin"/></svg></button><button type="button" class="wb mx" title="Maximize" aria-label="Maximize"><svg class="wg w-max" aria-hidden="true"><use href="#i-wmax"/></svg><svg class="wg w-res" aria-hidden="true"><use href="#i-wres"/></svg></button><button type="button" class="wb x" onclick="closeW('snake');stopSnake()" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     </div>
     <div class="sn-wrap">
       <div class="sn-hud"><span>Score: <span id="sn-sc">0</span></span><span>Best: <span id="sn-hi">0</span></span></div>
       <canvas id="snc" width="240" height="240"></canvas>
       <div class="sn-btns">
-        <div class="dkey" onclick="startSnake()" style="width:70px;background:linear-gradient(to bottom,#4a9eed,#2176c7);color:#fff;border-color:#1a5fa0">▶ Start</div>
-        <div class="dkey" onclick="stopSnake()" style="width:70px">↺ Reset</div>
+        <div class="dkey" onclick="startSnake()" style="width:70px"><svg class="kg" aria-hidden="true"><use href="#i-kplay"/></svg>Start</div>
+        <div class="dkey" onclick="stopSnake()" style="width:70px"><svg class="kg" aria-hidden="true"><use href="#i-kreset"/></svg>Reset</div>
       </div>
       <div class="sn-dpad">
-        <div class="drow"><div class="dkey" onclick="sDir(0,-1)">▲</div></div>
-        <div class="drow"><div class="dkey" onclick="sDir(-1,0)">◄</div><div class="dkey" onclick="sDir(0,1)">▼</div><div class="dkey" onclick="sDir(1,0)">►</div></div>
+        <div class="drow"><div class="dkey" onclick="sDir(0,-1)" title="Up"><svg class="kg" style="transform:rotate(0deg)" aria-hidden="true"><use href="#i-kup"/></svg></div></div>
+        <div class="drow"><div class="dkey" onclick="sDir(-1,0)" title="Left"><svg class="kg" style="transform:rotate(-90deg)" aria-hidden="true"><use href="#i-kup"/></svg></div><div class="dkey" onclick="sDir(0,1)" title="Down"><svg class="kg" style="transform:rotate(180deg)" aria-hidden="true"><use href="#i-kup"/></svg></div><div class="dkey" onclick="sDir(1,0)" title="Right"><svg class="kg" style="transform:rotate(90deg)" aria-hidden="true"><use href="#i-kup"/></svg></div></div>
       </div>
     </div>
   </div>
@@ -883,35 +1109,37 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
     </div>
     <div class="sm-apps">
       <div class="sm-hd">A</div>
-      <div class="smi" onclick="openFM('sgpt')"><span class="smi-i"><svg class="ic"><use href="#i-chat"/></svg></span> Assistant</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('sgpt')"><span class="smi-i"><svg class="ic"><use href="#i-chat"/></svg></span> Assistant</div>
       <div class="sm-hd">C</div>
-      <div class="smi" onclick="showWP()"><span class="smi-i"><svg class="ic"><use href="#i-display"/></svg></span> Change Wallpaper</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="showWP()"><span class="smi-i"><svg class="ic"><use href="#i-display"/></svg></span> Change Wallpaper</div>
       <div class="sm-hd">E</div>
-      <div class="smi" onclick="openFM('exp')"><span class="smi-i"><svg class="ic"><use href="#i-brief"/></svg></span> Experience</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('exp')"><span class="smi-i"><svg class="ic"><use href="#i-brief"/></svg></span> Experience</div>
       <div class="sm-hd">G</div>
-      <div class="smi sm-folder" onclick="smFolder(this)" aria-expanded="false"><span class="smi-i"><svg class="ic"><use href="#i-folder"/></svg></span> Games<span class="sm-chev" aria-hidden="true"></span></div>
-      <div class="smi sm-sub" onclick="openFM('snake')" hidden><span class="smi-i"><svg class="ic"><use href="#i-game"/></svg></span> Snake</div>
+      <div class="smi sm-folder" role="menuitem" tabindex="-1" onclick="smFolder(this)" aria-expanded="false"><span class="smi-i"><svg class="ic"><use href="#i-folder"/></svg></span> Games<span class="sm-chev" aria-hidden="true"></span></div>
+      <div class="smi sm-sub" role="menuitem" tabindex="-1" onclick="openFM('snake')" hidden><span class="smi-i"><svg class="ic"><use href="#i-game"/></svg></span> Snake</div>
       <div class="sm-hd">M</div>
-      <div class="smi" onclick="openFM('mail')"><span class="smi-i"><svg class="ic"><use href="#i-mail"/></svg></span> Mail</div>
-      <div class="smi" onclick="openFM('mp')"><span class="smi-i"><svg class="ic"><use href="#i-media"/></svg></span> Media Player</div>
-      <div class="smi" onclick="openFM('proj')"><span class="smi-i"><svg class="ic"><use href="#i-nodes"/></svg></span> My Projects</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('mail')"><span class="smi-i"><svg class="ic"><use href="#i-mail"/></svg></span> Mail</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('mp')"><span class="smi-i"><svg class="ic"><use href="#i-media"/></svg></span> Media Player</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('proj')"><span class="smi-i"><svg class="ic"><use href="#i-nodes"/></svg></span> My Projects</div>
       <div class="sm-hd">R</div>
-      <div class="smi" onclick="openFM('bin')"><span class="smi-i"><svg class="ic"><use href="#i-bin"/></svg></span> Recycle Bin</div>
-      <div class="smi" onclick="openResume();closeSM()"><span class="smi-i"><svg class="ic"><use href="#i-pdf"/></svg></span> Resume.pdf</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('bin')"><span class="smi-i"><svg class="ic"><use href="#i-bin"/></svg></span> Recycle Bin</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openResume();closeSM()"><span class="smi-i"><svg class="ic"><use href="#i-pdf"/></svg></span> Resume.pdf</div>
       <div class="sm-hd">S</div>
-      <div class="smi" onclick="openFM('sk')"><span class="smi-i"><svg class="ic"><use href="#i-term"/></svg></span> Skills.exe</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('sk')"><span class="smi-i"><svg class="ic"><use href="#i-term"/></svg></span> Skills.exe</div>
       <div class="sm-hd">T</div>
-      <div class="smi" onclick="openFM('pc')"><span class="smi-i"><svg class="ic"><use href="#i-pc"/></svg></span> This PC</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openTM();closeSM()"><span class="smi-i"><svg class="ic"><use href="#i-tm"/></svg></span> Task Manager</div>
+      <div class="smi" role="menuitem" tabindex="-1" onclick="openFM('pc')"><span class="smi-i"><svg class="ic"><use href="#i-pc"/></svg></span> This PC</div>
     </div>
     <div class="sm-tiles">
       <div class="sm-tt">Selected work</div>
       <div class="sm-grid">
         <div class="tile num" onclick="openFM('exp')"><span class="tn">73,441</span><span class="tc">records transcribed</span></div>
-        <div class="tile num d1" onclick="openFM('proj')"><span class="tn">70.3%</span><span class="tc">compute utilization</span></div>
+        <div class="tile num d1" onclick="openTM();closeSM()"><span class="tn">70.3%</span><span class="tc">compute utilization</span></div>
         <div class="tile num d2" onclick="openAch()"><span class="tn">3rd</span><span class="tc">of 50+ teams</span></div>
         <div class="tile" onclick="openFM('pc')"><svg class="tic"><use href="#i-pc"/></svg><span class="tl">This PC</span></div>
         <div class="tile" onclick="openFM('mail')"><svg class="tic"><use href="#i-mail"/></svg><span class="tl">Mail</span></div>
         <div class="tile" onclick="openResume();closeSM()"><svg class="tic"><use href="#i-pdf"/></svg><span class="tl">Resume</span></div>
+        <a class="tile num wide" href="https://datagov.opendatapolicylab.org/" target="_blank" rel="noopener" onclick="closeSM()"><span class="tn">Live demo</span><span class="tc">Data Governance Toolkit</span></a>
       </div>
     </div>
   </div>
@@ -931,10 +1159,10 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 
   <!-- WALLPAPER PICKER -->
   <div id="wpp">
-    <div class="wpp-tb"><span><svg class="ic"><use href="#i-display"/></svg>Display Properties — Wallpaper</span><div class="wb x" onclick="closeWP()">✕</div></div>
+    <div class="wpp-tb"><span><svg class="ic"><use href="#i-display"/></svg>Display Properties — Wallpaper</span><button type="button" class="wb x" onclick="closeWP()" title="Close" aria-label="Close"><svg class="wg" aria-hidden="true"><use href="#i-wclose"/></svg></button></div>
     <div class="wpp-b">
       <div class="wpo-row">
-        <div class="wpo sel" id="wpo-bliss" onclick="selWP('bliss')"><div class="pv" style="background:linear-gradient(180deg,#87ceeb 40%,#6abf3a 100%)"></div><div class="lb">Bliss</div></div>
+        <div class="wpo sel" id="wpo-bliss" onclick="selWP('bliss')"><div class="pv" style="background:linear-gradient(180deg,#020b1f,#0a3a8a)"></div><div class="lb">Default</div></div>
         <div class="wpo" id="wpo-nyc" onclick="selWP('nyc')"><div class="pv" style="background:linear-gradient(180deg,#0a0a1a,#2d1b4e)"></div><div class="lb">NYC Night</div></div>
         <div class="wpo" id="wpo-dark" onclick="selWP('dark')"><div class="pv" style="background:#111"></div><div class="lb">Dark</div></div>
       </div>
@@ -953,7 +1181,7 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   <!-- ACTION CENTER -->
   <div class="fly" id="fly-ac" role="dialog" aria-label="Action center">
     <div class="ac-toast"><svg class="ic"><use href="#i-brief"/></svg><div><div class="ac-t">Open to ML/AI engineering roles</div><div class="ac-b">Graduating December 2026. Reach me at sruthiraghavan2002@gmail.com</div></div></div>
-    <div class="ac-toast"><svg class="ic"><use href="#i-pc"/></svg><div><div class="ac-t">Currently</div><div class="ac-b">Graduate Research Assistant at NYU Faber Lab and Data Program Intern at The GovLab</div></div></div>
+    <div class="ac-toast"><svg class="ic"><use href="#i-pc"/></svg><div><div class="ac-t">Currently</div><div class="ac-b">Graduate Research Assistant at NYU Redlining Lab (Faber Lab) and Data Program Intern at The GovLab</div></div></div>
     <div class="ac-tiles">
       <button class="ac-tile" type="button" onclick="acDo(()=>openW('mail'))"><svg aria-hidden="true"><use href="#i-mail"/></svg>Mail</button>
       <button class="ac-tile" type="button" onclick="acDo(openResume)"><svg aria-hidden="true"><use href="#i-pdf"/></svg>Resume</button>
@@ -965,12 +1193,15 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
 
   <!-- BALLOON -->
   <div id="bal">
-    <span class="bal-x" onclick="document.getElementById('bal').style.display='none'">✕</span>
+    <span class="bal-x" onclick="document.getElementById('bal').style.display='none'" title="Close"><svg class="wg" style="width:8px;height:8px" aria-hidden="true"><use href="#i-wclose"/></svg></span>
     <div class="bal-row"><svg class="ic"><use href="#i-brief"/></svg><div><strong>Open to ML/AI engineering roles — graduating December 2026.</strong><br>
     <span style="font-size:10px;color:#888">Double-click an icon to get started.</span></div></div>
   </div>
 
   <div id="tbtip" role="tooltip"></div>
+  <div id="tbctx" role="menu" aria-label="Taskbar"><button type="button" role="menuitem" class="tbc-i" onclick="closeTbCtx();openTM()"><svg aria-hidden="true"><use href="#i-tm"/></svg>Task Manager</button></div>
+  <!-- SEARCH: results come only from text already on the page -->
+  <div id="srch" role="dialog" aria-label="Search"><div id="srch-list" role="listbox" aria-label="Search results"></div></div>
 
   <!-- SCREENSAVER -->
   <div id="ss"><div id="ss-t">Sruthi.exe</div></div>
@@ -978,23 +1209,24 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   <!-- TASKBAR -->
   <div id="tb">
     <div style="display:flex;align-items:center;gap:3px;flex:1;overflow:hidden;">
-      <div id="sb" onclick="toggleSM()">
-        <div class="slogo"><div style="background:#ff5722"></div><div style="background:#4caf50"></div><div style="background:#2196f3"></div><div style="background:#ffc107"></div></div>
+      <button id="sb" type="button" onclick="toggleSM()" aria-label="Start" aria-haspopup="menu" aria-expanded="false">
+        <span class="slogo" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
         <span class="slbl">start</span>
-      </div>
-      <div class="tb-search" aria-hidden="true"><span class="tb-search-ico"></span>Type here to search</div>
+      </button>
+      <label class="tb-search"><span class="tb-search-ico" aria-hidden="true"></span><input id="tb-q" type="text" placeholder="Type here to search" autocomplete="off" spellcheck="false" role="combobox" aria-label="Search" aria-autocomplete="list" aria-controls="srch-list" aria-expanded="false"></label>
       <div class="tb-apps">
         <button class="tb-tv" id="tb-tv" type="button" aria-label="Task View" data-tip="Task View"><svg aria-hidden="true"><use href="#i-tview"/></svg></button>
         <!-- pinned -->
         <button class="tba pin" id="tb-pc" type="button" onclick="togW('pc')"><svg class="ic" aria-hidden="true"><use href="#i-pc"/></svg></button>
         <button class="tba pin" id="tb-mail" type="button" onclick="togW('mail')"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></button>
         <button class="tba pin" id="tb-sgpt" type="button" onclick="togW('sgpt')"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></button>
-        <button class="tba pin" id="tb-mp" type="button" onclick="togW('mp')"><svg class="ic" aria-hidden="true"><use href="#i-media"/></svg></button>
         <!-- shown only while their window is open, in the order they were opened -->
         <button class="tba" id="tb-proj" type="button" onclick="togW('proj')"><svg class="ic" aria-hidden="true"><use href="#i-nodes"/></svg></button>
         <button class="tba" id="tb-exp" type="button" onclick="togW('exp')"><svg class="ic" aria-hidden="true"><use href="#i-brief"/></svg></button>
         <button class="tba" id="tb-sk" type="button" onclick="togW('sk')"><svg class="ic" aria-hidden="true"><use href="#i-term"/></svg></button>
         <button class="tba" id="tb-snake" type="button" onclick="togW('snake')"><svg class="ic" aria-hidden="true"><use href="#i-game"/></svg></button>
+        <button class="tba" id="tb-mp" type="button" onclick="togW('mp')"><svg class="ic" aria-hidden="true"><use href="#i-media"/></svg></button>
+        <button class="tba" id="tb-tm" type="button" onclick="togW('tm')"><svg class="ic" aria-hidden="true"><use href="#i-tm"/></svg></button>
         <button class="tba" id="tb-bin" type="button" onclick="togW('bin')"><svg class="ic" aria-hidden="true"><use href="#i-bin"/></svg></button>
       </div>
     </div>
@@ -1012,7 +1244,7 @@ button.tb-ico:hover,button.tb-ico[aria-expanded="true"]{color:#fff;}
   </div>
 </div>
 
-<script>
+<script type="text/x-desktop" id="desk-js">
 // ══ LOCK SCREEN -> SIGN-IN -> DESKTOP ══
 // Locked until a click, key press or upward swipe, or 2.5 s without one. Slide 400 ms, "Welcome" 1.2 s, fade 400 ms: ~2 s to the desktop.
 let lockState='locked',resumeMode=false;   // resumeMode: unlocking returns to the desktop as it was (Lock, wake) instead of building it
@@ -1051,12 +1283,12 @@ function unlockScreen(){
 function enterDesktop(){   // runs hidden under the sign-in screen
   document.getElementById('desktop').style.display='block';
   tick();clearInterval(clockTimer);clockTimer=setInterval(tick,60000);
-  setTimeout(showBal,4000);
   resetSS();
   openW('pc');   // greet visitors with This PC, centred in the viewport (kept clear of the taskbar) and focused
   const pc=document.getElementById('win-pc');
   pc.style.left=Math.max(0,Math.round((innerWidth-pc.offsetWidth)/2))+'px';
   pc.style.top=Math.max(0,Math.min(Math.round((innerHeight-pc.offsetHeight)/2),innerHeight-TBH-pc.offsetHeight))+'px';
+  clampWin(pc);
 }
 let clockTimer=0;
 function revealDesktop(){
@@ -1096,16 +1328,37 @@ function tick(){
 }
 
 // ══ WINDOWS ══
-const WS=['pc','proj','exp','sk','mail','sgpt','snake','mp','bin'];
+const WS=['pc','proj','exp','sk','mail','sgpt','snake','mp','bin','tm'];
 const mini={};let zz=20,curWin=null;
-function selIco(id){document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel'));document.getElementById('ic-'+id)?.classList.add('sel');}
-function openW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(!w)return;w.classList.add('open');w.style.display='flex';mini[id]=false;if(t&&!t.classList.contains('pin')&&!t.classList.contains('on'))t.parentNode.appendChild(t);t&&t.classList.add('on');front(id);if(id==='snake')initSnake();if(id==='mp')mpDraw(true);}
-function closeW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.classList.remove('open','foc');w.classList.add('blur');w.style.display='none';}if(t)t.classList.remove('on','act');mini[id]=false;if(curWin===id)curWin=null;if(id==='snake')stopSnake();if(id==='mp')mpPause();}
-function minW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.style.display='none';w.classList.remove('foc');w.classList.add('blur');}if(t)t.classList.remove('act');mini[id]=true;if(curWin===id)curWin=null;if(id==='snake')stopSnake();if(id==='mp')mpPause();}
+function selIco(id){document.querySelectorAll('.icon').forEach(i=>{i.classList.remove('sel');i.tabIndex=-1;});const e=document.getElementById('ic-'+id);if(e){e.classList.add('sel');e.tabIndex=0;}else document.querySelector('.icon').tabIndex=0;}   // always exactly one tab stop
+// Desktop icons by keyboard: arrows move in grid order (columns fill top to bottom first), Enter opens
+document.querySelector('.icon-grid').addEventListener('keydown',e=>{
+  const ic=[...document.querySelectorAll('.icon')],i=ic.indexOf(e.target);if(i<0)return;
+  const R=getComputedStyle(document.querySelector('.icon-grid')).gridTemplateRows.split(' ').length,row=i%R;
+  const to={ArrowDown:row<R-1?i+1:-1,ArrowUp:row>0?i-1:-1,ArrowRight:i+R,ArrowLeft:i-R}[e.key];
+  if(to!==undefined){e.preventDefault();e.stopPropagation();if(to>=0&&to<ic.length){selIco(ic[to].id.slice(3));ic[to].focus();}return;}
+  if(e.key==='Enter'){e.preventDefault();e.stopPropagation();e.target.dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));}
+});
+document.querySelectorAll('.icon').forEach(i=>i.addEventListener('focus',()=>selIco(i.id.slice(3))));
+function clampWin(w){   // keep the whole window — titlebar and its minimize / maximize / close — on-screen, above the taskbar
+  if(!w||w.style.display==='none'||w.classList.contains('max')||w.classList.contains('snapped'))return;
+  const W=w.offsetWidth,H=w.offsetHeight;
+  w.style.left=Math.max(0,Math.min(parseFloat(w.style.left)||w.offsetLeft,innerWidth-W))+'px';
+  w.style.top=Math.max(0,Math.min(parseFloat(w.style.top)||w.offsetTop,innerHeight-TBH-H))+'px';
+}
+function openW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(!w)return;w.classList.add('open');w.style.display='flex';mini[id]=false;if(t&&!t.classList.contains('pin')&&!t.classList.contains('on'))t.parentNode.appendChild(t);t&&t.classList.add('on');front(id);if(id==='snake')initSnake();if(id==='mp')mpDraw(true);clampWin(w);w.focus({preventScroll:true});}
+function closeW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.classList.remove('open','foc');w.classList.add('blur');w.style.display='none';}if(t)t.classList.remove('on','act');mini[id]=false;if(curWin===id)curWin=null;if(id==='snake')stopSnake();if(id==='mp')mpPause();if(id==='tm')cancelAnimationFrame(tmRaf);focusAfter(id,false);}
+function minW(id){const w=document.getElementById('win-'+id),t=document.getElementById('tb-'+id);if(w){w.style.display='none';w.classList.remove('foc');w.classList.add('blur');}if(t)t.classList.remove('act');mini[id]=true;if(curWin===id)curWin=null;if(id==='snake')stopSnake();if(id==='mp')mpPause();focusAfter(id,true);}
+// After a window closes or minimizes, keyboard focus goes somewhere sensible: its taskbar button, or the desktop
+function focusAfter(id,minimized){
+  const a=document.activeElement;if(a&&a!==document.body&&!document.getElementById('win-'+id).contains(a))return;
+  const b=document.getElementById('tb-'+id);
+  if(minimized&&b&&b.offsetParent)b.focus({preventScroll:true});else(document.querySelector('.icon[tabindex="0"]')||document.getElementById('sb')).focus({preventScroll:true});
+}
 function togW(id){   // taskbar click: open it; restore it; bring it forward; or, if it is already the focused window, minimize it
   const w=document.getElementById('win-'+id);if(!w)return;
   if(!w.classList.contains('open'))openW(id);
-  else if(mini[id]||w.style.display==='none'){w.style.display='flex';mini[id]=false;front(id);}
+  else if(mini[id]||w.style.display==='none'){w.style.display='flex';mini[id]=false;front(id);clampWin(w);w.focus({preventScroll:true});}
   else if(curWin===id)minW(id);
   else front(id);
 }
@@ -1166,8 +1419,9 @@ function unsnap(w){
   w.style.width=p.w||'';w.style.height=p.h||'';if(!p.sized)w.classList.remove('sized');
 }
 function dragS(e,id){
-  if(e.button!==0)return;
+  if(e.button!==0||e.target.closest('.wb'))return;
   const w=document.getElementById('win-'+id);if(!w)return;
+  w.focus({preventScroll:true});   // the drag's preventDefault would otherwise keep focus where it was
   front(id);
   const r=w.getBoundingClientRect();
   ox=e.clientX-r.left;oy=e.clientY-r.top;
@@ -1219,7 +1473,7 @@ WS.forEach(id=>{
   w.appendChild(g);
   const tb=w.querySelector('.win-tb');
   if(tb)tb.addEventListener('dblclick',ev=>{if(ev.target.closest('.wb'))return;toggleMax(id);});
-  const mx=Array.from(w.querySelectorAll('.win-tb .wb')).find(b=>b.textContent.trim()==='□');
+  const mx=w.querySelector('.win-tb .wb.mx');
   if(mx)mx.addEventListener('click',ev=>{ev.stopPropagation();toggleMax(id);});
 });
 
@@ -1281,7 +1535,7 @@ document.addEventListener('mouseup',()=>{
 // Marquee starts only on bare desktop
 document.getElementById('desktop').addEventListener('mousedown',e=>{
   if(e.button!==0)return;
-  if(e.target.closest('.win,.icon,#tb,#smenu,#ctx,#wpp,#bal,.fly'))return;
+  if(e.target.closest('.win,.icon,#tb,#smenu,#ctx,#wpp,#bal,.fly,#sticky'))return;
   e.preventDefault(); // the wallpaper is an <img>; without this the browser starts a native image drag
   selOn=true;selMoved=false;ssx=e.clientX;ssy=e.clientY;
   selBox.style.left=ssx+'px';selBox.style.top=ssy+'px';
@@ -1294,6 +1548,7 @@ window.addEventListener('resize',()=>{
     const w=document.getElementById('win-'+id);
     if(w&&w.classList.contains('max')){w.style.width=window.innerWidth+'px';w.style.height=(window.innerHeight-TBH)+'px';}
     else if(w&&w.classList.contains('snapped')){const r=snapRect(w.dataset.snap);w.style.left=r.l+'px';w.style.width=r.w+'px';w.style.height=r.h+'px';}
+    else clampWin(w);
   });
 });
 
@@ -1301,7 +1556,9 @@ window.addEventListener('resize',()=>{
 // Arrow keys are deliberately untouched (Snake owns them).
 document.addEventListener('keydown',e=>{
   if(e.target&&e.target.closest&&e.target.closest('input,textarea'))return;
+  if(e.key==='Escape'&&srchOn){closeSearch();e.preventDefault();return;}
   if(e.key==='Escape'&&document.getElementById('sm-pw').classList.contains('on')){pwMenu(false);e.preventDefault();return;}
+  if(e.key==='Escape'&&document.getElementById('smenu').style.display==='flex'){closeSM();document.getElementById('sb').focus();e.preventDefault();return;}
   if(e.key==='Escape'&&flyOpen){closeFly();e.preventDefault();return;}
   // Escape minimizes: closing is destructive and Windows never bound Escape to close.
   if(e.key==='Escape'&&curWin){minW(curWin);e.preventDefault();}
@@ -1323,7 +1580,7 @@ function calRender(){   // month grid, Sunday first, 6 weeks; today in #0078d7
   document.getElementById('cal-grid').innerHTML=h;calTick();
 }
 function openFly(id){
-  flyOpen=id;
+  closeSearch();flyOpen=id;
   document.getElementById('bal').style.display='none';
   if(id==='cal'){calRender();calTimer=setInterval(calTick,1000);}
   document.getElementById('fly-'+id).classList.add('on');
@@ -1362,14 +1619,198 @@ function showDesktop(){
 }
 
 // ══ START MENU ══
-function toggleSM(){const m=document.getElementById('smenu');m.style.display=m.style.display==='flex'?'none':'flex';if(m.style.display==='none')pwMenu(false);}
-function closeSM(){document.getElementById('smenu').style.display='none';pwMenu(false);}
+function toggleSM(){const m=document.getElementById('smenu');m.style.display=m.style.display==='flex'?'none':'flex';
+  document.getElementById('sb').setAttribute('aria-expanded',String(m.style.display==='flex'));
+  if(m.style.display==='none')pwMenu(false);else{closeSearch();smItems()[0].focus({preventScroll:true});document.querySelector('.sm-apps').scrollTop=0;}}
+function closeSM(){document.getElementById('smenu').style.display='none';pwMenu(false);document.getElementById('sb').setAttribute('aria-expanded','false');}
+const smItems=()=>[...document.querySelectorAll('.sm-apps .smi')].filter(e=>e.getClientRects().length);
+// Start by keyboard: Up/Down through the app list, Enter opens, Escape closes and returns to the Start button
+document.getElementById('smenu').addEventListener('keydown',e=>{
+  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();if(document.getElementById('sm-pw').classList.contains('on')){pwMenu(false);return;}closeSM();document.getElementById('sb').focus();return;}
+  const it=smItems(),i=it.indexOf(document.activeElement);
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopPropagation();const j=i<0?0:(i+(e.key==='ArrowDown'?1:-1)+it.length)%it.length;it[j].focus();return;}
+  if(e.key==='Enter'&&i>=0){e.preventDefault();e.stopPropagation();it[i].click();if(it[i].classList.contains('sm-folder'))it[i].focus();}
+});
 document.addEventListener('click',e=>{
   if(!e.target.closest('#smenu')&&!e.target.closest('#sb'))closeSM();
   if(!e.target.closest('#ctx'))closeCtx();
 });
 
+// ══ STICKY NOTE ══
+function stickyClose(){document.getElementById('sticky').hidden=true;try{sessionStorage.setItem('stickyClosed','1');}catch(e){}}   // hidden for this visit
+try{if(sessionStorage.getItem('stickyClosed')==='1')document.getElementById('sticky').hidden=true;}catch(e){}
+(function(){   // drag by the top bar, kept inside the desktop above the taskbar
+  const n=document.getElementById('sticky'),bar=document.getElementById('st-bar');let dx=0,dy=0,on=false;
+  const place=(x,y)=>{n.style.right='auto';n.style.left=Math.max(0,Math.min(x,innerWidth-n.offsetWidth))+'px';n.style.top=Math.max(0,Math.min(y,innerHeight-TBH-n.offsetHeight))+'px';};
+  bar.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('.st-x'))return;const r=n.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;on=true;bar.setPointerCapture(e.pointerId);e.preventDefault();});
+  bar.addEventListener('pointermove',e=>{if(on)place(e.clientX-dx,e.clientY-dy);});
+  bar.addEventListener('pointerup',()=>{on=false;});
+  addEventListener('resize',()=>{if(n.style.left)place(parseFloat(n.style.left),parseFloat(n.style.top));});
+})();
+
+// ══ TASK MANAGER (benchmark replay) ══
+// Only the measured endpoints already stated on the Projects card. The graph eases from one to the other over ~2.5 s;
+// no noise and no invented intermediate measurements. Memory is relative to the baseline peak (= 100%); no absolute GB.
+const TMD=[
+  {id:'gpu',name:'GPU compute utilization',max:100,a:4.2,b:70.3,aT:'4.2%',bT:'70.3%',la:'Baseline',lb:'GoRA',note:'Traced with Nsight Compute kernel profiling',spark:'4.2% → 70.3%'},
+  {id:'thr',name:'Throughput',max:12698/0.85,a:10965,b:12698,aT:'10,965 tok/s',bT:'12,698 tok/s',la:'Baseline',lb:'GoRA',note:'~15% higher throughput at comparable accuracy',spark:'10,965 → 12,698 tok/s'},
+  {id:'mq',name:'Peak memory: QLoRA',max:100,a:100,b:92.7,aT:'100%',bT:'92.7%',la:'Baseline',lb:'QLoRA',note:'Peak GPU memory, baseline peak = 100% (QLoRA: 7.3% lower)',spark:'100% → 92.7%'},
+  {id:'mg',name:'Peak memory: gradient checkpointing',max:100,a:100,b:43,aT:'100%',bT:'~43%',la:'Baseline',lb:'Gradient checkpointing',note:'Peak GPU memory, baseline peak = 100% (gradient checkpointing: ~57% lower)',spark:'100% → ~43%'},
+];
+let tmSel=TMD[0],tmRaf=0;
+const tmEase=x=>x<.15?0:x>.85?1:(u=>u*u*(3-2*u))((x-.15)/.7);   // flat at the measured baseline, smooth transition, flat at the measured result
+const tmY=(it,x,H)=>H-((it.a+(it.b-it.a)*tmEase(x))/it.max)*H;
+function tmPts(it,W,H,upto){const o=[];for(let i=0;i<=100;i++){const x=i/100;if(x>upto+1e-9)break;o.push([+(x*W).toFixed(1),+tmY(it,x,H).toFixed(1)]);}if(upto<1&&o.length)o.push([+(upto*W).toFixed(1),+tmY(it,upto,H).toFixed(1)]);return o;}
+function tmSvg(it,W,H,upto,grid){
+  const p=tmPts(it,W,H,upto);if(!p.length)return'';
+  const line='M'+p.map(q=>q.join(',')).join('L'),fill=line+'L'+p.at(-1)[0]+','+H+'L0,'+H+'Z';let g='';
+  if(grid){for(let x=W/10;x<W;x+=W/10)g+='<path d="M'+x.toFixed(1)+' 0V'+H+'"/>';for(let y=H/5;y<H;y+=H/5)g+='<path d="M0 '+y.toFixed(1)+'H'+W+'"/>';
+    g='<g stroke="#0078d7" stroke-opacity=".12" vector-effect="non-scaling-stroke">'+g.replace(/\/>/g,' vector-effect="non-scaling-stroke"/>')+'</g>';}
+  const dot=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="3" fill="#0078d7" vector-effect="non-scaling-stroke"/>';
+  const ends=grid?dot(0,tmY(it,0,H).toFixed(1))+(upto>=1?dot(W,tmY(it,1,H).toFixed(1)):''):'';
+  return g+'<path d="'+fill+'" fill="#0078d7" fill-opacity=".1"/><path d="'+line+'" fill="none" stroke="#0078d7" stroke-width="1.5" vector-effect="non-scaling-stroke"/>'+ends;
+}
+function tmDraw(p){document.getElementById('tm-graph').innerHTML=tmSvg(tmSel,400,180,p,true);}
+function tmPlay(){
+  cancelAnimationFrame(tmRaf);
+  if(RM.matches){tmDraw(1);return;}   // reduced motion: the final picture, no animation
+  const t0=performance.now(),step=now=>{const p=Math.min(1,(now-t0)/2500);tmDraw(p);if(p<1)tmRaf=requestAnimationFrame(step);};
+  tmDraw(0);tmRaf=requestAnimationFrame(step);
+}
+function tmShow(it){
+  tmSel=it;
+  document.querySelectorAll('.tm-it').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.id===it.id)));
+  document.getElementById('tm-name').textContent=it.name;
+  document.getElementById('tm-vals').innerHTML='<div class="tm-v"><small>'+it.la+'</small><b>'+it.aT+'</b></div><div class="tm-v"><small>'+it.lb+'</small><b>'+it.bT+'</b></div>';
+  document.getElementById('tm-axis').innerHTML='<span>'+it.la+'</span><span>'+it.lb+'</span>';
+  document.getElementById('tm-vtab').innerHTML='<caption>'+it.note+'</caption><thead><tr><th scope="col">Measure</th><th scope="col">'+it.la+'</th><th scope="col">'+it.lb+'</th></tr></thead><tbody><tr><th scope="row">'+it.name+'</th><td>'+it.aT+'</td><td>'+it.bT+'</td></tr></tbody>';
+  tmPlay();
+}
+document.getElementById('tm-list').innerHTML=TMD.map(it=>'<button type="button" role="tab" class="tm-it" data-id="'+it.id+'" aria-selected="false"><svg viewBox="0 0 56 26" preserveAspectRatio="none" aria-hidden="true">'+tmSvg(it,56,26,1,false)+'</svg><span><b>'+it.name+'</b><span>'+it.spark+'</span></span></button>').join('');
+document.getElementById('tm-list').addEventListener('click',e=>{const b=e.target.closest('.tm-it');if(b)tmShow(TMD.find(i=>i.id===b.dataset.id));});
+// Processes: the current roles, copied from the Experience window (no CPU, memory or percentage columns)
+document.getElementById('tm-rows').innerHTML=[...document.querySelectorAll('#win-exp .ecard')].filter(c=>/Present/.test(c.querySelector('.edate').textContent)).map(c=>{
+  const esc=s=>s.replace(/[&<>]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
+  return'<tr><td>'+esc(c.querySelector('.erol').textContent)+'<small>'+esc(c.querySelector('.eco').textContent)+'</small></td><td>Running</td><td>'+esc(c.querySelector('.edate').textContent.split(' – ')[0])+'</td></tr>';
+}).join('');
+function tmTab(id){
+  ['proc','perf'].forEach(x=>{document.getElementById('tm-'+x).hidden=x!==id;document.getElementById('tm-t-'+x).setAttribute('aria-selected',String(x===id));});
+  if(id==='perf')tmPlay();else cancelAnimationFrame(tmRaf);
+}
+function openTM(){openW('tm');tmTab('perf');tmShow(tmSel);}   // always opens on Performance
+// Taskbar right-click (empty space): a small menu with Task Manager. Ctrl+Shift+Esc is deliberately not bound (the OS takes it).
+function closeTbCtx(){document.getElementById('tbctx').classList.remove('on');}
+document.getElementById('tb').addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  if(e.target.closest('button,a,label,input,#sb,.tb-tray'))return;   // only empty taskbar space
+  closeSM();closeFly();closeCtx();closeSearch();
+  const m=document.getElementById('tbctx');m.classList.add('on');
+  m.style.left=Math.max(0,Math.min(e.clientX,innerWidth-m.offsetWidth-4))+'px';m.style.top=(innerHeight-TBH-m.offsetHeight-4)+'px';
+});
+document.addEventListener('click',e=>{if(!e.target.closest('#tbctx'))closeTbCtx();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('tbctx').classList.contains('on')){closeTbCtx();e.stopImmediatePropagation();e.preventDefault();}},true);
+
+// ══ SEARCH (taskbar box) ══
+// The index is built once from text already on the page — Start menu apps and window names, experience and project cards
+// (achievements included), education, and Skills.exe categories. The Assistant's answers are deliberately not indexed.
+const SQ=document.getElementById('tb-q'),SRCH=document.getElementById('srch'),SLIST=document.getElementById('srch-list');
+const SIX=(()=>{   // T(): text nodes joined with spaces, so tags and lines stay apart in snippets
+  const N=s=>s.replace(/[\u00a0\s]+/g,' ').trim(),T=el=>{const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),o=[];let n;while((n=w.nextNode()))o.push(n.textContent);return N(o.join(' '));},ix=[],body=(t,x)=>x.startsWith(t)?x.slice(t.length).trim():x;
+  document.querySelectorAll('.sm-apps .smi:not(.sm-folder)').forEach(e=>{   // apps: each runs exactly what its Start entry runs
+    const m=(e.getAttribute('onclick')||'').match(/openFM\('(\w+)'\)/),w=m&&document.getElementById('win-'+m[1]);
+    const title=N(e.textContent),wt=w?N(w.querySelector('.win-title').textContent):'';
+    ix.push({g:'Apps',title,text:wt!==title?wt:'',body:wt&&wt!==title?wt:'App',run:()=>e.click()});
+  });
+  document.querySelectorAll('#win-exp .ecard').forEach(c=>{const ti=N(c.querySelector('.eco').textContent),x=T(c);ix.push({g:'Experience',title:ti,text:x,body:body(ti,x),win:'exp',el:[c]});});
+  document.querySelectorAll('#win-proj .pcard').forEach(c=>{const ti=T(c.querySelector('.pname')),x=T(c);ix.push({g:'Projects',title:ti,text:x,body:body(ti,x),win:'proj',el:[c]});});
+  const ks=[...document.querySelectorAll('#win-pc .itab .k')],row=(l,i)=>{const k=ks.filter(k=>k.textContent===l)[i||0];return[k,k.nextElementSibling];};
+  [['M.S.:',0],['B.Tech:',1]].forEach(([l,i])=>{const[k,v]=row(l),[gk,gv]=row('GPA:',i),ti=l.replace(/:$/,'')+' '+N(v.textContent),g=gk.textContent+' '+N(gv.textContent);
+    ix.push({g:'Education',title:ti,text:ti+' '+g,body:g,win:'pc',el:[k,v,gk,gv]});});
+  {const h=[...document.querySelectorAll('#win-pc .sec')].find(s=>s.textContent==='Campus Activities'),p=h.nextElementSibling;ix.push({g:'Education',title:N(h.textContent),text:N(p.textContent),body:N(p.textContent),win:'pc',el:[h,p]});}
+  let cur=null;
+  [...document.querySelector('#win-sk .term-body').children].forEach(e=>{
+    const s=N(e.textContent),hd=s.match(/^\[ (.+) \]$/);
+    if(hd){cur={g:'Skills',title:hd[1],items:[],win:'sk',el:[e]};ix.push(cur);}
+    else if(cur&&e.tagName==='DIV'&&e.textContent.startsWith('\u00a0')){cur.items.push(s);cur.el.push(e);}
+    else if(e.tagName==='BR')cur=null;
+  });
+  ix.forEach(it=>{if(it.items){it.text=it.title+' '+it.items.join(' · ');it.body=it.items.join(' · ');delete it.items;}});
+  return ix;
+})();
+const SGROUPS=['Apps','Experience','Projects','Education','Skills'],SSUG=['PyTorch','YOLO','SLURM','UNESCO'];
+let srchOn=false,sItems=[],sAct=-1;
+const sEsc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),sRe=q=>new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+function sMark(s,q){if(!q)return sEsc(s);const re=sRe(q);let o='',i=0,m;while((m=re.exec(s))){o+=sEsc(s.slice(i,m.index))+'<mark>'+sEsc(m[0])+'</mark>';i=m.index+m[0].length;}return o+sEsc(s.slice(i));}
+function sSnip(s,q){   // one line around the first match in the snippet text (or its opening when only the title matched)
+  const i=s.toLowerCase().indexOf(q.toLowerCase()),a=i<0?0:Math.max(0,i-32),b=Math.min(s.length,(i<0?0:i+q.length)+64);
+  return(a>0?'…':'')+s.slice(a,b).trim()+(b<s.length?'…':'');
+}
+function sFind(q){
+  const l=q.toLowerCase(),wb=new RegExp('(^|[^a-z0-9])'+l.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  return SIX.map((it,k)=>{const t=it.title.toLowerCase(),x=(it.text||'').toLowerCase();
+    const s=t===l?100:t.startsWith(l)?80:wb.test(t)?60:t.includes(l)?50:wb.test(x)?30:x.includes(l)?20:0;return s?{it,s,k}:null;})
+    .filter(Boolean).sort((a,b)=>b.s-a.s||a.k-b.k).map(r=>r.it);
+}
+function sRender(){
+  const q=SQ.value.trim();sItems=[];sAct=-1;let h='';
+  const opt=(cls,html,act)=>{const id='sr-'+sItems.length;sItems.push(act);return'<div class="'+cls+'" role="option" id="'+id+'" data-i="'+(sItems.length-1)+'">'+html+'</div>';};
+  if(!q){
+    h='<div class="s-h">Try searching for</div><div>'+SSUG.map(w=>opt('s-sug',sEsc(w),{sug:w})).join('')+'</div>';
+  }else{
+    const res=sFind(q);
+    if(!res.length){h='<div class="s-none">No results for \''+sEsc(q)+'\'</div>'+opt('s-ask','Ask the Assistant',{ask:q});}
+    else{
+      const row=(it,best)=>opt('s-r'+(best?' s-best':''),'<div class="s-t">'+sMark(it.title,q)+'</div><div class="s-s">'+sMark(sSnip(it.body||'',q),q)+'</div>',{it});
+      h='<div class="s-h">Best match</div>'+row(res[0],true);
+      SGROUPS.forEach(g=>{const r=res.slice(1).filter(it=>it.g===g).slice(0,6);if(r.length)h+='<div class="s-h">'+g+'</div>'+r.map(it=>row(it)).join('');});
+    }
+  }
+  SLIST.innerHTML=h;SQ.removeAttribute('aria-activedescendant');
+}
+function sMove(d){
+  if(!sItems.length)return;sAct=(sAct+d+sItems.length)%sItems.length;
+  SLIST.querySelectorAll('[role=option]').forEach((e,i)=>e.classList.toggle('act',i===sAct));
+  const e=document.getElementById('sr-'+sAct);SQ.setAttribute('aria-activedescendant',e.id);e.scrollIntoView({block:'nearest'});
+}
+function sDo(a){
+  if(!a)return;
+  if(a.sug){SQ.value=a.sug;sRender();SQ.focus();return;}
+  closeSearch();SQ.value='';
+  if(a.ask){openW('sgpt');const i=document.getElementById('sg-in');i.value=a.ask;gptSend();return;}
+  const it=a.it;if(it.run){it.run();return;}
+  openW(it.win);   // opens, or restores and brings forward
+  requestAnimationFrame(()=>{sScrollTo(it.el[0]);it.el.forEach(e=>{e.classList.remove('s-hit');void e.offsetWidth;e.classList.add('s-hit');clearTimeout(e._sh);e._sh=setTimeout(()=>e.classList.remove('s-hit'),1700);});});
+}
+function sScrollTo(el){   // scroll the card's own scroll box (never the desktop) so the card is centred
+  let p=el.parentElement;
+  while(p&&!p.classList.contains('win')){const o=getComputedStyle(p).overflowY;if((o==='auto'||o==='scroll')&&p.scrollHeight>p.clientHeight)break;p=p.parentElement;}
+  if(!p||p.classList.contains('win'))return;
+  const r=el.getBoundingClientRect(),pr=p.getBoundingClientRect();p.scrollTop+=r.top-pr.top-Math.max(0,(p.clientHeight-r.height)/2);
+}
+function openSearch(){
+  if(srchOn)return;closeSM();closeFly();closeCtx();
+  const b=document.querySelector('.tb-search').getBoundingClientRect();SRCH.style.left=Math.max(0,b.left)+'px';   // left-aligned with the box
+  SRCH.classList.add('on');srchOn=true;SQ.setAttribute('aria-expanded','true');sRender();
+}
+function closeSearch(){if(!srchOn)return;SRCH.classList.remove('on');srchOn=false;SQ.setAttribute('aria-expanded','false');SQ.removeAttribute('aria-activedescendant');}
+SQ.addEventListener('mousedown',()=>{openSearch();});
+SQ.addEventListener('input',()=>{openSearch();sRender();});
+SQ.addEventListener('keydown',e=>{   // everything typed here stays here: no global shortcut sees these keys
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!srchOn)openSearch();sMove(e.key==='ArrowDown'?1:-1);}
+  else if(e.key==='Enter'){e.preventDefault();if(!srchOn){openSearch();return;}sDo(sItems[sAct>=0?sAct:0]);}
+  else if(e.key==='Escape'){e.preventDefault();closeSearch();}
+  else if(!srchOn&&e.key.length===1)openSearch();
+  e.stopPropagation();
+});
+SLIST.addEventListener('mousedown',e=>e.preventDefault());   // keep focus in the box while clicking a result
+SLIST.addEventListener('click',e=>{const o=e.target.closest('[role=option]');if(o)sDo(sItems[+o.dataset.i]);});
+document.addEventListener('click',e=>{if(srchOn&&!e.target.closest('#srch,.tb-search'))closeSearch();});
 {const k=document.querySelectorAll('#win-pc .x-ni').length;document.getElementById('pc-status').textContent=k+' items';}   // This PC status bar: the items under Quick access
+function iconRows(){   // as many 88px rows (6px gaps) as fit between the grid's top and the taskbar
+  const g=document.querySelector('.icon-grid'),top=g.offsetTop||14,avail=innerHeight-TBH-top-6;
+  g.style.setProperty('--rows',String(Math.max(1,Math.floor((avail+6)/94))));
+}
+iconRows();addEventListener('resize',iconRows);
 function openAch(){   // the "3rd of 50+ teams" tile: My Projects, scrolled to its Achievements section
   openFM('proj');
   const b=document.querySelector('#win-proj .win-body'),a=document.getElementById('proj-ach');
@@ -1380,7 +1821,7 @@ function refreshDesktop(){const g=document.querySelector('.icon-grid');g.style.v
 
 // ══ RIGHT CLICK ══
 document.getElementById('desktop').addEventListener('contextmenu',e=>{
-  if(e.target.closest('.win')||e.target.closest('#tb')||e.target.closest('.icon')||e.target.closest('.fly'))return;
+  if(e.target.closest('.win')||e.target.closest('#tb')||e.target.closest('.icon')||e.target.closest('.fly')||e.target.closest('#sticky'))return;
   e.preventDefault();
   const m=document.getElementById('ctx');
   m.style.display='block';
@@ -1752,7 +2193,8 @@ new ResizeObserver(()=>{if(!MP.playing)mpDraw(true);}).observe(document.getEleme
 // ══ SNAKE ══
 const CELL=12,COLS=20,ROWS=20;
 let sg=null,si=null,shi=0;
-function initSnake(){const c=document.getElementById('snc'),x=c.getContext('2d');x.fillStyle='#111';x.fillRect(0,0,240,240);x.fillStyle='#0f0';x.font='12px monospace';x.textAlign='center';x.fillText('Press ▶ Start',120,120);}
+function initSnake(){const c=document.getElementById('snc'),x=c.getContext('2d');x.fillStyle='#111';x.fillRect(0,0,240,240);x.fillStyle='#0f0';x.font='12px monospace';x.textAlign='left';const a='Press ',b=' Start',wa=x.measureText(a).width,s=120-(wa+8+x.measureText(b).width)/2;
+  x.fillText(a,s,120);x.beginPath();x.moveTo(s+wa,111);x.lineTo(s+wa+8,115.5);x.lineTo(s+wa,120);x.closePath();x.fill();x.fillText(b,s+wa+8,120);}
 function startSnake(){
   if(si)clearInterval(si);
   const st=[{x:10,y:10}];
@@ -1786,8 +2228,10 @@ function pauseSnake(){   // freeze a running game in place (Lock, Sleep); an arr
 }
 function snResume(){if(!sg||!snPaused)return;snPaused=false;si=setInterval(snStep,110);}
 document.addEventListener('keydown',e=>{
-  if(snPaused&&/^Arrow/.test(e.key)&&!(e.target.closest&&e.target.closest('input,textarea')))snResume();
-  if(!sg||!si||(e.target.closest&&e.target.closest('input,textarea')))return;const d=sg.dir;
+  const snFocus=document.getElementById('win-snake').contains(document.activeElement);   // only while the Snake window is focused
+  if(!snFocus||(e.target.closest&&e.target.closest('input,textarea')))return;
+  if(snPaused&&/^Arrow/.test(e.key))snResume();
+  if(!sg||!si)return;const d=sg.dir;
   if(e.key==='ArrowUp'&&d.y!==1){sg.dir={x:0,y:-1};e.preventDefault();}
   if(e.key==='ArrowDown'&&d.y!==-1){sg.dir={x:0,y:1};e.preventDefault();}
   if(e.key==='ArrowLeft'&&d.x!==1){sg.dir={x:-1,y:0};e.preventDefault();}
@@ -1801,10 +2245,12 @@ function rf(sn){let f;do{f={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.r
 // Local scripted responder — no backend, no key, no network calls.
 // Ordered: the most specific topics are checked first, general ones last.
 const KB=[
+  {keywords:['publish','paper','article','blog','writ','wrote','author','co-author','indigenous','new commons','incubator'],
+   answer:"Sruthi co-authored 'Identifying A Global Demand: Inside the Applications to our Indigenous Languages Incubator' with Stefaan Verhulst and Andrew J. Zahuranec, published by the Open Data Policy Lab at The GovLab in August 2026. You can read it at newcommons.ai/blog."},
   {keywords:['research','faber','ocr','redlining','qwen'],
-   answer:"Sruthi is a Graduate Research Assistant at NYU's Faber Lab working on redlining research. She built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records — about 150,000 page images spanning 1935 to 1975 — into analysis-ready data for housing-discrimination research. She parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster with SLURM and finished all 30 batches in roughly two weeks."},
+   answer:"Sruthi is a Graduate Research Assistant at NYU's Redlining Lab (Faber Lab) working on redlining research. She built an OCR pipeline using the Qwen2.5-VL vision-language model to transcribe 73,441 historical mortgage records — about 150,000 page images spanning 1935 to 1975 — into analysis-ready data for housing-discrimination research. She parallelized inference across 6 concurrent GPU jobs on NYU's HPC cluster with SLURM and finished all 30 batches in roughly two weeks. The lab is a collaboration between NYU, UC Santa Barbara, and the University of Virginia — the team page is at redlininglab.org/people."},
   {keywords:['govlab','unesco','pwa'],
-   answer:"At The GovLab Sruthi designed and built an interactive UNESCO Data Governance self-assessment tool — 56 questions across 4 dimensions. It's deployed live under The GovLab, has been adopted for course use, and got direct positive feedback from UNESCO. She built it as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard."},
+   answer:"At The GovLab Sruthi designed and built an interactive UNESCO Data Governance self-assessment tool — 56 questions across 4 dimensions. It's deployed live under The GovLab, has been adopted for course use, and got direct positive feedback from UNESCO. She built it as a client-side PWA with offline fallback, localStorage save/resume, and an installable results dashboard. Try it live at datagov.opendatapolicylab.org."},
   {keywords:['llm','fine-tuning','lora','qlora','gora','benchmark','pytorch'],
    answer:"Sruthi built a config-driven benchmarking framework comparing LoRA, QLoRA, GoRA, and gradient checkpointing on Qwen2.5-1.5B-Instruct with GSM8K. GoRA gave about 15% higher throughput at comparable accuracy — 10,965 to 12,698 tokens per second. QLoRA cut peak GPU memory by 7.3% and gradient checkpointing cut it by about 57%. Nsight Compute profiling traced GoRA's gain to compute utilization rising from 4.2% to 70.3%."},
   {keywords:['siteiq','hackathon','award','achievement','prize'],
@@ -1826,13 +2272,13 @@ const KB=[
   {keywords:['contact','email','reach','github','linkedin','resume'],
    answer:"You can reach Sruthi at sruthiraghavan2002@gmail.com, or find her on GitHub at github.com/Sruthi-2002 and LinkedIn at https://www.linkedin.com/in/sruthi-raghavan-340642221/. Her resume is on the desktop as Resume.pdf."},
   {keywords:['intern','internship','experience','worked','job','career'],
-   answer:"Sruthi has worked at NYU's Faber Lab (Graduate Research Assistant), The GovLab (Data Program Intern), NYU's CV Starr Center (Graduate Administrative Assistant), HCL Technologies (AI Intern), MultiD (Project Intern on drone-assisted crack detection), and NUS with Hewlett-Packard Enterprise (Data Science Intern). Ask about any of them for details."},
+   answer:"Sruthi has worked at NYU's Redlining Lab (Faber Lab) (Graduate Research Assistant), The GovLab (Data Program Intern), NYU's CV Starr Center (Graduate Administrative Assistant), HCL Technologies (AI Intern), MultiD (Project Intern on drone-assisted crack detection), and NUS with Hewlett-Packard Enterprise (Data Science Intern). Ask about any of them for details."},
   {keywords:['location','where','based','live','city'],
    answer:"Sruthi is based in Jersey City, NJ, right across from Manhattan — and she studies at NYU Tandon in Brooklyn."},
   {keywords:['who','about','yourself','tell me about','intro','hello','hi','hey'],
-   answer:"Sruthi Raghavan is an ML/AI engineer finishing her M.S. in Computer Engineering at NYU Tandon. She works on vision-language models, LLM fine-tuning, and computer vision. Right now she's a Graduate Research Assistant at NYU's Faber Lab and a Data Program Intern at The GovLab. Ask about her research, projects, or experience."}
+   answer:"Sruthi Raghavan is an ML/AI engineer finishing her M.S. in Computer Engineering at NYU Tandon. She works on vision-language models, LLM fine-tuning, and computer vision. Right now she's a Graduate Research Assistant at NYU's Redlining Lab (Faber Lab) and a Data Program Intern at The GovLab. Ask about her research, projects, or experience."}
 ];
-const FALLBACK="I don't have anything on that. For anything I haven't covered, email Sruthi directly at sruthiraghavan2002@gmail.com.";
+const FALLBACK="That isn't covered here. For anything else, email Sruthi directly at sruthiraghavan2002@gmail.com.";
 // Keywords match at a word start, so short ones like "hi" don't fire inside "this".
 function hasKw(msg,kw){return new RegExp('\\b'+kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(msg);}
 function findAnswer(txt){
@@ -1886,6 +2332,73 @@ function toggleMic(){
   recog.onend=()=>{isRec=false;document.getElementById('mic').classList.remove('rec');};
   recog.start();
 }
+</script>
+<script>
+// ══ LOADER: desktop OS or the mobile resume page — decided once, by the same query the CSS uses ══
+(function(){
+  var MQ='(max-width: 767px), (hover: none) and (pointer: coarse)',mq=matchMedia(MQ);
+  // Rotation or resizing across the breakpoint: start over, so the right layout initialises cleanly
+  var swap=function(){location.reload();};
+  if(mq.addEventListener)mq.addEventListener('change',swap);else mq.addListener(swap);
+  if(!mq.matches){   // desktop: run the OS script exactly as before, as a normal global script
+    var src=document.getElementById('desk-js'),s=document.createElement('script');s.textContent=src.textContent;src.remove();document.body.appendChild(s);return;
+  }
+  // ── mobile: copy the content out of the window markup (word for word), then remove every desktop layer ──
+  var $=function(s,r){return(r||document).querySelector(s);},$$=function(s,r){return[].slice.call((r||document).querySelectorAll(s));};
+  var esc=function(x){var d=document.createElement('div');d.textContent=x;return d.innerHTML;};
+  var clean=function(node){   // keep text, lists, emphasis and links; drop desktop classes and inline styles
+    var c=node.cloneNode(true);[c].concat($$('*',c)).forEach(function(e){e.removeAttribute('style');if(e.tagName!=='A'||!e.classList.contains('pbtn'))e.removeAttribute('class');});return c;
+  };
+  var kv=function(label,nth){var ks=$$('#win-pc .itab .k').filter(function(k){return k.textContent===label;});return ks[nth||0].nextElementSibling.textContent;};
+  var secAfter=function(win,title){var h=$$(win+' .sec').filter(function(s){return s.textContent===title;})[0];return h&&h.nextElementSibling;};
+  var link=function(sel){return $(sel).getAttribute('href');};
+  var m=document.createElement('main');m.id='mob';
+  var h='';
+  // a. header
+  h+='<header><img class="m-photo" src="./photo.jpeg" alt="'+esc($('#win-pc .side-n').textContent)+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="m-init">'+esc($('#win-pc .side-init').textContent)+'</div>'+
+     '<h1>'+esc($('#win-pc .side-n').textContent)+'</h1><p class="m-title">ML/AI Engineer — M.S. Computer Engineering, NYU Tandon</p>'+
+     '<p class="m-meta">'+esc(kv('Location:'))+'</p><p class="m-meta">'+esc($('#bal strong').textContent)+'</p></header>';
+  // b. contact row (the existing URLs)
+  var lk=$$('#win-pc .x-links a'),by=function(re){return lk.filter(function(a){return re.test(a.getAttribute('href'));})[0].getAttribute('href');};
+  h+='<nav class="m-btns" aria-label="Contact"><a class="m-btn pri" href="'+by(/^mailto:/)+'">Email</a><a class="m-btn" href="'+by(/github\.com/)+'" target="_blank" rel="noopener">GitHub</a>'+
+     '<a class="m-btn" href="'+by(/linkedin\.com/)+'" target="_blank" rel="noopener">LinkedIn</a><a class="m-btn" href="'+by(/drive\.google\.com/)+'" target="_blank" rel="noopener">Resume</a></nav>';
+  // c. selected results
+  h+='<h2>Selected results</h2>'+$$('#win-pc .sres .sr').map(function(r){return'<div class="m-item">'+clean(r).innerHTML+'</div>';}).join('');
+  // d. about
+  h+='<h2>About</h2><div class="m-item"><p>'+clean(secAfter('#win-pc','About')).innerHTML+'</p></div>';
+  // e. experience: company, title, dates · location, bullets, links
+  h+='<h2>Experience</h2>'+$$('#win-exp .ecard').map(function(c){
+    var a=$$('a',c).map(function(x){return'<p><a href="'+x.getAttribute('href')+'" target="_blank" rel="noopener">'+esc(x.textContent)+'</a></p>';}).join('');
+    return'<div class="m-item"><h3>'+esc($('.eco',c).textContent)+'</h3><div class="m-sub">'+esc($('.erol',c).textContent)+'</div><div class="m-date">'+esc($('.edate',c).textContent)+'</div>'+clean($('.ebul',c)).outerHTML+a+'</div>';
+  }).join('');
+  // f. projects, the live tool button, achievements
+  var proj='',body=$('#win-proj .win-body');
+  [].slice.call(body.children).forEach(function(e){
+    if(e.classList.contains('sec')){proj+='<h2>'+esc(e.textContent)+'</h2>';return;}
+    if(!e.classList.contains('pcard'))return;
+    var tags=$$('.ptag',e).map(function(x){return x.textContent;}),btn=$('.pbtn',e);
+    proj+='<div class="m-item"><h3>'+clean($('.pname',e)).innerHTML+'</h3>'+'<div class="m-desc">'+clean($('.pdesc',e)).innerHTML+'</div>'+
+      (btn?'<a class="pbtn" href="'+btn.getAttribute('href')+'" target="_blank" rel="noopener">'+esc(btn.textContent)+'</a>':'')+(tags.length?'<div class="m-tags">'+tags.map(esc).join(' · ')+'</div>':'')+'</div>';
+  });
+  h+='<h2>Projects</h2>'+proj;
+  // g. education: both degrees with GPA and dates, then activities
+  h+='<h2>Education</h2><div class="m-item"><h3>M.S. '+esc(kv('M.S.:'))+'</h3><div class="m-date">GPA: '+esc(kv('GPA:',0))+'</div></div>'+   // degree label + value, both from the This PC table
+     '<div class="m-item"><h3>B.Tech '+esc(kv('B.Tech:'))+'</h3><div class="m-date">GPA: '+esc(kv('GPA:',1))+'</div></div>'+
+     '<div class="m-item"><div class="m-sub">'+esc($$('#win-pc .sec').filter(function(s){return s.textContent==='Campus Activities';})[0].textContent)+'</div><p>'+esc(secAfter('#win-pc','Campus Activities').textContent)+'</p></div>';
+  // h. skills, grouped by category, as plain text
+  var groups=[],g=null;
+  [].slice.call($('#win-sk .term-body').children).forEach(function(e){
+    var s=e.textContent.replace(/\u00a0/g,' ').trim(),hd=s.match(/^\[ (.+) \]$/);
+    if(hd){g={name:hd[1],items:[]};groups.push(g);}else if(g&&e.tagName==='DIV'&&/^\u00a0/.test(e.textContent))g.items.push(s);else if(e.tagName==='BR')g=null;
+  });
+  h+='<h2>Skills</h2>'+groups.map(function(x){return'<div class="m-item m-skill"><b>'+esc(x.name)+'</b>'+esc(x.items.join(' · '))+'</div>';}).join('');
+  // i. footer
+  h+='<footer>The full desktop version is available on a larger screen.</footer>';
+  m.innerHTML=h;
+  ['desktop','lock','signin','pwr','sleep'].forEach(function(id){var e=document.getElementById(id);if(!e)return;$$('img[onerror]',e).forEach(function(i){i.onerror=null;});e.remove();});   // removed images must not run their fallbacks (they look up removed elements)   // no window, lock screen or taskbar exists here
+  document.getElementById('desk-js').remove();
+  document.body.insertBefore(m,document.body.firstChild);
+})();
 </script>
 </body>
 </html>
